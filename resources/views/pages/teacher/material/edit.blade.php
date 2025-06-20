@@ -1,0 +1,50 @@
+<x-layouts.teacher-layout>
+    <x-slot name="header">Edit Material</x-slot>
+    <div class="flex justify-center">
+        <form
+            class="w-full max-w-5xl rounded-lg border border-primary/20 bg-white p-10"
+            method="POST"
+            enctype="multipart/form-data"
+            action="{{ route('teacher.material.update', $material->id) }}"
+        >
+            @csrf
+            @method('PUT')
+            <div class="mb-6">
+                <x-input-label for="title" value="Material Title" class="text-xl" />
+                <x-text-input
+                    id="title"
+                    name="title"
+                    class="mt-1"
+                    required
+                    placeholder="Please enter the material title"
+                    :value="old('title', $material->title)"
+                />
+                <x-input-error :messages="$errors->get('title')" class="mt-2" />
+            </div>
+
+            <div class="mb-6">
+                <x-input-label for="classroom_id" value="Select Course" />
+                <select name="classroom_id" id="classroom_id">
+                    <option value="" disabled>Select a course</option>
+                    @foreach ($classrooms as $id => $classroom)
+                        <option value="{{ $id }}" {{ old('classroom_id', $material->classroom_id) == $id ? 'selected' : '' }}>
+                            {{ $classroom }}
+                        </option>
+                    @endforeach
+                </select>
+                <x-input-error :messages="$errors->get('classroom_id')" class="mt-2" />
+            </div>
+
+            <div class="prose mb-6 min-w-full">
+                @trix($material, 'content')
+            </div>
+
+            <div class="flex justify-end">
+                <div class="flex flex-row justify-end gap-2">
+                    <x-secondary-button type="button" onclick="window.history.back()">Cancel</x-secondary-button>
+                    <x-primary-button type="submit" class="w-fit">Update Material</x-primary-button>
+                </div>
+            </div>
+        </form>
+    </div>
+</x-layouts.teacher-layout> 

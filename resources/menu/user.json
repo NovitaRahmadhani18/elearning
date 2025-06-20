@@ -1,0 +1,26 @@
+[
+    {
+        "label": "Dashboard",
+        "url": "user.dashboard",
+        "icon": "gmdi-home",
+        "routes": ["user.dashboard"]
+    },
+    {
+        "label": "My Class",
+        "url": "user.classroom.index",
+        "icon": "fas-book",
+        "routes": ["user.classroom.index", "user.classroom.create", "user.classroom.edit"]
+    },
+    {
+        "label": "Leaderboard",
+        "url": "user.leaderboard.index",
+        "icon": "fas-chart-line",
+        "routes": ["user.leaderboard.index"]
+    },
+    {
+        "label": "Lencana",
+        "url": "user.lencana.index",
+        "icon": "fas-award",
+        "routes": ["user.lencana.index", "user.lencana.create", "user.lencana.edit"]
+    }
+]

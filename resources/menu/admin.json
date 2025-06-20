@@ -1,0 +1,32 @@
+[
+    {
+        "label": "Dashboard",
+        "url": "admin.dashboard",
+        "icon": "gmdi-dashboard",
+        "routes": ["admin.dashboard"]
+    },
+    {
+        "label": "User Management",
+        "url": "admin.users.index",
+        "icon": "gmdi-people",
+        "routes": ["admin.users.index", "admin.users.create", "admin.users.edit"]
+    },
+    {
+        "label": "Class",
+        "url": "admin.classroom.index",
+        "icon": "gmdi-class",
+        "routes": ["admin.classroom.index", "admin.classroom.create", "admin.classroom.edit"]
+    },
+    {
+        "label": "Monitoring & Reports",
+        "url": "admin.monitoring.index",
+        "icon": "gmdi-insert-chart",
+        "routes": ["admin.monitoring.index", "admin.monitoring.create", "admin.monitoring.edit"]
+    },
+    {
+        "label": "System Settings",
+        "url": "admin.system.index",
+        "icon": "gmdi-settings",
+        "routes": ["admin.system.index", "admin.system.create", "admin.system.edit"]
+    }
+]

@@ -1,0 +1,25 @@
+[
+    {
+        "label": "Material Creation",
+        "url": "teacher.material.index",
+        "icon": "fas-book-open",
+        "routes": [
+            "teacher.material.index",
+            "teacher.material.create",
+            "teacher.material.edit",
+            "teacher.material.show"
+        ]
+    },
+    {
+        "label": "Quizes",
+        "url": "teacher.quizes.index",
+        "icon": "fas-list",
+        "routes": ["teacher.quizes.index", "teacher.quizes.create", "teacher.quizes.edit"]
+    },
+    {
+        "label": "Student Tracking",
+        "url": "teacher.student.index",
+        "icon": "fas-chart-line",
+        "routes": ["teacher.student.index", "teacher.student.create", "teacher.student.edit"]
+    }
+]
