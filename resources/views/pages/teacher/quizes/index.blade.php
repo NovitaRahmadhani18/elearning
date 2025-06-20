@@ -13,19 +13,45 @@
 
     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
         <!-- Quiz Card 1 -->
-        @forelse ([1, 2, 3, 4, 5] as $item)
-            <div class="relative rounded-lg bg-white p-6 shadow-sm">
-                <button class="absolute right-6 top-6 text-gray-400 hover:text-gray-600">
-                    <x-gmdi-more-vert-o class="h-7 w-7" />
-                </button>
+        @forelse ($quizes as $quiz)
+            <div class="relative rounded-lg border border-primary/20 bg-white p-6" id="quiz-{{ $quiz->id }}" x-init>
+                <x-dropdown align="right">
+                    <x-slot name="trigger">
+                        <button class="absolute right-0 top-0 text-gray-400 hover:text-gray-600">
+                            <x-gmdi-more-vert-o class="h-7 w-7" />
+                        </button>
+                    </x-slot>
+                    <x-slot name="content">
+                        <x-dropdown-link :href="route('teacher.quizes.show', $quiz->id)">View Quiz</x-dropdown-link>
+                        <x-dropdown-link :href="route('teacher.quizes.edit', $quiz->id)">Edit Quiz</x-dropdown-link>
+                        <form
+                            method="POST"
+                            action="{{ route('teacher.quizes.destroy', $quiz->id) }}"
+                            x-init
+                            x-target="quiz-{{ $quiz->id }}"
+                        >
+                            @csrf
+                            @method('DELETE')
+                            <x-dropdown-link href="#" x-on:click.prevent="$el.closest('form').submit()">
+                                Delete Quiz
+                            </x-dropdown-link>
+                        </form>
+                    </x-slot>
+                </x-dropdown>
 
-                <h3 class="mb-4 text-xl font-semibold text-gray-800">Teknologi Informasi</h3>
+                <a class="text-xl font-semibold text-gray-800" href="{{ route('teacher.quizes.show', $quiz->id) }}">
+                    {{ $quiz->title }}
+                </a>
+                <h4 class="mb-4 text-sm text-gray-800">{{ $quiz->classroom->title }}</h4>
 
-                <p class="mb-6 text-gray-600">Explore the world of TIK in a fun way!</p>
+                <p class="mb-6 text-gray-600">{{ $quiz->description }}</p>
 
                 <div class="flex items-center justify-between">
                     <span class="text-gray-700">50 points</span>
-                    <span class="text-gray-700">Due in 5 days</span>
+                    <span class="text-gray-700">
+                        Due
+                        {{ $quiz->due_time->diffForHumans() }}
+                    </span>
                 </div>
             </div>
         @empty

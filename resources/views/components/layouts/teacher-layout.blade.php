@@ -1,7 +1,7 @@
 <x-layouts>
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <div class="min-h-screen w-72 border-r border-r-primary/20 bg-white">
+        <div class="hidden min-h-screen w-72 border-r border-r-primary/20 bg-white lg:block">
             <div class="h-16 border-b border-b-primary/20"></div>
             <div class="mt-4 space-y-1 px-4">
                 @foreach ($menu['teacherMenu'] as $item)

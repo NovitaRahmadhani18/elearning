@@ -30,5 +30,7 @@
                 <div x-init="$dispatch('{{ $event }}')"></div>
             @endif
         </div>
+
+        @stack('scripts')
     </body>
 </html>

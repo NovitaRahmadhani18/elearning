@@ -16,6 +16,11 @@ class Classroom extends Model
         return $this->hasMany(Material::class);
     }
 
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
+
 
     public function getImageUrlAttribute()
     {

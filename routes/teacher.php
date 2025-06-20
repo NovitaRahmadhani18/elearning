@@ -14,7 +14,9 @@ Route::group(
     function () {
         Route::get('/', [App\Http\Controllers\DashboardController::class, 'teacherDashboard'])->name('dashboard');
         Route::resource('material', App\Http\Controllers\Teacher\MaterialController::class);
-        Route::resource('quizes', App\Http\Controllers\Teacher\QuizesController::class);
+        Route::resource('quizes', App\Http\Controllers\Teacher\QuizesController::class)->parameters([
+            'quizes' => 'quiz'
+        ]);
         Route::resource('student', App\Http\Controllers\Teacher\StudentController::class);
     }
 );

@@ -14,7 +14,7 @@
         "label": "Quizes",
         "url": "teacher.quizes.index",
         "icon": "fas-list",
-        "routes": ["teacher.quizes.index", "teacher.quizes.create", "teacher.quizes.edit"]
+        "routes": ["teacher.quizes.index", "teacher.quizes.create", "teacher.quizes.edit", "teacher.quizes.show"]
     },
     {
         "label": "Student Tracking",
