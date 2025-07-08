@@ -26,9 +26,16 @@
                     <x-input-error :messages="$errors->get('category')" class="mt-2" />
                 </div>
                 <div>
-                    <x-input-label for="number_of_modules" value="Number of Modules" />
-                    <x-text-input id="number_of_modules" name="number_of_modules" type="number" min="0" required placeholder="Enter number of modules" :value="old('number_of_modules')" />
-                    <x-input-error :messages="$errors->get('number_of_modules')" class="mt-2" />
+                    <x-input-label for="teacher_id" value="Teacher" />
+                    <select id="teacher_id" name="teacher_id" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                        <option value="">Select Teacher</option>
+                        @foreach ($teachers as $teacher)
+                            <option value="{{ $teacher->id }}" {{ old('teacher_id') == $teacher->id ? 'selected' : '' }}>
+                                {{ $teacher->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <x-input-error :messages="$errors->get('teacher_id')" class="mt-2" />
                 </div>
             </div>
             <div class="mb-6">

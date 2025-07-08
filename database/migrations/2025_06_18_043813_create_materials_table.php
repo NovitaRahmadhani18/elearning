@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->foreignId('classroom_id')
-                ->constrained('classrooms')
-                ->cascadeOnDelete();
+            $table->integer('points')->default(0);
             $table->timestamps();
         });
     }

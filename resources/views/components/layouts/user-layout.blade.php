@@ -36,6 +36,10 @@
                     <div class="flex items-center">
                         <x-layouts.components.settings-dropdown />
                     </div>
+                    <div class="flex w-[100px] flex-col justify-center gap-1 px-2 py-1">
+                        <span class="text-xs font-medium text-gray-700">Level {{ auth()->user()->getLevel() }}</span>
+                        <span class="text-xs font-medium text-gray-700">{{ auth()->user()->getPoints() }} Points</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -43,6 +47,21 @@
 
     <!-- Page Content -->
     <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <h1 class="mb-4 text-2xl font-semibold text-gray-900">
+            {{ $header ?? 'User Dashboard' }}
+        </h1>
+        @if (session('success'))
+            <div class="mb-4 rounded bg-green-100 p-4 text-green-800">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="mb-4 rounded bg-red-100 p-4 text-red-800">
+                {{ session('error') }}
+            </div>
+        @endif
+
         {{ $slot }}
     </main>
 </x-layouts>

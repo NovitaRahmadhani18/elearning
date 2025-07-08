@@ -14,9 +14,15 @@ Route::group(
     function () {
         Route::get('/', [App\Http\Controllers\DashboardController::class, 'teacherDashboard'])->name('dashboard');
         Route::resource('material', App\Http\Controllers\Teacher\MaterialController::class);
+
+        Route::get('quizes/create', App\Livewire\CreateQuiz::class)->name('quizes.create');
+        Route::get('quizes/{quiz}/edit', App\Livewire\EditQuiz::class)->name('quizes.edit');
+
+        // Keep original routes for backward compatibility
         Route::resource('quizes', App\Http\Controllers\Teacher\QuizesController::class)->parameters([
             'quizes' => 'quiz'
-        ]);
+        ])->except(['create', 'edit']);
+
         Route::resource('student', App\Http\Controllers\Teacher\StudentController::class);
     }
 );

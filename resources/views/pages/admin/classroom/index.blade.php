@@ -40,18 +40,18 @@
                 </div>
                 <div class="p-4">
                     <h3 class="text-lg font-semibold text-gray-800">
-                        <a href="{{ route('admin.classroom.edit', $classroom->id) }}" class="hover:underline">
+                        <a href="{{ route('admin.classroom.show', $classroom->id) }}" class="hover:underline">
                             {{ $classroom->title }}
                         </a>
                     </h3>
                     <div class="mt-2 flex items-center text-primary">
-                        <x-gmdi-library-books class="mr-2 h-5 w-5 text-gray-500" />
-                        <span>{{ $classroom->number_of_modules }} Modules</span>
+                        <x-gmdi-person class="mr-2 h-5 w-5 text-gray-500" />
+                        <span>{{ $classroom->teacher->name }}</span>
                     </div>
                     <div class="mt-4 flex justify-end space-x-2">
-                        <button class="text-yellow-500">
+                        <a class="text-yellow-500" href="{{ route('admin.classroom.edit', $classroom->id) }}">
                             <x-gmdi-edit class="h-5 w-5" />
-                        </button>
+                        </a>
                         <form
                             action="{{ route('admin.classroom.destroy', $classroom->id) }}"
                             method="post"

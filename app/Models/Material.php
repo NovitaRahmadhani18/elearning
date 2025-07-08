@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
 use Te7aHoudini\LaravelTrix\Traits\HasTrixRichText;
 
@@ -11,11 +12,6 @@ class Material extends Model
     use HasTrixRichText;
 
     protected $guarded = [];
-
-    public function classroom()
-    {
-        return $this->belongsTo(Classroom::class);
-    }
 
     public function getThumbnailUrlAttribute()
     {
@@ -27,5 +23,16 @@ class Material extends Model
         }
 
         return '';
+    }
+
+    public function contents(): MorphMany
+    {
+        return $this->morphMany(Content::class, 'contentable');
+    }
+
+    public function classroom()
+    {
+        return $this->hasOneThrough(Classroom::class, Content::class, 'contentable_id', 'id', 'id', 'classroom_id')
+            ->where('contentable_type', self::class);
     }
 }

@@ -2,7 +2,7 @@
     <x-slot name="header">Quizzes</x-slot>
 
     <!-- Create Quiz Button -->
-    <div class="mb-6">
+    <div class="mb-6 flex gap-2">
         <a
             class="inline-flex items-center rounded-md bg-primary px-4 py-2 text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
             href="{{ route('teacher.quizes.create') }}"

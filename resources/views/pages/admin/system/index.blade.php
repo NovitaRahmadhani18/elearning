@@ -1,29 +1,11 @@
 <x-layouts.admin-layout>
     <x-slot name="header">System Settings</x-slot>
-    <x-slot name="username">Joshua</x-slot>
-    <x-slot name="role">Administrator</x-slot>
 
     <!-- Settings Cards Grid -->
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div class="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
         <!-- Gamification Settings Card -->
         <div class="rounded-lg bg-white p-6 shadow-sm">
             <h2 class="mb-6 text-lg font-semibold text-gray-800">Gamification Settings</h2>
-
-            <!-- Point System -->
-            <div class="mb-6">
-                <label for="pointSystem" class="mb-2 block text-sm font-medium text-gray-700">Point System</label>
-                <div class="flex items-center">
-                    <input
-                        type="number"
-                        id="pointSystem"
-                        name="pointSystem"
-                        class="w-24 rounded-md border-gray-300 focus:border-primary focus:ring-primary"
-                        value="10"
-                    />
-                    <span class="ml-3 text-sm text-gray-600">points per completed class</span>
-                </div>
-            </div>
-
             <!-- Level Progression -->
             <div class="mb-6">
                 <label for="levelProgression" class="mb-2 block text-sm font-medium text-gray-700">

@@ -2,25 +2,31 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Classroom extends Model
 {
+    use HasFactory;
 
     protected $guarded = [];
 
-    public function materials()
+    // when creating a classroom, then make unique invite code and secret code
+    protected static function booted()
     {
-        return $this->hasMany(Material::class);
+        static::creating(function (Classroom $classroom) {
+            $classroom->invite_code = strtoupper(uniqid());
+            // random 8 numeric characters
+            $classroom->secret_code = strtoupper(substr(md5(uniqid()), 0, 8));
+        });
     }
 
-    public function quizzes()
+    public function contents()
     {
-        return $this->hasMany(Quiz::class);
+        return $this->hasMany(Content::class, 'classroom_id');
     }
-
 
     public function getImageUrlAttribute()
     {
@@ -29,5 +35,15 @@ class Classroom extends Model
         }
 
         return '';
+    }
+
+    public function teacher()
+    {
+        return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function students()
+    {
+        return $this->belongsToMany(User::class, 'classroom_user', 'classroom_id', 'user_id');
     }
 }

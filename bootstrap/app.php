@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'classroom.enrollment' => \App\Http\Middleware\CheckClassroomEnrollment::class,
+            'classroom.content.lock' => \App\Http\Middleware\CheckPrevContent::class,
         ]);
 
         $middleware->trustProxies(

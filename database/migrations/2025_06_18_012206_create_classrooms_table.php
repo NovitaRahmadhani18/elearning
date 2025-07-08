@@ -16,9 +16,25 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('category')->nullable();
-            $table->integer('number_of_modules')->default(0);
             $table->integer('max_students')->default(0);
             $table->string('thumbnail_path')->nullable();
+
+            $table->string('secret_code', 8)->unique()->nullable();
+            $table->string('invite_code')->unique()->nullable();
+
+            $table->foreignId('teacher_id')
+                ->constrained('users')
+                ->onDelete('cascade');
+            $table->timestamps();
+        });
+
+        Schema::create('contentable', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('classroom_id')
+                ->constrained('classrooms')
+                ->onDelete('cascade');
+            $table->morphs('contentable'); // This will create contentable_id and contentable_type columns
+            $table->integer('order')->default(0);
             $table->timestamps();
         });
     }
@@ -29,5 +45,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('classrooms');
+        Schema::dropIfExists('contentable');
     }
 };

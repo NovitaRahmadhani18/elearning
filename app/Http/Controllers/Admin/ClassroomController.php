@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Classroom;
+use App\Models\ClassroomStudent;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +18,9 @@ class ClassroomController extends Controller
     public function index()
     {
 
-        $classrooms = \App\Models\Classroom::all();
+        $classrooms = \App\Models\Classroom::orderBy('created_at', 'desc')
+            ->with(['teacher'])
+            ->get();
 
         return view('pages.admin.classroom.index', compact('classrooms'));
     }
@@ -26,7 +30,8 @@ class ClassroomController extends Controller
      */
     public function create()
     {
-        return view('pages.admin.classroom.create');
+        $teachers = User::role('teacher')->get();
+        return view('pages.admin.classroom.create', compact('teachers'));
     }
 
     /**
@@ -38,13 +43,13 @@ class ClassroomController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'nullable|string|max:255',
-            'number_of_modules' => 'required|integer|min:0',
             'max_students' => 'required|integer|min:0',
             'thumbnail' => 'nullable|image|max:2048',
+            'teacher_id' => 'required|exists:users,id',
         ]);
 
         DB::transaction(function () use ($request) {
-            $data = $request->only(['title', 'description', 'category', 'number_of_modules', 'max_students']);
+            $data = $request->only(['title', 'description', 'category', 'teacher_id', 'max_students']);
 
             if ($request->hasFile('thumbnail')) {
                 $path = $request->file('thumbnail')->store('classroom_thumbnails', 'public');
@@ -60,9 +65,29 @@ class ClassroomController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Classroom $classroom)
     {
-        //
+        $query = ClassroomStudent::query()
+            ->where('classroom_id', $classroom->id)
+            ->with(['user'])
+            ->latest();
+
+        $studentsTableData = \App\CustomClasses\TableData::make(
+            $query,
+            [
+                \App\CustomClasses\Column::make('user', 'Student')
+                    ->setView('reusable-table.column.user-card'),
+                \App\CustomClasses\Column::make('user.email', 'Email'),
+                \App\CustomClasses\Column::make('created_at', 'Joined At')
+                    ->setView('reusable-table.column.date-yyyy'),
+            ],
+            perPage: request('perPage', 10),
+            id: 'classroom-students-table',
+        );
+
+        $contents = $classroom->contents()->with(['contentable'])->get();
+
+        return view('pages.admin.classroom.show', compact('classroom', 'studentsTableData', 'contents'));
     }
 
     /**
@@ -70,7 +95,8 @@ class ClassroomController extends Controller
      */
     public function edit(\App\Models\Classroom $classroom)
     {
-        return view('pages.admin.classroom.edit', compact('classroom'));
+        $teachers = User::role('teacher')->get();
+        return view('pages.admin.classroom.edit', compact('classroom', 'teachers'));
     }
 
     /**
@@ -82,13 +108,13 @@ class ClassroomController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'nullable|string|max:255',
-            'number_of_modules' => 'required|integer|min:0',
             'max_students' => 'required|integer|min:0',
             'thumbnail' => 'nullable|image|max:2048',
+            'teacher_id' => 'required|exists:users,id',
         ]);
 
         DB::transaction(function () use ($request, $classroom) {
-            $data = $request->only(['title', 'description', 'category', 'number_of_modules', 'max_students']);
+            $data = $request->only(['title', 'description', 'category', 'max_students', 'teacher_id']);
 
             if ($request->hasFile('thumbnail')) {
                 $path = $request->file('thumbnail')->store('classroom_thumbnails', 'public');
@@ -104,19 +130,15 @@ class ClassroomController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Classroom $classroom)
+    public function syncStudents(Request $request, Classroom $classroom)
     {
-        DB::transaction(function () use ($classroom) {
-            // Delete the classroom's thumbnail if it exists
-            if ($classroom->thumbnail_path) {
-                Storage::disk('public')->delete($classroom->thumbnail_path);
-            }
+        $request->validate([
+            'students' => 'nullable|array',
+            'students.*' => 'exists:users,id',
+        ]);
 
-            // Delete the classroom
-            $classroom->delete();
-        });
+        $classroom->students()->sync($request->input('students', []));
 
-
-        return to_route('admin.classroom.index')->with('success', 'Classroom deleted successfully.');
+        return back()->with('success', 'Students updated successfully.');
     }
 }

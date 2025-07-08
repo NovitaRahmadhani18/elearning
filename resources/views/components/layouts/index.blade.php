@@ -21,6 +21,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @trixassets
+        @livewireStyles
     </head>
     <body class="bg-primary-light/5 antialiased" x-data>
         {{ $slot }}
@@ -31,6 +32,7 @@
             @endif
         </div>
 
+        @livewireScriptConfig
         @stack('scripts')
     </body>
 </html>

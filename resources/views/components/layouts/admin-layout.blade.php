@@ -1,5 +1,5 @@
 <x-layouts>
-    <div class="flex min-h-screen">
+    <div class="flex h-screen">
         <!-- Sidebar -->
         <div class="hidden min-h-screen w-72 border-r border-r-primary/20 bg-white md:block">
             <div class="h-16 border-b border-b-primary/20"></div>

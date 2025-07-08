@@ -19,9 +19,7 @@ return new class extends Migration
             $table->timestamp('due_time')->nullable();
             $table->unsignedInteger('time_limit')->default(0); // in seconds
 
-            $table->foreignId('classroom_id')
-                ->constrained('classrooms')
-                ->cascadeOnDelete();
+            $table->integer('points')->default(0);
             $table->timestamps();
         });
     }

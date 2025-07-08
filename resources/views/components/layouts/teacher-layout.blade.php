@@ -1,5 +1,5 @@
 <x-layouts>
-    <div class="flex min-h-screen">
+    <div class="flex h-screen">
         <!-- Sidebar -->
         <div class="hidden min-h-screen w-72 border-r border-r-primary/20 bg-white lg:block">
             <div class="h-16 border-b border-b-primary/20"></div>
@@ -36,6 +36,18 @@
                     <x-layouts.components.settings-dropdown />
                 </div>
             </header>
+
+            @if (session('success'))
+                <div class="mb-4 rounded bg-green-100 p-4 text-green-800">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="mb-4 rounded bg-red-100 p-4 text-red-800">
+                    {{ session('error') }}
+                </div>
+            @endif
 
             <!-- Content -->
             <main class="flex-1 overflow-auto p-6">

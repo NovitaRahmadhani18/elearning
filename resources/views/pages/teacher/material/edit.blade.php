@@ -22,19 +22,6 @@
                 <x-input-error :messages="$errors->get('title')" class="mt-2" />
             </div>
 
-            <div class="mb-6">
-                <x-input-label for="classroom_id" value="Select Course" />
-                <select name="classroom_id" id="classroom_id">
-                    <option value="" disabled>Select a course</option>
-                    @foreach ($classrooms as $id => $classroom)
-                        <option value="{{ $id }}" {{ old('classroom_id', $material->classroom_id) == $id ? 'selected' : '' }}>
-                            {{ $classroom }}
-                        </option>
-                    @endforeach
-                </select>
-                <x-input-error :messages="$errors->get('classroom_id')" class="mt-2" />
-            </div>
-
             <div class="prose mb-6 min-w-full">
                 @trix($material, 'content')
             </div>
@@ -47,4 +34,4 @@
             </div>
         </form>
     </div>
-</x-layouts.teacher-layout> 
+</x-layouts.teacher-layout>

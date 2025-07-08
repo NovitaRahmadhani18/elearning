@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use LevelUp\Experience\Concerns\GiveExperience;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, GiveExperience;
 
     /**
      * The attributes that are mass assignable.
@@ -59,6 +60,18 @@ class User extends Authenticatable
     public function profileable(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Get the user's initials
+     */
+    public function initials(): string
+    {
+        return Str::of($this->name)
+            ->explode(' ')
+            ->take(2)
+            ->map(fn($word) => Str::substr($word, 0, 1))
+            ->implode('');
     }
 
     public function getProfilePhotoUrlAttribute(): string
@@ -158,5 +171,58 @@ class User extends Authenticatable
         }
 
         return null;
+    }
+
+    public function classrooms()
+    {
+        if ($this->hasRole('teacher') || $this->hasRole('admin')) {
+            return $this->hasMany(Classroom::class, 'teacher_id');
+        }
+
+        return $this->belongsToMany(Classroom::class, 'classroom_user')
+            ->withPivot('progress')
+            ->withTimestamps()
+            ->orderBy('created_at', 'desc');
+    }
+
+    public function classroomStudents()
+    {
+        if (!$this->role('user')) {
+            return collect();
+        }
+
+        // Get the classrooms where the user is a studenta
+        return $this->belongsToMany(Classroom::class, 'classroom_user')
+            ->withPivot('progress')
+            ->withTimestamps()
+            ->orderBy('created_at', 'desc');
+    }
+
+    public function completedContents()
+    {
+        return $this->belongsToMany(Content::class, 'content_users')
+            ->withTimestamps();
+    }
+
+    public function quizSubmissions()
+    {
+        return $this->hasMany(QuizSubmission::class);
+    }
+
+    public function quizAnswers()
+    {
+        return $this->hasManyThrough(QuizAnswer::class, QuizSubmission::class);
+    }
+
+    public function getPercentNextLevelAttribute()
+    {
+        if ($this->experience()->level->next_level_experience != null || $this->experience()->level->next_level_experience > 0) {
+            return round(
+                ($this->experience()->total_experience / $this->experience()->level->next_level_experience) * 100,
+                2
+            );
+        }
+
+        return 100; // If there is no next level, return 100%
     }
 }

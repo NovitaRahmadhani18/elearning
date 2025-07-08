@@ -33,3 +33,119 @@
 /*         transform: rotate(360deg); */
 /*     } */
 /* } */
+
+/* ========================================
+   QUIZ INTERFACE STYLES
+   ======================================== */
+
+/* Quiz Option Hover Effects */
+.quiz-option-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Quiz Progress Bar */
+.quiz-progress-bar {
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Quiz Timer Animation */
+.quiz-timer {
+    animation: quiz-pulse 2s infinite;
+}
+
+/* Quiz Question Enter Animation */
+.quiz-question-enter {
+    animation: quiz-slideInUp 0.5s ease-out;
+}
+
+/* Quiz Feedback Animations */
+.quiz-feedback-correct {
+    animation: quiz-bounceIn 0.6s ease-out;
+}
+
+.quiz-feedback-incorrect {
+    animation: quiz-shakeX 0.6s ease-out;
+}
+
+/* ========================================
+   QUIZ KEYFRAME ANIMATIONS
+   ======================================== */
+
+@keyframes quiz-pulse {
+    0%, 100% { 
+        opacity: 1; 
+    }
+    50% { 
+        opacity: 0.7; 
+    }
+}
+
+@keyframes quiz-slideInUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes quiz-bounceIn {
+    0%, 20%, 40%, 60%, 80%, 100% {
+        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    }
+    0% {
+        opacity: 0;
+        transform: scale3d(.3, .3, .3);
+    }
+    20% {
+        transform: scale3d(1.1, 1.1, 1.1);
+    }
+    40% {
+        transform: scale3d(.9, .9, .9);
+    }
+    60% {
+        opacity: 1;
+        transform: scale3d(1.03, 1.03, 1.03);
+    }
+    80% {
+        transform: scale3d(.97, .97, .97);
+    }
+    100% {
+        opacity: 1;
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+@keyframes quiz-shakeX {
+    from, to {
+        transform: translate3d(0, 0, 0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translate3d(-10px, 0, 0);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translate3d(10px, 0, 0);
+    }
+}
+
+/* ========================================
+   QUIZ RESPONSIVE STYLES
+   ======================================== */
+
+@media (max-width: 768px) {
+    .quiz-container {
+        padding: 1rem;
+    }
+    
+    .quiz-question-card {
+        padding: 1.5rem;
+    }
+    
+    .quiz-option {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+}

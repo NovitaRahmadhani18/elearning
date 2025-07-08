@@ -19,9 +19,9 @@
     </div>
     <div class="p-4">
         <a class="font-semibold text-gray-800" href="{{ route('teacher.material.show', $material->id) }}">
-            {{ $material->classroom->title }}
+            {{ $material->title }}
         </a>
-        <p class="text-sm text-gray-600">{{ $material->title }}</p>
+        <p class="text-sm text-gray-600">{{ $material->classroom?->title }}</p>
 
         <div class="mt-4 flex w-full items-center justify-between">
             <p class="text-xs text-gray-500">Updated {{ $material->updated_at->diffForHumans() }}</p>

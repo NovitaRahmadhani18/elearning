@@ -1,7 +1,5 @@
 <x-layouts.teacher-layout>
-    <x-slot name="header">Material Creation</x-slot>
+    <x-slot name="header">Material Detail</x-slot>
 
-    <div class="prose mx-auto w-full max-w-5xl border border-primary/20 bg-white p-4">
-        {!! $material->trixRender('content') !!}
-    </div>
+    <x-reusable-table :tableData="$tableData" title="Completed Students" />
 </x-layouts.teacher-layout>
