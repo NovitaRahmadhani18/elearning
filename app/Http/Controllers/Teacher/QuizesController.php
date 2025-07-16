@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Teacher;
 
+use App\CustomClasses\Column;
+use App\CustomClasses\TableData;
 use App\Http\Controllers\Controller;
-use App\Models\Classroom;
+use App\Models\ContentUser;
 use App\Models\Quiz;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class QuizesController extends Controller
 {
@@ -27,7 +27,35 @@ class QuizesController extends Controller
      */
     public function show(Quiz $quiz)
     {
-        return view('pages.teacher.quizes.show', compact('quiz'));
+
+        $content = $quiz->contents->first();
+        $classroom = $content ? $content->classroom : null;
+
+        if (!$classroom) {
+            return to_route('teacher.material.index')
+                ->with('error', 'Material not found or classroom not associated.');
+        }
+
+
+        $query = ContentUser::query()
+            ->where('content_id', $content->id)
+            ->with(['user'])
+            ->latest();
+
+
+        $tableData = TableData::make(
+            $query,
+            [
+                Column::make('user', 'User')->setView('reusable-table.column.user-card'),
+                Column::make('completed_at', 'Completed')->setView('reusable-table.column.date-yyyy'),
+                Column::make('', 'point')->setView('reusable-table.column.quiz-point'),
+            ],
+            perPage: request('perPage', 10),
+            id: 'log-activity-table',
+        );
+
+
+        return view('pages.teacher.quizes.show', compact('quiz', 'tableData', 'classroom'));
     }
 
     /**

@@ -2,7 +2,7 @@
     <x-dropdown align="right" width="48">
         <x-slot name="trigger">
             <button
-                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                class="inline-flex items-center rounded-md border border-transparent px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
             >
                 <div class="mr-2 h-8 w-8 rounded-full bg-gray-200"></div>
                 <div class="text-left">

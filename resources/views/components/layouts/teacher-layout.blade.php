@@ -1,8 +1,8 @@
 <x-layouts>
     <div class="flex h-screen">
         <!-- Sidebar -->
-        <div class="hidden min-h-screen w-72 border-r border-r-primary/20 bg-white lg:block">
-            <div class="h-16 border-b border-b-primary/20"></div>
+        <div class="hidden min-h-screen w-72 border-r border-r-primary-dark bg-primary-light md:block">
+            <div class="h-16 border-b border-b-primary-dark"></div>
             <div class="mt-4 space-y-1 px-4">
                 @foreach ($menu['teacherMenu'] as $item)
                     <x-sidebar-link
@@ -26,7 +26,7 @@
         <!-- Main Content -->
         <div class="flex w-0 flex-1 flex-col">
             <!-- Header -->
-            <header class="flex h-16 items-center justify-between border-b border-b-primary/20 bg-white px-6">
+            <header class="flex h-16 items-center justify-between border-b border-b-primary-dark bg-primary-light px-6">
                 <h1 class="text-xl font-medium text-gray-800">{{ $header }}</h1>
                 <div class="flex items-center">
                     <button class="mr-4 text-gray-500">

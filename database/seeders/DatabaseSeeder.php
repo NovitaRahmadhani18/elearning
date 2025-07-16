@@ -19,12 +19,5 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             /* ClassroomSeeder::class, */
         ]);
-
-        Level::add(
-            ['level' => 1, 'next_level_experience' => null],
-            ['level' => 2, 'next_level_experience' => 100],
-            ['level' => 3, 'next_level_experience' => 250],
-            ['level' => 4, 'next_level_experience' => 250],
-        );
     }
 }

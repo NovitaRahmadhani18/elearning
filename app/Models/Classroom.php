@@ -28,6 +28,18 @@ class Classroom extends Model
         return $this->hasMany(Content::class, 'classroom_id');
     }
 
+    public function quizzes()
+    {
+        return $this->hasManyThrough(Quiz::class, Content::class, 'classroom_id', 'id', 'id', 'contentable_id')
+            ->where('contentable_type', Quiz::class);
+    }
+
+    public function materials()
+    {
+        return $this->hasManyThrough(Material::class, Content::class, 'classroom_id', 'id', 'id', 'contentable_id')
+            ->where('contentable_type', Material::class);
+    }
+
     public function getImageUrlAttribute()
     {
         if ($this->thumbnail_path) {

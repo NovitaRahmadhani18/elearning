@@ -1,63 +1,46 @@
 <x-layouts.teacher-layout>
-    <x-slot name="header">Quizzes</x-slot>
+    <x-slot name="header">Quiz Management</x-slot>
+    <!-- Quiz Management -->
+    <div class="mb-8 rounded-lg border border-primary/20 bg-white p-6">
+        <div class="mb-6 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-gray-800">Course Quizzes</h2>
+            <a href="{{ route('teacher.quizes.create') }}">
+                <x-primary-button class="flex items-center justify-center gap-2">
+                    <x-gmdi-add class="h-5 w-5 text-white" />
+                    <span>Create Quiz</span>
+                </x-primary-button>
+            </a>
+        </div>
 
-    <!-- Create Quiz Button -->
-    <div class="mb-6 flex gap-2">
-        <a
-            class="inline-flex items-center rounded-md bg-primary px-4 py-2 text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
-            href="{{ route('teacher.quizes.create') }}"
-        >
-            Create Quiz
-        </a>
-    </div>
+        <!-- Search Box -->
+        <div class="relative mb-6 max-w-md">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <x-gmdi-search class="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+                type="text"
+                class="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder-gray-500 focus:border-primary focus:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
+                placeholder="Search quizzes..."
+            />
+        </div>
 
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <!-- Quiz Card 1 -->
-        @forelse ($quizes as $quiz)
-            <div class="relative rounded-lg border border-primary/20 bg-white p-6" id="quiz-{{ $quiz->id }}" x-init>
-                <x-dropdown align="right">
-                    <x-slot name="trigger">
-                        <button class="absolute right-0 top-0 text-gray-400 hover:text-gray-600">
-                            <x-gmdi-more-vert-o class="h-7 w-7" />
-                        </button>
-                    </x-slot>
-                    <x-slot name="content">
-                        <x-dropdown-link :href="route('teacher.quizes.show', $quiz->id)">View Quiz</x-dropdown-link>
-                        <x-dropdown-link :href="route('teacher.quizes.edit', $quiz->id)">Edit Quiz</x-dropdown-link>
-                        <form
-                            method="POST"
-                            action="{{ route('teacher.quizes.destroy', $quiz->id) }}"
-                            x-init
-                            x-target="quiz-{{ $quiz->id }}"
-                        >
-                            @csrf
-                            @method('DELETE')
-                            <x-dropdown-link href="#" x-on:click.prevent="$el.closest('form').submit()">
-                                Delete Quiz
-                            </x-dropdown-link>
-                        </form>
-                    </x-slot>
-                </x-dropdown>
-
-                <a class="text-xl font-semibold text-gray-800" href="{{ route('teacher.quizes.show', $quiz->id) }}">
-                    {{ $quiz->title }}
-                </a>
-                <h4 class="mb-4 text-sm text-gray-800">{{ $quiz->classroom->title }}</h4>
-
-                <p class="mb-6 text-gray-600">{{ $quiz->description }}</p>
-
-                <div class="flex items-center justify-between">
-                    <span class="text-gray-700">50 points</span>
-                    <span class="text-gray-700">
-                        Due
-                        {{ $quiz->due_time->diffForHumans() }}
-                    </span>
+        <!-- Quizzes Grid -->
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            @forelse ($quizes as $quiz)
+                <x-quiz-card :quiz="$quiz" />
+            @empty
+                <div class="col-span-1 py-12 text-center md:col-span-2 lg:col-span-3">
+                    <x-gmdi-assignment class="mx-auto mb-4 h-16 w-16 text-gray-400" />
+                    <h3 class="mb-2 text-lg font-medium text-gray-800">No quizzes found</h3>
+                    <p class="mb-4 text-gray-500">Start by creating your first quiz to get started.</p>
+                    <a href="{{ route('teacher.quizes.create') }}">
+                        <x-primary-button class="flex items-center justify-center gap-2">
+                            <x-gmdi-add class="h-5 w-5 text-white" />
+                            <span>Create Quiz</span>
+                        </x-primary-button>
+                    </a>
                 </div>
-            </div>
-        @empty
-            <div class="col-span-1 text-center md:col-span-2 lg:col-span-3">
-                <p class="text-gray-500">No quizzes available. Start by creating a new quiz.</p>
-            </div>
-        @endforelse
+            @endforelse
+        </div>
     </div>
 </x-layouts.teacher-layout>

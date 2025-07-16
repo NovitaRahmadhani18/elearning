@@ -23,7 +23,23 @@
         @trixassets
         @livewireStyles
     </head>
-    <body class="bg-primary-light/5 antialiased" x-data>
+
+    <body
+        class="bg-primary antialiased"
+        x-data="{
+            notifications: [],
+        }"
+        @notify.window="
+              notifications.push({
+                  id: Date.now(),
+                  type: $event.detail.type,
+                  message: $event.detail.message
+              });
+              setTimeout(() => {
+                  notifications = notifications.filter(n => n.id !== $event.detail.id);
+              }, 5000);
+          "
+    >
         {{ $slot }}
 
         <div x-sync id="sync" class="hidden">

@@ -40,7 +40,7 @@
 
             <div class="flex justify-end">
                 <div class="flex flex-row justify-end gap-2">
-                    <x-secondary-button type="button">Cancel</x-secondary-button>
+                    <x-secondary-button type="button" onclick="window.history.back()">Cancel</x-secondary-button>
                     <x-primary-button type="submit" class="w-fit">Publish Material</x-primary-button>
                 </div>
             </div>

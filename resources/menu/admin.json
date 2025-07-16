@@ -22,11 +22,5 @@
         "url": "admin.monitoring.index",
         "icon": "gmdi-insert-chart",
         "routes": ["admin.monitoring.index", "admin.monitoring.create", "admin.monitoring.edit"]
-    },
-    {
-        "label": "System Settings",
-        "url": "admin.system.index",
-        "icon": "gmdi-settings",
-        "routes": ["admin.system.index", "admin.system.create", "admin.system.edit"]
     }
 ]

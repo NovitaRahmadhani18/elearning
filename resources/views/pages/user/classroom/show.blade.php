@@ -11,7 +11,7 @@
             $isLocked = false;
         @endphp
 
-        <div class="space-y-4 rounded-md bg-primary/20 p-4">
+        <div class="space-y-4 rounded-md bg-primary p-4">
             @forelse ($classroom->contents as $item)
                 @php
                     // Konten pertama tidak pernah terkunci
@@ -33,7 +33,7 @@
 
                             <a
                                 href="{{ $isLocked ? '#' : route('user.classroom.material.show', [$classroom->id, $item->contentable->id]) }}"
-                                @class(['rounded-md bg-primary px-6 py-1 text-sm text-white', 'cursor-not-allowed bg-primary/30' => $isLocked])
+                                @class(['rounded-md bg-secondary px-6 py-1 text-sm', 'cursor-not-allowed bg-secondary/30' => $isLocked])
                             >
                                 Detail
                             </a>
@@ -60,14 +60,14 @@
                             @if ($item->contentable->hasUserSubmitted(auth()->user()->id))
                                 <a
                                     href="{{ $isLocked ? '#' : route('user.classroom.quiz.start', [$classroom->id, $item->contentable->id]) }}"
-                                    @class(['rounded-md bg-primary px-6 py-1 text-sm text-white', 'cursor-not-allowed bg-primary/30' => $isLocked])
+                                    @class(['rounded-md bg-secondary px-6 py-1 text-sm', 'cursor-not-allowed bg-secondary/30' => $isLocked])
                                 >
                                     Show Results
                                 </a>
                             @else
                                 <a
                                     href="{{ $isLocked ? '#' : route('user.classroom.quiz.show', [$classroom->id, $item->contentable->id]) }}"
-                                    @class(['rounded-md bg-primary px-6 py-1 text-sm text-white', 'cursor-not-allowed bg-primary/30' => $isLocked])
+                                    @class(['rounded-md bg-secondary px-6 py-1 text-sm', 'cursor-not-allowed bg-secondary/30' => $isLocked])
                                 >
                                     Start Quiz
                                 </a>

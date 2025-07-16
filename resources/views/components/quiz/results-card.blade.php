@@ -63,7 +63,7 @@
         <div class="flex flex-col justify-center gap-2">
             <a
                 href="{{ route('user.classroom.quiz.review', [$classroom, $quiz]) }}"
-                class="rounded-lg bg-secondary-dark px-6 py-3 text-center"
+                class="rounded-lg bg-secondary px-6 py-3 text-center"
             >
                 Review Answers
             </a>

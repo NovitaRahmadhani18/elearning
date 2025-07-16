@@ -1,36 +1,44 @@
 <x-layouts.admin-layout>
     <x-slot name="header">Class &gt; Add Class</x-slot>
     <div class="flex min-h-[70vh] items-center justify-center">
-        <form
-            class="w-full max-w-3xl rounded-lg border border-primary/20 bg-white p-10"
-            method="POST"
-            enctype="multipart/form-data"
-            action="{{ route('admin.classroom.store') }}"
-        >
+        <form class="w-full max-w-3xl rounded-lg border border-primary/20 bg-white p-10" method="POST"
+            enctype="multipart/form-data" action="{{ route('admin.classroom.store') }}">
             @csrf
             <h2 class="mb-8 text-xl font-semibold text-gray-800">Add New Class</h2>
             <div class="mb-6">
                 <x-input-label for="title" value="Class Title" />
-                <x-text-input id="title" name="title" type="text" required placeholder="Enter class title" :value="old('title')" />
+                <x-text-input id="title" name="title" type="text" required placeholder="Enter class title"
+                    :value="old('title')" />
                 <x-input-error :messages="$errors->get('title')" class="mt-2" />
             </div>
             <div class="mb-6">
                 <x-input-label for="description" value="Class Description" />
-                <textarea id="description" name="description" rows="4" required placeholder="Enter class description" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">{{ old('description') }}</textarea>
+                <textarea id="description" name="description" rows="4" required placeholder="Enter class description"
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">{{ old('description') }}</textarea>
                 <x-input-error :messages="$errors->get('description')" class="mt-2" />
             </div>
             <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                     <x-input-label for="category" value="Category" />
-                    <x-text-input id="category" name="category" type="text" required placeholder="Enter category" :value="old('category')" />
+                    <select id="category" name="category" required
+                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                        <option value="">Select Category</option>
+                        @foreach (['7A', '7B', '7C', '8A', '8B', '8C', '9A', '9B', '9C'] as $category)
+                            <option value="{{ $category }}" {{ old('category') == $category ? 'selected' : '' }}>
+                                {{ $category }}
+                            </option>
+                        @endforeach
+                    </select>
                     <x-input-error :messages="$errors->get('category')" class="mt-2" />
                 </div>
                 <div>
                     <x-input-label for="teacher_id" value="Teacher" />
-                    <select id="teacher_id" name="teacher_id" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                    <select id="teacher_id" name="teacher_id"
+                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
                         <option value="">Select Teacher</option>
                         @foreach ($teachers as $teacher)
-                            <option value="{{ $teacher->id }}" {{ old('teacher_id') == $teacher->id ? 'selected' : '' }}>
+                            <option value="{{ $teacher->id }}"
+                                {{ old('teacher_id') == $teacher->id ? 'selected' : '' }}>
                                 {{ $teacher->name }}
                             </option>
                         @endforeach
@@ -40,8 +48,10 @@
             </div>
             <div class="mb-6">
                 <x-input-label for="thumbnail" value="Course Thumbnail" />
-                <div x-data="{ fileName: '', preview: '' }" class="w-full rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary transition">
-                    <input id="thumbnail" name="thumbnail" type="file" accept="image/*" class="hidden" @change="
+                <div x-data="{ fileName: '', preview: '' }"
+                    class="w-full rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary transition">
+                    <input id="thumbnail" name="thumbnail" type="file" accept="image/*" class="hidden"
+                        @change="
                         fileName = $event.target.files[0]?.name;
                         if ($event.target.files[0]) {
                             const reader = new FileReader();
@@ -58,17 +68,13 @@
                             </div>
                         </template>
                         <template x-if="preview">
-                            <img :src="preview" class="mx-auto h-32 object-contain rounded-lg border border-gray-200" />
+                            <img :src="preview"
+                                class="mx-auto h-32 object-contain rounded-lg border border-gray-200" />
                         </template>
                         <span x-text="fileName" class="block mt-2 text-xs text-gray-500"></span>
                     </label>
                 </div>
                 <x-input-error :messages="$errors->get('thumbnail')" class="mt-2" />
-            </div>
-            <div class="mb-8">
-                <x-input-label for="max_students" value="Maximum Students" />
-                <x-text-input id="max_students" name="max_students" type="number" min="0" required placeholder="Enter maximum students" :value="old('max_students')" />
-                <x-input-error :messages="$errors->get('max_students')" class="mt-2" />
             </div>
             <div class="flex justify-end">
                 <div class="flex flex-row justify-end gap-2">

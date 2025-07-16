@@ -81,7 +81,9 @@ class UserManagementController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|exists:roles,name',
             'avatar' => 'nullable|image|max:2048',
-            'last_name' => 'nullable|string|max:255',
+            'nomor_induk' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'jk' => 'nullable|string|in:Laki-Laki,Perempuan',
         ]);
 
         // create the user with transaction
@@ -91,7 +93,9 @@ class UserManagementController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'is_active' => $request->status ?? false,
-                'last_name' => $request->last_name,
+                'nomor_induk' => $request->nomor_induk,
+                'address' => $request->address,
+                'jk' => $request->jk,
             ]);
 
             if ($request->hasFile('avatar')) {
@@ -100,8 +104,6 @@ class UserManagementController extends Controller
 
             if ($request->role) {
                 $user->assignRole($request->role);
-                // create user profile if role is not 'admin'
-                $user->addProfile($request->role);
             }
 
             $user->save();
@@ -139,13 +141,17 @@ class UserManagementController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|exists:roles,name',
             'avatar' => 'nullable|image|max:2048',
-            'last_name' => 'nullable|string|max:255',
+            'nomor_induk' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'jk' => 'nullable|string|in:Laki-Laki,Perempuan',
         ]);
 
         DB::transaction(function () use ($request, $user) {
             $user->name = $request->name;
             $user->email = $request->email;
-            $user->last_name = $request->last_name;
+            $user->nomor_induk = $request->nomor_induk;
+            $user->address = $request->address;
+            $user->jk = $request->jk;
             $user->is_active = $request->status ? true : false;
 
             if ($request->filled('password')) {
@@ -160,8 +166,6 @@ class UserManagementController extends Controller
 
             if ($request->role) {
                 $user->syncRoles([$request->role]);
-
-                $user->addProfile($request->role);
             }
         });
 

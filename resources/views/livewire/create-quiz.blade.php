@@ -41,7 +41,10 @@
 
             <div class="space-y-4">
                 @foreach ($questions as $qIndex => $question)
-                    <div class="space-y-3 rounded-md bg-primary/10 p-4" wire:key="question-{{ $question['tempId'] ?? $qIndex }}">
+                    <div
+                        class="space-y-3 rounded-md bg-primary/10 p-4"
+                        wire:key="question-{{ $question['tempId'] ?? $qIndex }}"
+                    >
                         <div class="flex items-start gap-2">
                             <div class="flex-1">
                                 <textarea
@@ -50,36 +53,43 @@
                                     placeholder="Enter question text"
                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
                                 ></textarea>
-                                
+
                                 <!-- Question Image Upload -->
                                 <div class="mt-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Question Image (Optional)</label>
-                                    <input 
-                                        type="file" 
+                                    <label class="mb-1 block text-sm font-medium text-gray-700">
+                                        Question Image (Optional)
+                                    </label>
+                                    <input
+                                        type="file"
                                         wire:model="questionImages.{{ $qIndex }}"
                                         accept="image/*"
-                                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary-dark"
-                                    >
+                                        class="block w-full text-sm text-gray-500 file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-primary-dark"
+                                    />
                                     @if (isset($question['image_path']) && $question['image_path'])
-                                        <div class="mt-2 relative">
-                                            <img src="{{ Storage::url($question['image_path']) }}" alt="Question image" class="max-w-xs rounded border">
-                                            <button 
-                                                type="button" 
+                                        <div class="relative mt-2">
+                                            <img
+                                                src="{{ Storage::url($question['image_path']) }}"
+                                                alt="Question image"
+                                                class="max-w-xs rounded border"
+                                            />
+                                            <button
+                                                type="button"
                                                 wire:click="removeQuestionImage({{ $qIndex }})"
-                                                class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                                class="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
                                             >
                                                 <x-gmdi-close class="h-3 w-3" />
                                             </button>
                                         </div>
                                     @endif
+
                                     @error("questionImages.{$qIndex}")
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
                             @if (count($questions) > 1)
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     wire:click="removeQuestion({{ $qIndex }})"
                                     class="text-red-500 hover:text-red-700"
                                 >
@@ -94,14 +104,17 @@
 
                         <div class="ml-6 space-y-2">
                             @foreach ($question['options'] as $oIndex => $option)
-                                <div class="flex items-start gap-2" wire:key="option-{{ $option['tempId'] ?? $oIndex }}">
+                                <div
+                                    class="flex items-start gap-2"
+                                    wire:key="option-{{ $option['tempId'] ?? $oIndex }}"
+                                >
                                     <input
                                         type="radio"
                                         name="q_{{ $qIndex }}_correct"
                                         value="{{ $oIndex }}"
                                         wire:click="setCorrectOption({{ $qIndex }}, {{ $oIndex }})"
                                         @checked(($question['correctOptionIndex'] ?? 0) == $oIndex)
-                                        class="text-primary focus:ring-primary mt-1"
+                                        class="mt-1 text-primary focus:ring-primary"
                                     />
                                     <div class="flex-1">
                                         <x-text-input
@@ -110,28 +123,35 @@
                                             placeholder="Enter option text"
                                             class="w-full"
                                         />
-                                        
+
                                         <!-- Option Image Upload -->
                                         <div class="mt-2">
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Option Image (Optional)</label>
-                                            <input 
-                                                type="file" 
+                                            <label class="mb-1 block text-sm font-medium text-gray-700">
+                                                Option Image (Optional)
+                                            </label>
+                                            <input
+                                                type="file"
                                                 wire:model="optionImages.{{ $qIndex }}.{{ $oIndex }}"
                                                 accept="image/*"
-                                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
-                                            >
+                                                class="block w-full text-sm text-gray-500 file:mr-4 file:rounded file:border-0 file:bg-gray-100 file:px-3 file:py-1 file:text-xs file:font-semibold file:text-gray-700 hover:file:bg-gray-200"
+                                            />
                                             @if (isset($option['image_path']) && $option['image_path'])
-                                                <div class="mt-2 relative">
-                                                    <img src="{{ Storage::url($option['image_path']) }}" alt="Option image" class="max-w-xs rounded border">
-                                                    <button 
-                                                        type="button" 
+                                                <div class="relative mt-2">
+                                                    <img
+                                                        src="{{ Storage::url($option['image_path']) }}"
+                                                        alt="Option image"
+                                                        class="max-w-xs rounded border"
+                                                    />
+                                                    <button
+                                                        type="button"
                                                         wire:click="removeOptionImage({{ $qIndex }}, {{ $oIndex }})"
-                                                        class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                                                        class="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
                                                     >
                                                         <x-gmdi-close class="h-3 w-3" />
                                                     </button>
                                                 </div>
                                             @endif
+
                                             @error("optionImages.{$qIndex}.{$oIndex}")
                                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                             @enderror
@@ -141,7 +161,7 @@
                                         <button
                                             type="button"
                                             wire:click="removeOption({{ $qIndex }}, {{ $oIndex }})"
-                                            class="text-red-400 hover:text-red-600 mt-1"
+                                            class="mt-1 text-red-400 hover:text-red-600"
                                         >
                                             <x-gmdi-delete class="h-5 w-5" />
                                         </button>
@@ -240,12 +260,7 @@
 
             <div class="mb-6">
                 <x-input-label for="start_time" value="Start Time" />
-                <x-text-input
-                    id="start_time"
-                    wire:model="start_time"
-                    type="datetime-local"
-                    class="mt-1 w-full"
-                />
+                <x-text-input id="start_time" wire:model="start_time" type="datetime-local" class="mt-1 w-full" />
                 @error('start_time')
                     <x-input-error :messages="$message" class="mt-2" />
                 @enderror
@@ -253,13 +268,16 @@
 
             <div class="mb-6">
                 <x-input-label for="due_time" value="Due Time" />
-                <x-text-input
-                    id="due_time"
-                    wire:model="due_time"
-                    type="datetime-local"
-                    class="mt-1 w-full"
-                />
+                <x-text-input id="due_time" wire:model="due_time" type="datetime-local" class="mt-1 w-full" />
                 @error('due_time')
+                    <x-input-error :messages="$message" class="mt-2" />
+                @enderror
+            </div>
+
+            <div class="mb-6">
+                <x-input-label for="point" value="Total Point" />
+                <x-text-input id="point" wire:model="point" class="mt-1 w-full" />
+                @error('point')
                     <x-input-error :messages="$message" class="mt-2" />
                 @enderror
             </div>
@@ -267,8 +285,8 @@
             <x-divider />
 
             <div class="mt-6 flex flex-col gap-2">
-                <x-primary-button 
-                    wire:click="save" 
+                <x-primary-button
+                    wire:click="save"
                     class="justify-center"
                     wire:loading.attr="disabled"
                     wire:loading.class="opacity-50"
@@ -276,12 +294,7 @@
                     <span wire:loading.remove>Save Quiz</span>
                     <span wire:loading>Saving...</span>
                 </x-primary-button>
-                <x-secondary-button 
-                    wire:click="cancel" 
-                    class="justify-center"
-                >
-                    Cancel
-                </x-secondary-button>
+                <x-secondary-button wire:click="cancel" class="justify-center">Cancel</x-secondary-button>
             </div>
         </div>
     </div>

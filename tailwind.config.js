@@ -19,14 +19,14 @@ export default {
             },
             colors: {
                 primary: {
-                    DEFAULT: "#0099CC", // Blue from logo
-                    light: "#33ADDA",
-                    dark: "#007A9F",
+                    DEFAULT: "#bbe9fe", // Blue from logo
+                    light: "#E2F5FF",
+                    dark: "#19BCB2",
                 },
                 secondary: {
-                    DEFAULT: "#F5D300", // Yellow from logo
-                    light: "#FFE133",
-                    dark: "#D9BC00",
+                    DEFAULT: "#FFC361", // Yellow from logo
+                    light: "#FFE6B9",
+                    dark: "#CC9235",
                 },
                 neutral: {
                     50: "#f9fafb",

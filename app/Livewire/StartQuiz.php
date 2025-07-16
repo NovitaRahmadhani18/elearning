@@ -134,7 +134,6 @@ class StartQuiz extends Component
         if ($this->currentQuestionIndex >= count($this->questions)) {
             $this->completeQuiz();
         } else {
-
             $this->currentQuestion = $this->getCurrentQuestion();
             $this->questionStartTime = now();
             $this->questionTimeSpent = 0; // Reset time spent for the new question
@@ -150,6 +149,7 @@ class StartQuiz extends Component
             $this->submission->update([
                 'is_completed' => true,
                 'completed_at' => now(),
+                'score' => $this->correctAnswers / $this->submission->total_questions * $this->quiz->points,
                 'correct_answers' => $this->correctAnswers,
                 'time_spent' => $this->totalTimeSpent + $this->questionTimeSpent
             ]);

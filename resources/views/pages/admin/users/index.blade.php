@@ -21,14 +21,12 @@
             </form>
         </div>
         <a href="{{ route('admin.users.create') }}">
-            <button
-                class="flex items-center space-x-2 rounded-md bg-primary px-4 py-2 text-white hover:bg-primary-dark"
-            >
+            <x-primary-button class="flex items-center justify-center gap-2">
                 <x-gmdi-add class="h-5 w-5 text-white" />
                 <span>
                     <span class="hidden sm:inline">Add User</span>
                 </span>
-            </button>
+            </x-primary-button>
         </a>
     </div>
 

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use LevelUp\Experience\Concerns\GiveExperience;
@@ -31,6 +32,9 @@ class User extends Authenticatable
         'last_name',
         'photo_profile_path',
         'is_active',
+        'nomor_induk',
+        'address',
+        'jk',
     ];
 
     /**
@@ -55,11 +59,6 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_active' => 'boolean',
         ];
-    }
-
-    public function profileable(): MorphTo
-    {
-        return $this->morphTo();
     }
 
     /**
@@ -126,36 +125,6 @@ class User extends Authenticatable
         return $this;
     }
 
-
-    public function addProfile(string $role): void
-    {
-        // check if user already has a profile and change role
-        if ($this->profile && $this->role !== $role) {
-            // if the user already has a profile, we can update it based on the new role
-            $this->profile->delete();
-        }
-
-        // create user profile based on role
-        switch ($role) {
-            case 'user':
-                $profile = new StudentProfile(['user_id' => $this->id]);
-                $profile->save();
-                break;
-            case 'teacher':
-                $profile = new TeacherProfile(['user_id' => $this->id]);
-                $profile->save();
-                break;
-            case 'admin':
-                // Admins do not have a profile, so we can skip this
-                return;
-            default:
-                throw new \InvalidArgumentException("Role {$role} is not supported.");
-        }
-
-        // associate the profile with the user
-        $this->profileable()->associate($profile);
-    }
-
     public function getLastLoginAttribute(): ?string
     {
         // Get the last login time from the activity log
@@ -214,15 +183,8 @@ class User extends Authenticatable
         return $this->hasManyThrough(QuizAnswer::class, QuizSubmission::class);
     }
 
-    public function getPercentNextLevelAttribute()
+    public function getQuizSubmissionsCountAttribute(): int
     {
-        if ($this->experience()->level->next_level_experience != null || $this->experience()->level->next_level_experience > 0) {
-            return round(
-                ($this->experience()->total_experience / $this->experience()->level->next_level_experience) * 100,
-                2
-            );
-        }
-
-        return 100; // If there is no next level, return 100%
+        return $this->quizSubmissions()->count();
     }
 }

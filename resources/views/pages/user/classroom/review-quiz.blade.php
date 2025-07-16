@@ -215,18 +215,6 @@
                                     </div>
                                 @endforeach
                             </div>
-
-                            <!-- Explanation (if available) -->
-                            @if ($question->explanation)
-                                <div class="rounded-xl bg-blue-50 p-4 sm:rounded-2xl sm:p-6">
-                                    <h3 class="mb-2 text-base font-semibold text-blue-800 sm:mb-3 sm:text-lg">
-                                        Explanation:
-                                    </h3>
-                                    <p class="text-sm leading-relaxed text-blue-700 sm:text-base">
-                                        {{ $question->explanation }}
-                                    </p>
-                                </div>
-                            @endif
                         </div>
                     @endforeach
                 </div>

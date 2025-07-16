@@ -9,7 +9,7 @@
         "label": "My Class",
         "url": "user.classroom.index",
         "icon": "fas-book",
-        "routes": ["user.classroom.index", "user.classroom.create", "user.classroom.edit"]
+        "routes": ["user.classroom.index", "user.classroom.create", "user.classroom.edit", "user.classroom.show"]
     },
     {
         "label": "Leaderboard",

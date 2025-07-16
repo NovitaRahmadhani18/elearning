@@ -23,7 +23,7 @@
         @livewireStyles
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <div class="flex min-h-screen flex-col items-center justify-center bg-primary-light/5">
+        <div class="flex min-h-screen flex-col items-center justify-center bg-primary">
             <div class="w-full overflow-hidden bg-white px-8 py-8 shadow-md sm:max-w-md sm:rounded-lg">
                 {{ $slot }}
             </div>

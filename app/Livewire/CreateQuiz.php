@@ -37,6 +37,9 @@ class CreateQuiz extends Component
     #[Validate('required|date|after_or_equal:start_time')]
     public $due_time = '';
 
+    #[Validate('required|numeric|min:1')]
+    public $point = 100;
+
     #[Validate('required|array|min:1')]
     public $questions = [];
 
@@ -224,6 +227,7 @@ class CreateQuiz extends Component
             $quiz->description = $this->description;
             $quiz->start_time = $this->start_time;
             $quiz->due_time = $this->due_time;
+            $quiz->points = $this->point;
 
 
             // Handle time limit
@@ -308,7 +312,6 @@ class CreateQuiz extends Component
 
     public function render()
     {
-        return view('livewire.create-quiz')
-            ->layout('layouts.teacher');
+        return view('livewire.create-quiz');
     }
 }

@@ -51,11 +51,12 @@
                         ></div>
                     </div>
 
-                    <button
-                        class="w-full rounded-md border border-gray-300 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                    <a
+                        class="block w-full rounded-md bg-secondary py-2 text-center text-sm text-gray-700"
+                        href="{{ route('user.classroom.show', $classroom->id) }}"
                     >
                         Detail
-                    </button>
+                    </a>
                 </div>
             </div>
         @empty

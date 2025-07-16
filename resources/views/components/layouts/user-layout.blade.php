@@ -1,5 +1,5 @@
 <x-layouts>
-    <header class="bg-white shadow-sm">
+    <header class="bg-primary-light shadow-sm">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between">
                 <div class="flex items-center">
@@ -12,8 +12,8 @@
                             <a
                                 href="{{ route($item->url) }}"
                                 @class([
-                                    'space-x-1 rounded-md px-3 py-2 text-sm font-medium',
-                                    'text-primary' => in_array(
+                                    'space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:bg-primary-light hover:text-gray-900',
+                                    'text-primary-dark' => in_array(
                                         request()
                                             ->route()
                                             ->getName(),

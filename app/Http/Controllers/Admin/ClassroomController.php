@@ -17,9 +17,9 @@ class ClassroomController extends Controller
      */
     public function index()
     {
-
         $classrooms = \App\Models\Classroom::orderBy('created_at', 'desc')
             ->with(['teacher'])
+            ->withCount(['students', 'contents', 'quizzes', 'materials'])
             ->get();
 
         return view('pages.admin.classroom.index', compact('classrooms'));
@@ -43,13 +43,12 @@ class ClassroomController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'nullable|string|max:255',
-            'max_students' => 'required|integer|min:0',
             'thumbnail' => 'nullable|image|max:2048',
             'teacher_id' => 'required|exists:users,id',
         ]);
 
         DB::transaction(function () use ($request) {
-            $data = $request->only(['title', 'description', 'category', 'teacher_id', 'max_students']);
+            $data = $request->only(['title', 'description', 'category', 'teacher_id']);
 
             if ($request->hasFile('thumbnail')) {
                 $path = $request->file('thumbnail')->store('classroom_thumbnails', 'public');
@@ -108,13 +107,12 @@ class ClassroomController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'nullable|string|max:255',
-            'max_students' => 'required|integer|min:0',
             'thumbnail' => 'nullable|image|max:2048',
             'teacher_id' => 'required|exists:users,id',
         ]);
 
         DB::transaction(function () use ($request, $classroom) {
-            $data = $request->only(['title', 'description', 'category', 'max_students', 'teacher_id']);
+            $data = $request->only(['title', 'description', 'category', 'teacher_id']);
 
             if ($request->hasFile('thumbnail')) {
                 $path = $request->file('thumbnail')->store('classroom_thumbnails', 'public');
@@ -125,6 +123,50 @@ class ClassroomController extends Controller
         });
 
         return to_route('admin.classroom.index')->with('success', 'Class updated successfully.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Classroom $classroom)
+    {
+        try {
+            DB::transaction(function () use ($classroom) {
+                // Delete classroom thumbnail if exists
+                if ($classroom->thumbnail_path) {
+                    Storage::disk('public')->delete($classroom->thumbnail_path);
+                }
+
+                // Delete related records
+                $classroom->students()->detach();
+                $classroom->contents()->delete();
+
+                // Delete classroom
+                $classroom->delete();
+            });
+
+            // Check if request is AJAX (Alpine AJAX)
+            if (request()->header('X-Alpine-Request')) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Classroom deleted successfully.'
+                ]);
+            }
+
+            return redirect()->route('admin.classroom.index')
+                ->with('success', 'Classroom deleted successfully.');
+        } catch (\Exception $e) {
+            // Check if request is AJAX (Alpine AJAX)
+            if (request()->header('X-Alpine-Request')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete classroom: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->route('admin.classroom.index')
+                ->with('error', 'Failed to delete classroom: ' . $e->getMessage());
+        }
     }
 
     /**
