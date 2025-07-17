@@ -44,10 +44,13 @@ class MaterialController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'classroom_id' => 'required|exists:classrooms,id',
+            'points' => 'nullable|integer|min:0|max:100',
         ]);
+
         // Assuming you have a Material model to handle the storage
         $material = \App\Models\Material::create([
             'title' => $request->title,
+            'points' => $request->points, // Default to 10 if not provided
             'material-trixFields' => request('material-trixFields'),
             'attachment-material-trixFields' => request('attachment-material-trixFields'),
         ]);
@@ -109,10 +112,12 @@ class MaterialController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
+            'points' => 'nullable|integer|min:0|max:100',
         ]);
 
         $material->update([
             'title' => $request->title,
+            'points' => $request->points ?? $material->points ?? 10, // Keep existing points or default to 10
             'material-trixFields' => request('material-trixFields'),
             'attachment-material-trixFields' => request('attachment-material-trixFields'),
         ]);

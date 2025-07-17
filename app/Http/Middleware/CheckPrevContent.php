@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Services\ExpiredQuizService;
 
 class CheckPrevContent
 {
@@ -53,6 +54,11 @@ class CheckPrevContent
 
         // check if previous content is completed
         $prevContentCompleted = $previousContent && $completedContents->contains($previousContent->id);
+
+        // If previous content is not completed, check if it's an expired quiz
+        if (!$prevContentCompleted && $previousContent) {
+            $prevContentCompleted = ExpiredQuizService::handleExpiredQuizContent($previousContent, auth()->id());
+        }
 
         if (!$prevContentCompleted) {
             return to_route('user.classroom.show', $classroom)

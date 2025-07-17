@@ -1,14 +1,14 @@
 @props(['quiz'])
 
-<div class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/30"
+<div class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:border-secondary/30"
     x-init id="quiz-{{ $quiz->id }}">
     <!-- Quiz Header -->
-    <div class="relative h-32 bg-gradient-to-br from-primary/10 to-primary/30 overflow-hidden">
+    <div class="relative h-32 bg-gradient-to-br from-secondary/10 to-secondary/30 overflow-hidden">
         <div class="absolute inset-0 bg-quiz-pattern opacity-5"></div>
         <div class="relative flex h-full items-center justify-center p-4">
             <div class="text-center">
-                <x-gmdi-assignment class="mx-auto h-12 w-12 text-primary/70 mb-2" />
-                <div class="text-xs text-primary-dark font-medium">
+                <x-gmdi-assignment class="mx-auto h-12 w-12 text-secondary/70 mb-2" />
+                <div class="text-xs text-secondary-dark font-medium">
                     {{ $quiz->questions->count() }} Questions
                 </div>
             </div>
@@ -17,7 +17,7 @@
         <!-- Quiz Type Badge -->
         <div class="absolute top-3 right-3">
             <span
-                class="inline-flex items-center rounded-full bg-primary/20 px-2 py-1 text-xs font-medium text-primary-dark">
+                class="inline-flex items-center rounded-full bg-secondary/20 px-2 py-1 text-xs font-medium text-secondary-dark">
                 <x-gmdi-assignment class="mr-1 h-3 w-3" />
                 Quiz
             </span>
@@ -51,15 +51,23 @@
     <div class="flex flex-1 flex-col p-4">
         <!-- Title -->
         <a href="{{ route('teacher.quizes.show', $quiz->id) }}"
-            class="mb-2 block font-semibold text-gray-800 transition-colors hover:text-primary">
+            class="mb-2 block font-semibold text-gray-800 transition-colors hover:text-secondary">
             {{ Str::limit($quiz->title, 50) }}
         </a>
 
         <!-- Classroom Info -->
         @if ($quiz->classroom)
-            <div class="mb-3 flex items-center text-sm text-gray-600">
-                <x-gmdi-class class="mr-1 h-4 w-4" />
-                <span>{{ $quiz->classroom->title }}</span>
+            <div class="mb-3 flex items-center justify-between">
+                <div class="flex items-center text-sm text-gray-600">
+                    <x-gmdi-class class="mr-1 h-4 w-4" />
+                    <span>{{ $quiz->classroom->title }}</span>
+                </div>
+                @if ($quiz->classroom->category)
+                    <span
+                        class="inline-flex items-center rounded-full bg-secondary/20 px-2 py-1 text-xs font-medium text-secondary-dark">
+                        {{ $quiz->classroom->category }}
+                    </span>
+                @endif
             </div>
         @endif
 

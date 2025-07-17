@@ -21,7 +21,6 @@ class ClassroomFactory extends Factory
             'title' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(4),
             'category' => $this->faker->randomElement($categories),
-            'max_students' => $this->faker->numberBetween(10, 50),
             'teacher_id' => \App\Models\User::role('teacher')->inRandomOrder()->first()->id,
         ];
     }

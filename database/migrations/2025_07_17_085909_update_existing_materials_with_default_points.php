@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Material;
 
 return new class extends Migration
 {
@@ -11,12 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('materials', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->integer('points')->default(10);
-            $table->timestamps();
-        });
+        // Update existing materials with default points if they don't have any
+        Material::whereNull('points')
+            ->orWhere('points', 0)
+            ->update(['points' => 10]);
     }
 
     /**
@@ -24,6 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('materials');
+        // Revert points back to 0 for materials that had null/0 points
+        Material::where('points', 10)->update(['points' => 0]);
     }
 };

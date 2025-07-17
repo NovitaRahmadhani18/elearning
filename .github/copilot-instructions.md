@@ -1,5 +1,9 @@
 # E-Learning Platform - AI Developer Guide
 
+## RULES
+
+Mulai sekarang saya akan menanyakanmu untuk melakukan generate code, JANGAN SAMPAI KAMU MENGEDIT CODE, sebelum kamu memberikan plan dan saya berikan perintah LAKSANAKAN
+
 ## IMPORTANT NOTE
 
 Before you start working on any feature, please ensure you have the latest code from the repository and that you understand the existing architecture and patterns. This will help maintain consistency and avoid conflicts in the codebase. and use Context7 for latest documentation and updates. Use the latest documentation and updates available in Context7 to stay informed about any changes or new features. you doesn't need to generate documentation for codebase that you have generated. you must also ensure that you are familiar with the existing codebase and its structure to avoid unnecessary duplication or conflicts. and plase make code structure consistent with existing patterns. for styling frontend, you must be consistent with Tailwind CSS conventions and use the provided custom color palette and existing components. you also must using best practice for everything. and if you are not sure about something, please ask for clarification before proceeding. This will help ensure that your contributions align with the project's goals and standards.and make sure to follow the development patterns and conventions outlined in this document. This will help maintain consistency and quality across the codebase. don't generate long code, insetead make it short and simple, and if you need to generate long code, please break it down into smaller parts and explain each part clearly. This will make it easier for others to understand and review your code.

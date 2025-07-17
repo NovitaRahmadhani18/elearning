@@ -86,6 +86,20 @@ class ClassroomController extends Controller
                 ->with('error', 'You are not enrolled in this classroom.');
         }
 
+        // Auto-complete expired quizzes for this user in this classroom
+        $expiredQuizzesCompleted = \App\Services\ExpiredQuizService::autoCompleteExpiredQuizzesInClassroom(
+            $classroom->id,
+            auth()->id()
+        );
+
+        // Show notification if any expired quizzes were auto-completed
+        if ($expiredQuizzesCompleted > 0) {
+            session()->flash(
+                'info',
+                "Notice: {$expiredQuizzesCompleted} expired quiz(es) have been automatically completed to unlock subsequent content."
+            );
+        }
+
         // check completed contents
         $completedContents = auth()->user()->completedContents()
             ->where('classroom_id', $classroom->id)
@@ -100,15 +114,21 @@ class ClassroomController extends Controller
     {
         $currentContent = $material->contents()
             ->where('classroom_id', $classroom->id)
-            ->firstOrFail();
+            ->firstOrFail();        // Check if this is the first time user opens this material
+        if (!$currentContent->isCompletedByUser()) {
+            // Award points from the material (not fixed 10 points)
+            $pointsToAward = $material->points > 0 ? $material->points : 10; // Default to 10 if no points set
 
-        auth()->user()->addPoints(10);
+            // Simply add points without auditing details
+            auth()->user()->addPoints($pointsToAward);
 
-        if (
-            !$currentContent->isCompletedByUser()
-        ) {
+            // Mark the content as completed
             auth()->user()->completedContents()->syncWithoutDetaching($currentContent->id);
+
+            // Add success message with points earned
+            session()->flash('success', "Great! You've earned {$pointsToAward} points for viewing this material!");
         }
+
         return view('pages.user.classroom.show-material', compact('classroom', 'material'));
     }
 

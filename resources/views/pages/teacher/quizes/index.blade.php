@@ -17,11 +17,9 @@
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <x-gmdi-search class="h-5 w-5 text-gray-400" />
             </div>
-            <input
-                type="text"
+            <input type="text"
                 class="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder-gray-500 focus:border-primary focus:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
-                placeholder="Search quizzes..."
-            />
+                placeholder="Search quizzes..." />
         </div>
 
         <!-- Quizzes Grid -->

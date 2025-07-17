@@ -1,15 +1,15 @@
 @props(['material'])
 
-<div class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/30"
+<div class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:border-secondary/30"
     x-init id="material-{{ $material->id }}">
     <!-- Material Thumbnail -->
-    <div class="relative h-40 bg-gradient-to-br from-primary-light to-primary/30 overflow-hidden">
+    <div class="relative h-40 bg-gradient-to-br from-secondary-light to-secondary/30 overflow-hidden">
         @if (!empty($material->thumbnailUrl))
             <img src="{{ $material->thumbnailUrl }}" alt="{{ $material->title }}" class="h-full w-full object-cover"
                 loading="lazy" />
         @else
             <div class="flex h-full items-center justify-center">
-                <x-gmdi-description class="h-16 w-16 text-primary/50" />
+                <x-gmdi-description class="h-16 w-16 text-secondary/50" />
             </div>
         @endif
 
@@ -27,15 +27,23 @@
     <div class="flex flex-1 flex-col p-4">
         <!-- Title -->
         <a href="{{ route('teacher.material.show', $material->id) }}"
-            class="mb-2 block font-semibold text-gray-800 transition-colors hover:text-primary">
+            class="mb-2 block font-semibold text-gray-800 transition-colors hover:text-secondary">
             {{ Str::limit($material->title, 50) }}
         </a>
 
         <!-- Classroom Info -->
         @if ($material->classroom)
-            <div class="mb-3 flex items-center text-sm text-gray-600">
-                <x-gmdi-class class="mr-1 h-4 w-4" />
-                <span>{{ $material->classroom->title }}</span>
+            <div class="mb-3 flex items-center justify-between">
+                <div class="flex items-center text-sm text-gray-600">
+                    <x-gmdi-class class="mr-1 h-4 w-4" />
+                    <span>{{ $material->classroom->title }}</span>
+                </div>
+                @if ($material->classroom->category)
+                    <span
+                        class="inline-flex items-center rounded-full bg-secondary/20 px-2 py-1 text-xs font-medium text-secondary-dark">
+                        {{ $material->classroom->category }}
+                    </span>
+                @endif
             </div>
         @endif
 
@@ -49,10 +57,19 @@
 
         <!-- Footer -->
         <div class="mt-auto flex items-center justify-between pt-2">
-            <!-- Last Updated -->
-            <div class="flex items-center text-xs text-gray-500">
-                <x-gmdi-update class="mr-1 h-3 w-3" />
-                <span>{{ $material->updated_at->diffForHumans() }}</span>
+            <!-- Left side info -->
+            <div class="flex items-center space-x-3">
+                <!-- Last Updated -->
+                <div class="flex items-center text-xs text-gray-500">
+                    <x-gmdi-update class="mr-1 h-3 w-3" />
+                    <span>{{ $material->updated_at->diffForHumans() }}</span>
+                </div>
+
+                <!-- Points -->
+                <div class="flex items-center text-xs text-secondary-dark">
+                    <x-gmdi-stars class="mr-1 h-3 w-3" />
+                    <span>{{ $material->points ?? 10 }} pts</span>
+                </div>
             </div>
 
             <!-- Actions -->

@@ -31,6 +31,7 @@ class ClassroomSeeder extends Seeder
                 'start_time' => now()->addDays($i - 2),
                 'due_time' => now()->addDays($i + 3),
                 'time_limit' => 60 * 30, // 30 minutes
+                'points' => 100,
             ]);
 
             // make 2 options and 1 question for each quiz

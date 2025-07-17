@@ -11,6 +11,7 @@ class Material extends Model
 {
     use HasTrixRichText;
 
+
     protected $guarded = [];
 
     public function getThumbnailUrlAttribute()
