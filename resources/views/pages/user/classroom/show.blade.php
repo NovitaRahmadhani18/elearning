@@ -144,20 +144,22 @@
                                     @endif
                                 </div>
 
-                                <a href="{{ $isLocked ? '#' : route('user.classroom.material.show', [$classroom->id, $item->contentable->id]) }}"
-                                    @class([
-                                        'inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-all duration-200',
-                                        'bg-secondary text-white shadow-sm hover:bg-secondary-dark hover:shadow-md' => !$isLocked,
-                                        'cursor-not-allowed bg-gray-300 text-gray-500' => $isLocked,
-                                    ])>
-                                    @if ($isCompleted)
-                                        <x-gmdi-visibility class="mr-1 h-4 w-4" />
-                                        View Again
-                                    @else
-                                        <x-gmdi-play-arrow class="mr-1 h-4 w-4" />
-                                        Start Reading
-                                    @endif
-                                </a>
+                                <div class="flex items-center space-x-2">
+                                    <a href="{{ $isLocked ? '#' : route('user.classroom.material.show', [$classroom->id, $item->contentable->id]) }}"
+                                        @class([
+                                            'inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-all duration-200',
+                                            'bg-secondary text-white shadow-sm hover:bg-secondary-dark hover:shadow-md' => !$isLocked,
+                                            'cursor-not-allowed bg-gray-300 text-gray-500' => $isLocked,
+                                        ])>
+                                        @if ($isCompleted)
+                                            <x-gmdi-visibility class="mr-1 h-4 w-4" />
+                                            View Again
+                                        @else
+                                            <x-gmdi-play-arrow class="mr-1 h-4 w-4" />
+                                            Start Reading
+                                        @endif
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -273,27 +275,29 @@
                                     @endif
                                 </div>
 
-                                @if ($item->contentable->hasUserSubmitted(auth()->user()->id))
-                                    <a href="{{ $isLocked ? '#' : route('user.classroom.quiz.start', [$classroom->id, $item->contentable->id]) }}"
-                                        @class([
-                                            'inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-all duration-200',
-                                            'bg-green-600 text-white shadow-sm hover:bg-green-700 hover:shadow-md' => !$isLocked,
-                                            'cursor-not-allowed bg-gray-300 text-gray-500' => $isLocked,
-                                        ])>
-                                        <x-gmdi-visibility class="mr-1 h-4 w-4" />
-                                        View Results
-                                    </a>
-                                @else
-                                    <a href="{{ $isLocked ? '#' : route('user.classroom.quiz.show', [$classroom->id, $item->contentable->id]) }}"
-                                        @class([
-                                            'inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-all duration-200',
-                                            'bg-purple-600 text-white shadow-sm hover:bg-purple-700 hover:shadow-md' => !$isLocked,
-                                            'cursor-not-allowed bg-gray-300 text-gray-500' => $isLocked,
-                                        ])>
-                                        <x-gmdi-play-arrow class="mr-1 h-4 w-4" />
-                                        Start Quiz
-                                    </a>
-                                @endif
+                                <div class="flex items-center space-x-2">
+                                    @if ($item->contentable->hasUserSubmitted(auth()->user()->id))
+                                        <a href="{{ $isLocked ? '#' : route('user.classroom.quiz.start', [$classroom->id, $item->contentable->id]) }}"
+                                            @class([
+                                                'inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-all duration-200',
+                                                'bg-green-600 text-white shadow-sm hover:bg-green-700 hover:shadow-md' => !$isLocked,
+                                                'cursor-not-allowed bg-gray-300 text-gray-500' => $isLocked,
+                                            ])>
+                                            <x-gmdi-visibility class="mr-1 h-4 w-4" />
+                                            View Results
+                                        </a>
+                                    @else
+                                        <a href="{{ $isLocked ? '#' : route('user.classroom.quiz.show', [$classroom->id, $item->contentable->id]) }}"
+                                            @class([
+                                                'inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-all duration-200',
+                                                'bg-purple-600 text-white shadow-sm hover:bg-purple-700 hover:shadow-md' => !$isLocked,
+                                                'cursor-not-allowed bg-gray-300 text-gray-500' => $isLocked,
+                                            ])>
+                                            <x-gmdi-play-arrow class="mr-1 h-4 w-4" />
+                                            Start Quiz
+                                        </a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -3,12 +3,9 @@
 namespace App\Livewire;
 
 use App\Models\Classroom;
-use App\Models\Question;
 use App\Models\Quiz;
-use App\Models\QuizAnswer;
 use App\Models\QuizSubmission;
 use Exception;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -16,33 +13,19 @@ use Livewire\Component;
 #[Layout('components.layouts.index')]
 class StartQuiz extends Component
 {
-
     public QuizSubmission $submission;
-    public $questionTimeSpent = 0; // Time spent on the current question in seconds
-
     public Classroom $classroom;
     public Quiz $quiz;
 
     public array $questions = [];
-    public $currentQuestionIndex = 0;
-    public $currentQuestion;
-    public $questionStartTime = null;
+    public int $currentQuestionIndex = 0;
+    public array $currentQuestion = [];
+    public array $userAnswers = [];
 
-    public $answers = [];
-    public $selectedAnswer = null;
-    public $isCorrect = false;
-    public $correctAnswers = 0;
-
-    public $totalTimeSpent = 0;
-
-    public $isCompleted = false;
-
-    // Server-side timer properties
-    public $serverStartTime = null;
-    public $timeRemaining = 0;
-    public $timerWarningShown = false;
-    public $autoSubmitWarning = false;
-    public $isTimerExpired = false;
+    public int $timeRemaining = 0;
+    public bool $isCompleted = false;
+    public int $correctAnswers = 0;
+    public int $totalTimeSpent = 0;
 
     public function mount(Classroom $classroom, Quiz $quiz)
     {
@@ -50,317 +33,188 @@ class StartQuiz extends Component
             abort(403, 'You are not enrolled in this classroom.');
         }
 
-        // Check if quiz exists
-        if ($classroom->contents->where('contentable_type', Quiz::class)->where('contentable_id', $quiz->id)->isEmpty()) {
-            abort(404, 'Quiz not found in this classroom.');
-        }
-
-        /* // Check if quiz is available */
+        // Check if quiz is available
         if ($quiz->start_time && $quiz->start_time->isFuture()) {
             return redirect()->route('user.classroom.quiz.show', [$classroom, $quiz])
                 ->with('error', 'Quiz has not started yet.');
         }
-        /**/
-        /* // Check if quiz is completed */
+
+        // Check if quiz deadline has passed
         if ($quiz->due_time && $quiz->due_time->isPast()) {
-            // Auto-complete the expired quiz
             $content = $quiz->contents()->where('classroom_id', $classroom->id)->first();
             if ($content) {
                 \App\Services\ExpiredQuizService::handleExpiredQuizContent($content, auth()->id());
             }
-
-            return redirect()->route('user.classroom.quiz.show', [$classroom, $quiz])
-                ->with('info', 'Quiz deadline has passed. The quiz has been automatically completed.');
         }
 
-        // Load quiz with questions and options
-        $quiz->load(['questions.options']);
         $this->classroom = $classroom;
         $this->quiz = $quiz;
         $this->questions = $quiz->questions()->with('options')->get()->toArray();
-        $this->currentQuestion = $this->getCurrentQuestion();
 
-        $this->initializeSubmission();
-        $this->initializeTimer();
-
-        // Additional validation after initialization
-        if ($this->quiz->time_limit > 0 && !$this->isCompleted) {
-            // Check if there's enough time left to continue
-            if ($this->timeRemaining <= 0) {
-                $this->handleTimerExpired();
-            }
-        }
+        $this->initializeQuiz();
     }
 
-    public function initializeTimer()
-    {
-        if ($this->quiz->time_limit > 0) {
-            $this->serverStartTime = $this->submission->started_at;
-            $this->calculateTimeRemaining();
-
-            // If timer has expired, handle it immediately
-            if ($this->timeRemaining <= 0) {
-                $this->handleTimerExpired();
-            }
-        }
-    }
-
-    public function calculateTimeRemaining()
-    {
-        if ($this->quiz->time_limit > 0 && $this->serverStartTime) {
-            $elapsedSeconds = now()->diffInSeconds($this->serverStartTime);
-            $this->timeRemaining = max(0, (int)($this->quiz->time_limit - $elapsedSeconds));
-
-            if ($this->timeRemaining <= 0) {
-                $this->handleTimerExpired();
-            }
-        }
-    }
-
-    public function refreshTimer()
-    {
-        $this->calculateTimeRemaining();
-        return $this->timeRemaining;
-    }
-
-    // Auto-submit when user leaves page
-    public function autoSubmitOnLeave()
-    {
-        if (!$this->isCompleted && !$this->isTimerExpired) {
-            $this->completeQuiz();
-        }
-    }
-    public function handleTimerExpired()
-    {
-        if (!$this->isTimerExpired && !$this->isCompleted) {
-            $this->isTimerExpired = true;
-            $this->dispatch('timer-expired');
-            $this->completeQuiz();
-        }
-    }
-
-    public function initializeSubmission()
+    public function initializeQuiz()
     {
         try {
+            // Create or get existing submission
             $this->submission = QuizSubmission::firstOrCreate([
                 'quiz_id' => $this->quiz->id,
                 'user_id' => auth()->id(),
             ], [
                 'started_at' => now(),
                 'total_questions' => count($this->questions),
-                'answers' => []
+                'answers' => [],
+                'is_completed' => false
             ]);
 
-            // check if the submission is already isCompleted
-            if ($this->submission->is_completed || $this->submission->completed_at || count($this->submission->answers) >= $this->submission->total_questions) {
+            // Check if already completed
+            if ($this->submission->is_completed) {
                 $this->isCompleted = true;
+                $this->correctAnswers = $this->submission->correct_answers ?? 0;
+                $this->totalTimeSpent = $this->submission->time_spent ?? 0;
                 return;
             }
 
-            // Validate submission started_at time to prevent timer manipulation
-            if ($this->submission->started_at && $this->submission->started_at->isFuture()) {
-                // If start time is in the future, reset it to now
-                $this->submission->update(['started_at' => now()]);
-            }
+            // Initialize quiz state
+            $this->userAnswers = $this->submission->answers ?? [];
+            $this->currentQuestionIndex = count($this->userAnswers);
+            $this->currentQuestion = $this->getCurrentQuestion();
+            $this->correctAnswers = collect($this->userAnswers)->where('is_correct', true)->count();
+            $this->calculateTimeRemaining();
 
-            // If continuing an existing submission, load progress
-            if ($this->submission->answers) {
-                $this->answers = $this->submission->answers;
-                $this->currentQuestionIndex = count($this->answers);
-                $this->currentQuestion = $this->getCurrentQuestion();
-                $this->totalTimeSpent = $this->submission->time_spent;
-
-                // Set question start time for continued quiz
-                if (!$this->isCompleted && $this->currentQuestion) {
-                    $this->questionStartTime = now();
-                }
-            } else {
-                // For new quiz, initialize question start time
-                if (!$this->isCompleted) {
-                    $this->questionStartTime = now();
-                }
+            // Check if time is up
+            if ($this->quiz->time_limit > 0 && $this->timeRemaining <= 0) {
+                $this->submitQuiz();
             }
         } catch (Exception $e) {
-            $this->dispatch('quiz-error', [
-                'message' => 'Error starting quiz. Please try again.'
-            ]);
+            Log::error('Error initializing quiz: ' . $e->getMessage());
+            $this->dispatch('quiz-error', ['message' => 'Error starting quiz. Please try again.']);
         }
     }
 
     public function selectAnswer($optionId)
     {
-        if ($this->isCompleted || $this->isTimerExpired) {
-            return; // Prevent further actions if the quiz is already completed or timer expired
-        }
-
-        // Simple timer check
-        $this->calculateTimeRemaining();
-        if ($this->timeRemaining <= 0) {
-            $this->handleTimerExpired();
+        if ($this->isCompleted) {
             return;
         }
 
-        $this->selectedAnswer = $optionId;
-
-        $this->saveAnswer($optionId);
-
-        if ($this->isCorrect) {
-            $this->correctAnswers++;
-        }
-
-        $this->nextQuestion();
-    }
-
-    public function nextQuestion()
-    {
-        if ($this->isCompleted) {
-            return; // Prevent further actions if the quiz is already completed
-        }
-
-        $this->currentQuestionIndex++;
-
-        if ($this->currentQuestionIndex >= count($this->questions)) {
-            $this->completeQuiz();
-        } else {
-            $this->currentQuestion = $this->getCurrentQuestion();
-            $this->questionStartTime = now();
-            $this->questionTimeSpent = 0; // Reset time spent for the new question
-            $this->selectedAnswer = null; // Reset selected answer for the new question
-            $this->isCorrect = false; // Reset correctness for the new question
-        }
-    }
-
-    public function completeQuiz()
-    {
-        DB::beginTransaction();
         try {
-            // Calculate final time spent for current question if not already saved
-            if ($this->questionStartTime && !$this->isTimerExpired) {
-                $currentQuestionTime = now()->diffInSeconds($this->questionStartTime);
-                $finalTimeSpent = $this->totalTimeSpent + $currentQuestionTime;
-            } else {
-                $finalTimeSpent = $this->totalTimeSpent;
+            $correctOption = collect($this->currentQuestion['options'])->firstWhere('is_correct', true);
+            $isCorrect = $correctOption && $correctOption['id'] == $optionId;
+
+            // Save answer
+            $this->userAnswers[] = [
+                'question_id' => $this->currentQuestion['id'],
+                'selected_option_id' => $optionId,
+                'is_correct' => $isCorrect
+            ];
+
+            if ($isCorrect) {
+                $this->correctAnswers++;
             }
 
-            // Calculate final score
-            $scorePercentage = $this->submission->total_questions > 0 ?
-                ($this->correctAnswers / $this->submission->total_questions) * 100 : 0;
+            // Update submission
+            $this->submission->update([
+                'answers' => $this->userAnswers,
+                'correct_answers' => $this->correctAnswers
+            ]);
 
-            $finalScore = round($scorePercentage * ($this->quiz->points / 100), 2);
+            // Auto move to next question or submit
+            $this->currentQuestionIndex++;
 
+            if ($this->currentQuestionIndex >= count($this->questions)) {
+                $this->submitQuiz();
+            } else {
+                $this->currentQuestion = $this->getCurrentQuestion();
+            }
+        } catch (Exception $e) {
+            Log::error('Error selecting answer: ' . $e->getMessage());
+            $this->dispatch('quiz-error', ['message' => 'Error saving answer. Please try again.']);
+        }
+    }
+
+    public function submitQuiz()
+    {
+        if ($this->isCompleted) {
+            return;
+        }
+
+        try {
+            // Calculate final time spent
+            $this->totalTimeSpent = $this->submission->started_at ?
+                now()->diffInSeconds($this->submission->started_at) : 0;
+
+            // Calculate score using the formula: (quiz_points / total_questions) * correct_answers
+            $finalScore = ($this->quiz->points / count($this->questions)) * $this->correctAnswers;
+
+            // Update submission
             $this->submission->update([
                 'is_completed' => true,
                 'completed_at' => now(),
-                'score' => $finalScore,
+                'total_questions' => count($this->questions),
                 'correct_answers' => $this->correctAnswers,
-                'time_spent' => $finalTimeSpent
+                'time_spent' => $this->totalTimeSpent,
+                'score' => $finalScore,
+                'answers' => $this->userAnswers
             ]);
 
-            $this->isCompleted = true;
+            // Mark content as completed and award points
+            $content = $this->quiz->contents()->where('classroom_id', $this->classroom->id)->first();
+            if ($content) {
+                // Sync with leaderboard data
+                auth()->user()->completedContents()->syncWithoutDetaching([
+                    $content->id => [
+                        'completion_time' => $this->totalTimeSpent,
+                        'points_earned' => $finalScore,
+                        'score' => $finalScore // Quiz score for leaderboard
+                    ]
+                ]);
 
-            $currentContent = $this->quiz->contents()
-                ->where('classroom_id', $this->classroom->id)
-                ->firstOrFail();
+                auth()->user()->addPoints($finalScore);
 
-            auth()->user()->completedContents()->syncWithoutDetaching($currentContent->id);
-            auth()->user()->addPoints($finalScore);
-
-            $this->dispatch('quiz-completed', [
-                'message' => 'Quiz completed successfully!'
-            ]);
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::error('Error completing quiz: ' . $e->getMessage());
-            $this->dispatch('quiz-error', [
-                'message' => 'Error completing quiz. Please try again.'
-            ]);
-        }
-        DB::commit();
-    }
-
-    public function saveAnswer($optionId)
-    {
-        DB::beginTransaction();
-        try {
-            // Calculate time spent on current question
-            if ($this->questionStartTime) {
-                $this->questionTimeSpent = now()->diffInSeconds($this->questionStartTime);
-            } else {
-                $this->questionTimeSpent = 0;
+                // Update classroom progress
+                $newProgress = auth()->user()->getClassroomProgress($this->classroom->id);
+                auth()->user()->classrooms()->updateExistingPivot($this->classroom->id, [
+                    'progress' => $newProgress
+                ]);
             }
 
-            $correctOption = collect($this->currentQuestion['options'])->firstWhere('is_correct', true);
-            $isCorrect = $correctOption && $correctOption['id'] == $optionId;
-            $this->isCorrect = $isCorrect;
-
-            // Save to quiz_answers table
-            QuizAnswer::create([
-                'quiz_submission_id' => $this->submission->id,
-                'question_id' => $this->currentQuestion['id'],
-                'selected_option_id' => $optionId,
-                'is_correct' => $isCorrect,
-                'time_spent' => $this->questionTimeSpent
-            ]);
-
-            // Update answers array
-            $this->answers[] = [
-                'question_id' => $this->currentQuestion['id'],
-                'selected_option_id' => $optionId,
-                'is_correct' => $isCorrect,
-                'time_spent' => $this->questionTimeSpent
-            ];
-
-            // Accumulate total time spent
-            $this->totalTimeSpent += $this->questionTimeSpent;
-
-            // Update submission with accumulated time
-            $this->submission->update([
-                'answers' => $this->answers,
-                'correct_answers' => $this->correctAnswers,
-                'time_spent' => $this->totalTimeSpent
-            ]);
+            $this->isCompleted = true;
+            $this->dispatch('quiz-completed');
         } catch (Exception $e) {
-            DB::rollBack();
-            dump($e->getMessage());
+            Log::error('Error submitting quiz: ' . $e->getMessage());
+            $this->dispatch('quiz-error', ['message' => 'Error submitting quiz. Please try again.']);
         }
-        DB::commit();
     }
 
-    public function retakeQuiz()
+    public function autoSubmitOnLeave()
     {
-        DB::beginTransaction();
-        try {
-            // Reset submission
-            $this->submission->update([
-                'is_completed' => false,
-                'completed_at' => null,
-                'correct_answers' => 0,
-                'time_spent' => 0,
-                'answers' => []
-            ]);
-
-            // Reset quiz state
-            $this->isCompleted = false;
-            $this->currentQuestionIndex = 0;
-            $this->currentQuestion = $this->getCurrentQuestion();
-            $this->answers = [];
-            $this->correctAnswers = 0;
-            $this->totalTimeSpent = 0;
-            $this->questionStartTime = now();
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::error('Error retaking quiz: ' . $e->getMessage());
-            $this->dispatch('quiz-error', [
-                'message' => 'Error retaking quiz. Please try again.'
-            ]);
+        if (!$this->isCompleted) {
+            $this->submitQuiz();
         }
-        DB::commit();
+    }
+
+    public function calculateTimeRemaining()
+    {
+        if ($this->quiz->time_limit > 0 && $this->submission->started_at) {
+            $elapsedSeconds = now()->diffInSeconds($this->submission->started_at);
+            $this->timeRemaining = max(0, ($this->quiz->time_limit * 60) - $elapsedSeconds);
+        } else {
+            $this->timeRemaining = 0;
+        }
+    }
+
+    public function getCurrentQuestion()
+    {
+        return $this->questions[$this->currentQuestionIndex] ?? [];
     }
 
     public function getPerformanceLevel()
     {
-        $percentage = $this->submission->total_questions > 0 ?
-            ($this->correctAnswers / $this->submission->total_questions) * 100 : 0;
+        if (count($this->questions) == 0) return 'No Questions';
+
+        $percentage = ($this->correctAnswers / count($this->questions)) * 100;
 
         if ($percentage >= 90) return 'Excellent';
         if ($percentage >= 80) return 'Very Good';
@@ -371,8 +225,9 @@ class StartQuiz extends Component
 
     public function getEncouragementMessage()
     {
-        $percentage = $this->submission->total_questions > 0 ?
-            ($this->correctAnswers / $this->submission->total_questions) * 100 : 0;
+        if (count($this->questions) == 0) return 'No questions available.';
+
+        $percentage = ($this->correctAnswers / count($this->questions)) * 100;
 
         if ($percentage >= 90) return 'Outstanding performance! You\'ve mastered this topic!';
         if ($percentage >= 80) return 'Great job! You have a solid understanding of the material.';
@@ -381,18 +236,22 @@ class StartQuiz extends Component
         return 'Don\'t give up! Every expert was once a beginner.';
     }
 
-    public function getCurrentQuestion()
-    {
-        return $this->questions[$this->currentQuestionIndex] ?? null;
-    }
-
     public function render()
     {
-        // Update timer in real-time
-        if ($this->quiz->time_limit > 0 && !$this->isCompleted) {
-            $this->calculateTimeRemaining();
+        if (!$this->isCompleted) {
+            // Only check if time is up during server-side renders, don't recalculate
+            if ($this->quiz->time_limit > 0 && $this->timeRemaining <= 0) {
+                $this->submitQuiz();
+            }
         }
 
-        return view('livewire.start-quiz');
+        return view('livewire.start-quiz', [
+            'currentQuestion' => $this->getCurrentQuestion(),
+            'questions' => $this->questions,
+            'submission' => $this->submission,
+            'correctAnswers' => $this->correctAnswers,
+            'userAnswers' => $this->userAnswers,
+            'totalTimeSpent' => $this->totalTimeSpent
+        ]);
     }
 }

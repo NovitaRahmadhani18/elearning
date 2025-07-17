@@ -4,8 +4,10 @@
     <div class="mx-auto w-full max-w-4xl px-4 py-6">
         <!-- Back Navigation -->
         <div class="mb-6">
-            <a href="{{ route('user.classroom.show', $classroom->id) }}"
-                class="inline-flex items-center text-sm text-gray-600 hover:text-secondary transition-colors">
+            <a
+                href="{{ route('user.classroom.show', $classroom->id) }}"
+                class="inline-flex items-center text-sm text-gray-600 transition-colors hover:text-secondary"
+            >
                 <x-gmdi-arrow-back class="mr-1 h-4 w-4" />
                 Back to Classroom
             </a>
@@ -14,11 +16,11 @@
         <!-- Quiz Card -->
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
             <!-- Quiz Header -->
-            <div class="relative h-32 bg-gradient-to-br from-purple-50 to-purple-100 overflow-hidden">
-                <div class="absolute inset-0 bg-quiz-pattern opacity-10"></div>
+            <div class="relative h-32 overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100">
+                <div class="bg-quiz-pattern absolute inset-0 opacity-10"></div>
                 <div class="relative flex h-full items-center justify-center">
                     <div class="text-center">
-                        <x-gmdi-quiz class="mx-auto h-12 w-12 text-purple-600 mb-2" />
+                        <x-gmdi-quiz class="mx-auto mb-2 h-12 w-12 text-purple-600" />
                         <div class="text-sm font-medium text-purple-700">Ready to Start Quiz</div>
                     </div>
                 </div>
@@ -49,8 +51,7 @@
                         </div>
                         <div>
                             <p class="text-sm text-gray-600">Duration</p>
-                            <p class="text-lg font-semibold text-gray-900">{{ $quiz->time_limit_in_minutes }} minutes
-                            </p>
+                            <p class="text-lg font-semibold text-gray-900">{{ $quiz->time_limit }} minute</p>
                         </div>
                     </div>
 
@@ -111,8 +112,10 @@
                         </span>
                     </div>
 
-                    <a href="{{ route('user.classroom.quiz.start', ['classroom' => $classroom->id, 'quiz' => $quiz->id]) }}"
-                        class="inline-flex items-center rounded-md bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-3 text-base font-medium text-white shadow-sm transition-all duration-200 hover:from-purple-700 hover:to-purple-800 hover:shadow-md transform hover:scale-105">
+                    <a
+                        href="{{ route('user.classroom.quiz.start', ['classroom' => $classroom->id, 'quiz' => $quiz->id]) }}"
+                        class="inline-flex transform items-center rounded-md bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-3 text-base font-medium text-white shadow-sm transition-all duration-200 hover:scale-105 hover:from-purple-700 hover:to-purple-800 hover:shadow-md"
+                    >
                         <x-gmdi-play-arrow class="mr-2 h-5 w-5" />
                         Start Quiz
                     </a>
@@ -128,19 +131,19 @@
             </h3>
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div class="flex items-start">
-                    <x-gmdi-check-circle class="mr-2 h-4 w-4 text-green-500 mt-0.5" />
+                    <x-gmdi-check-circle class="mr-2 mt-0.5 h-4 w-4 text-green-500" />
                     <span class="text-sm text-gray-600">Read each question carefully</span>
                 </div>
                 <div class="flex items-start">
-                    <x-gmdi-check-circle class="mr-2 h-4 w-4 text-green-500 mt-0.5" />
+                    <x-gmdi-check-circle class="mr-2 mt-0.5 h-4 w-4 text-green-500" />
                     <span class="text-sm text-gray-600">Manage your time wisely</span>
                 </div>
                 <div class="flex items-start">
-                    <x-gmdi-check-circle class="mr-2 h-4 w-4 text-green-500 mt-0.5" />
+                    <x-gmdi-check-circle class="mr-2 mt-0.5 h-4 w-4 text-green-500" />
                     <span class="text-sm text-gray-600">Review answers before submitting</span>
                 </div>
                 <div class="flex items-start">
-                    <x-gmdi-check-circle class="mr-2 h-4 w-4 text-green-500 mt-0.5" />
+                    <x-gmdi-check-circle class="mr-2 mt-0.5 h-4 w-4 text-green-500" />
                     <span class="text-sm text-gray-600">Stay calm and focused</span>
                 </div>
             </div>

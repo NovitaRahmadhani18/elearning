@@ -2,7 +2,7 @@
 
 ## RULES
 
-Mulai sekarang saya akan menanyakanmu untuk melakukan generate code, JANGAN SAMPAI KAMU MENGEDIT CODE, sebelum kamu memberikan plan dan saya berikan perintah LAKSANAKAN
+Mulai sekarang saya akan menanyakanmu untuk melakukan generate code, JANGAN SAMPAI KAMU MENGEDIT CODE, sebelum kamu memberikan plan dan saya berikan perintah LAKSANAKAN,kamu tidak perlu menjelaskan dokumentasi terkait fitur yang sudah kamu buat di file readme, cukup jelaskan saja melalui chat secara singkat, dan pastikan kamu mengikuti struktur kode yang sudah ada. Kamu juga harus memastikan bahwa kode yang kamu hasilkan sesuai dengan standar pengembangan yang telah ditetapkan dalam proyek ini.
 
 ## IMPORTANT NOTE
 
@@ -66,18 +66,6 @@ storage/app/public/
     └── options/       # Cleaned up on save/cancel
 ```
 
-### 4. Real-time Data Sync
-
-`ClassroomStudents.php` demonstrates instant database updates:
-
-```php
-public function toggleStudent($studentId) {
-    // Immediately sync to database, no "save" button needed
-    $this->classroom->students()->toggle($studentId);
-    $this->emit('student-updated');
-}
-```
-
 ## Development Workflow
 
 ### Setup & Testing
@@ -110,27 +98,6 @@ php artisan test
 - **Blade Components**: Custom components in `app/View/Components/`
 - **Icon System**: `<x-gmdi-*>` for Google Material Design icons
 
-## Key Files & Patterns
-
-### Essential Models
-
-- `User.php`: HasRoles, GiveExperience traits
-- `Quiz.php`: Polymorphic content relationship
-- `Question.php`: Image support, options relationship
-- `Classroom.php`: Many-to-many students, teacher relationship
-
-### Critical Livewire Components
-
-- `CreateQuiz.php`/`EditQuiz.php`: Complex form handling with file uploads
-- `ClassroomStudents.php`: Real-time student assignment
-- `InteractiveQuiz.php`: Student quiz taking experience
-
-### Testing Conventions
-
-- **Pest PHP**: Feature tests in `tests/Feature/`
-- **RefreshDatabase**: Used for all feature tests
-- **Factories**: User and Classroom factories available
-
 ## Common Gotchas
 
 1. **File Upload Cleanup**: Always clean temporary files in `cancel()` methods
@@ -138,11 +105,3 @@ php artisan test
 3. **Image Validation**: 2MB limit, handle both temp and permanent paths
 4. **Livewire State**: Use `wire:model` for two-way binding, `wire:click` for actions
 5. **Database Transactions**: Wrap multi-model operations for consistency
-
-## Integration Points
-
-- **Storage**: Public disk for images, automatic cleanup on delete
-- **Queue System**: Job batches table configured for background processing
-- **Activity Logging**: Spatie ActivityLog for user actions
-- **Permission System**: Spatie Permission with custom enum wrapper
-- **Experience System**: Level-up package with achievements and streaks

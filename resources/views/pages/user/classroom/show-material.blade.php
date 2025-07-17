@@ -67,11 +67,13 @@
 
         <!-- Navigation Actions -->
         <div class="mt-6 flex items-center justify-between">
-            <a href="{{ route('user.classroom.show', $classroom->id) }}"
-                class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors">
-                <x-gmdi-arrow-back class="mr-2 h-4 w-4" />
-                Back to Course
-            </a>
+            <div class="flex items-center space-x-3">
+                <a href="{{ route('user.classroom.show', $classroom->id) }}"
+                    class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors">
+                    <x-gmdi-arrow-back class="mr-2 h-4 w-4" />
+                    Back to Course
+                </a>
+            </div>
 
             <!-- User XP Progress -->
             <div class="text-right">

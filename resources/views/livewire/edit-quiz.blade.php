@@ -230,10 +230,10 @@
                         wire:model="time_limit"
                         class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
                     >
-                        <option value="300">5 minutes</option>
-                        <option value="600">10 minutes</option>
-                        <option value="1800">30 minutes</option>
-                        <option value="3600">1 hour</option>
+                        <option value="5">5 minutes</option>
+                        <option value="10">10 minutes</option>
+                        <option value="30">30 minutes</option>
+                        <option value="60">1 hour</option>
                     </select>
                 @endif
                 @error('time_limit')

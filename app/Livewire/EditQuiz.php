@@ -58,12 +58,12 @@ class EditQuiz extends Component
         $this->due_time = $quiz->due_time->format('Y-m-d\TH:i');
 
         // Handle time limit
-        $predefinedLimits = [300, 600, 1800, 3600];
+        $predefinedLimits = [5, 10, 30, 60];
         if (in_array($quiz->time_limit, $predefinedLimits)) {
             $this->time_limit = $quiz->time_limit;
             $this->custom_time_limit = false;
         } else {
-            $this->time_limit = $quiz->time_limit / 60; // Convert seconds to minutes
+            $this->time_limit = $quiz->time_limit; // Convert seconds to minutes
             $this->custom_time_limit = true;
         }
 

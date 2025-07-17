@@ -9,18 +9,12 @@
                     </div>
                     <div class="ml-6 flex space-x-4">
                         @foreach ($menu['userMenu'] as $item)
-                            <a
-                                href="{{ route($item->url) }}"
-                                @class([
-                                    'space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:bg-primary-light hover:text-gray-900',
-                                    'text-primary-dark' => in_array(
-                                        request()
-                                            ->route()
-                                            ->getName(),
-                                        $item->routes ?? [],
-                                    ),
-                                ])
-                            >
+                            <a href="{{ route($item->url) }}" @class([
+                                'space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:bg-primary-light hover:text-gray-900',
+                                'text-primary-dark' => in_array(
+                                    request()->route()->getName(),
+                                    $item->routes ?? []),
+                            ])>
                                 <x-icon :name="$item->icon" class="ml-1 inline h-5 w-5" />
                                 <span>
                                     {{ $item->label }}
@@ -36,9 +30,14 @@
                     <div class="flex items-center">
                         <x-layouts.components.settings-dropdown />
                     </div>
-                    <div class="flex w-[100px] flex-col justify-center gap-1 px-2 py-1">
-                        <span class="text-xs font-medium text-gray-700">Level {{ auth()->user()->getLevel() }}</span>
-                        <span class="text-xs font-medium text-gray-700">{{ auth()->user()->getPoints() }} Points</span>
+                    <div
+                        class="ml-4 flex items-center rounded-lg bg-gradient-to-r from-secondary/10 to-secondary/20 px-3 py-2 shadow-sm">
+                        <x-gmdi-stars class="mr-2 h-5 w-5 text-secondary" />
+                        <div class="flex flex-col">
+                            <span class="text-xs text-gray-600">Points</span>
+                            <span
+                                class="text-sm font-bold text-secondary-dark">{{ number_format(auth()->user()->getPoints()) }}</span>
+                        </div>
                     </div>
                 </div>
             </div>

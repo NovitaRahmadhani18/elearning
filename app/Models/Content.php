@@ -22,6 +22,7 @@ class Content extends Model
     public function completedByUser()
     {
         return $this->belongsToMany(User::class, 'content_users', 'content_id', 'user_id')
+            ->withPivot('completion_time', 'points_earned', 'score', 'created_at', 'updated_at')
             ->withTimestamps();
     }
 

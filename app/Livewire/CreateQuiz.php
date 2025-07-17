@@ -27,11 +27,11 @@ class CreateQuiz extends Component
     public $classroom_id = '';
 
     #[Validate('required|integer|min:0')]
-    public $time_limit = 300;
+    public $time_limit = 5;
 
     public $custom_time_limit = false;
 
-    #[Validate('required|date')]
+    #[Validate('required|date|after_or_equal:now')]
     public $start_time = '';
 
     #[Validate('required|date|after_or_equal:start_time')]
@@ -142,7 +142,7 @@ class CreateQuiz extends Component
     public function updatedCustomTimeLimit()
     {
         if (!$this->custom_time_limit) {
-            $this->time_limit = 300; // Reset to default 5 minutes
+            $this->time_limit = 5; // Reset to default 5 minutes
         }
     }
 
@@ -230,12 +230,7 @@ class CreateQuiz extends Component
             $quiz->points = $this->point;
 
 
-            // Handle time limit
-            if ($this->custom_time_limit) {
-                $quiz->time_limit = $this->time_limit * 60; // Convert minutes to seconds
-            } else {
-                $quiz->time_limit = $this->time_limit; // Already in seconds
-            }
+            $quiz->time_limit = $this->time_limit; // Convert minutes to seconds
             $quiz->save();
 
             $content = Content::create([

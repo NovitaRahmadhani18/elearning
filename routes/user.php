@@ -34,12 +34,15 @@ Route::group(
                     ->name('classroom.quiz.show')->middleware('classroom.content.lock');
                 Route::get('classroom/{classroom}/quiz/{quiz}/start', StartQuiz::class)
                     ->name('classroom.quiz.start')->middleware('classroom.content.lock');
+                Route::post('classroom/{classroom}/quiz/{quiz}/auto-submit', [App\Http\Controllers\User\ClassroomController::class, 'autoSubmitQuiz'])
+                    ->name('classroom.quiz.auto-submit')->middleware('classroom.content.lock');
                 Route::get('classroom/{classroom}/quiz/{quiz}/review', [App\Http\Controllers\User\ClassroomController::class, 'reviewQuiz'])
                     ->name('classroom.quiz.review')->middleware('classroom.content.lock');
             });
 
 
-        Route::resource('leaderboard', App\Http\Controllers\User\LeaderboardController::class);
+        Route::get('leaderboard', [App\Http\Controllers\User\LeaderboardController::class, 'index'])
+            ->name('leaderboard.index');
         Route::resource('lencana', App\Http\Controllers\User\LencanaController::class);
         Route::resource('profile', App\Http\Controllers\User\ProfileController::class);
     }

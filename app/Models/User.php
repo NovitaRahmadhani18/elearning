@@ -187,4 +187,35 @@ class User extends Authenticatable
     {
         return $this->quizSubmissions()->count();
     }
+
+    public function getClassroomProgress($classroomId)
+    {
+        // Get total contents in the classroom
+        $totalContents = \App\Models\Content::where('classroom_id', $classroomId)->count();
+
+        if ($totalContents === 0) {
+            return 0;
+        }
+
+        // Get completed contents for this classroom
+        $completedContents = $this->completedContents()
+            ->where('classroom_id', $classroomId)
+            ->count();
+
+        // Calculate progress percentage
+        return round(($completedContents / $totalContents) * 100, 2);
+    }
+
+    public static function updateClassroomProgress($userId, $classroomId)
+    {
+        $user = self::find($userId);
+        if (!$user) return;
+
+        $newProgress = $user->getClassroomProgress($classroomId);
+        $user->classrooms()->updateExistingPivot($classroomId, [
+            'progress' => $newProgress
+        ]);
+
+        return $newProgress;
+    }
 }

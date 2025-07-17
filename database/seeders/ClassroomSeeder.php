@@ -28,9 +28,9 @@ class ClassroomSeeder extends Seeder
             $quiz = \App\Models\Quiz::create([
                 'title' => 'Quiz ' . ($i + 1),
                 'description' => 'This is the description of quiz ' . ($i + 1),
-                'start_time' => now()->addDays($i - 2),
-                'due_time' => now()->addDays($i + 3),
-                'time_limit' => 60 * 30, // 30 minutes
+                'start_time' => now(),
+                'due_time' => now()->addDays(3),
+                'time_limit' => 1, // 30 minutes
                 'points' => 100,
             ]);
 
@@ -53,17 +53,18 @@ class ClassroomSeeder extends Seeder
         $materials = \App\Models\Material::all();
         $quizzes = \App\Models\Quiz::all();
 
+        foreach ($quizzes as $quiz) {
+            $classroom->contents()->create([
+                'contentable_type' => \App\Models\Quiz::class,
+                'contentable_id' => $quiz->id,
+            ]);
+        }
+
         // attach materials and quizzes to the first classroom
         foreach ($materials as $material) {
             $classroom->contents()->create([
                 'contentable_type' => \App\Models\Material::class,
                 'contentable_id' => $material->id,
-            ]);
-        }
-        foreach ($quizzes as $quiz) {
-            $classroom->contents()->create([
-                'contentable_type' => \App\Models\Quiz::class,
-                'contentable_id' => $quiz->id,
             ]);
         }
 
