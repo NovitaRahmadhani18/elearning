@@ -27,6 +27,8 @@ services:
       - SESSION_DRIVER=redis
       - QUEUE_CONNECTION=redis
       - SERVER_NAME=${SERVER_NAME:-localhost}
+      # Disable worker mode for now
+      # - FRANKENPHP_CONFIG=worker /app/public/index.php
     depends_on:
       - redis
     networks:

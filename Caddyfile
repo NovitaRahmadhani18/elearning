@@ -1,9 +1,10 @@
 {
-    frankenphp {
-        worker /app/public/index.php
-        num_threads 4
-    }
-    # Enable automatic HTTPS
+    frankenphp
+    # Disable worker mode for now
+    # frankenphp {
+    #     worker /app/public/index.php
+    #     num_threads 4
+    # }
     auto_https off
 }
 

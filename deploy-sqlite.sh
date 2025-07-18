@@ -75,21 +75,19 @@ EOF
 print_status "Konfigurasi Caddyfile untuk production..."
 cat > Caddyfile << EOF
 {
-    frankenphp {
-        worker /app/public/index.php
-        num_threads 4
-    }
+    frankenphp
+    # Worker mode disabled for stability
 }
 
 $DOMAIN {
     root * /app/public
-
+    
     encode gzip
-
+    
     php_server {
         try_files {path} /index.php
     }
-
+    
     header {
         X-Frame-Options "SAMEORIGIN"
         X-XSS-Protection "1; mode=block"
@@ -97,21 +95,19 @@ $DOMAIN {
         Referrer-Policy "no-referrer-when-downgrade"
         Strict-Transport-Security "max-age=31536000; includeSubDomains"
     }
-
+    
     @static {
         file
         path *.css *.js *.ico *.png *.jpg *.jpeg *.gif *.svg *.woff *.woff2 *.ttf *.eot
     }
     header @static Cache-Control "public, max-age=31536000"
-
+    
     log {
         output stdout
-        format json
+        format console
     }
 }
-EOF
-
-# Create database directory
+EOF# Create database directory
 mkdir -p database
 
 # Build dan start containers

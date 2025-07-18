@@ -36,8 +36,8 @@ RUN chmod -R 775 /app/storage /app/bootstrap/cache
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Enable worker mode for better performance
-ENV FRANKENPHP_CONFIG="worker /app/public/index.php"
+# Enable worker mode for better performance (disabled for debugging)
+# ENV FRANKENPHP_CONFIG="worker /app/public/index.php"
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
