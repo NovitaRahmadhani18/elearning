@@ -1,36 +1,49 @@
-# Docker Environment Documentation
+# FrankenPHP E-Learning Platform
 
-## 🐳 Docker Setup for E-Learning Laravel Project
+## 🧟 Modern PHP App Server dengan FrankenPHP
 
-This project includes a complete Docker development environment with all necessary services.
+Project ini menggunakan **FrankenPHP** - modern PHP application server yang dibangun di atas Caddy web server dengan fitur-fitur canggih seperti Worker Mode, HTTP/2, HTTP/3, dan HTTPS otomatis.
 
 ### 📋 Services Included:
 
-- **app**: PHP 8.2-FPM Laravel application
-- **webserver**: Nginx web server
+- **app**: FrankenPHP dengan Worker Mode (super fast!)
 - **database**: MySQL 8.0 database
-- **redis**: Redis for caching and sessions
-- **node**: Node.js for asset compilation
+- **redis**: Redis untuk caching dan sessions
 
-### 🚀 Quick Start:
+### 🚀 Development Quick Start:
 
-1. **Copy environment file:**
-
-    ```bash
-    cp .env.docker .env
-    ```
-
-2. **Start the environment:**
+1. **Start development environment:**
 
     ```bash
-    chmod +x docker-start.sh
-    ./docker-start.sh
+    docker-compose up -d
     ```
 
-3. **Access the application:**
-    - **Web App**: http://localhost:8000
+2. **Access the application:**
+    - **Web App**: http://localhost
     - **Database**: localhost:3306
     - **Redis**: localhost:6379
+
+### 🌐 Production Deployment:
+
+**Untuk VPS Production:**
+
+```bash
+# Clone project ke VPS
+git clone <your-repo> elearning
+cd elearning
+
+# Deploy dengan domain Anda
+chmod +x deploy-production.sh
+./deploy-production.sh yourdomain.com
+```
+
+**Fitur Production:**
+
+- ✅ **HTTPS Otomatis** - Caddy automatic SSL
+- ✅ **Worker Mode** - Performance maksimal
+- ✅ **HTTP/2 & HTTP/3** - Modern protocols
+- ✅ **Auto Backup** - Database backup harian
+- ✅ **Security Headers** - Production security
 
 ### 🔧 Daily Development Commands:
 
