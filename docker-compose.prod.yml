@@ -34,8 +34,10 @@ services:
       - SERVER_NAME=${SERVER_NAME}
       - FRANKENPHP_CONFIG=worker /app/public/index.php
     depends_on:
-      - database
-      - redis
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - elearning-network
 
@@ -53,7 +55,11 @@ services:
       - ./backups:/backups
     networks:
       - elearning-network
-    command: --default-authentication-plugin=mysql_native_password
+    command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USERNAME}", "-p${DB_PASSWORD}"]
+      timeout: 20s
+      retries: 10
 
   redis:
     image: redis:7-alpine

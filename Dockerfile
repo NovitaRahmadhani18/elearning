@@ -1,14 +1,19 @@
 FROM dunglas/frankenphp
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    sqlite3 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install additional PHP extensions for Laravel
 RUN install-php-extensions \
-    pdo_mysql \
+    pdo_sqlite \
+    sqlite3 \
     gd \
     intl \
     zip \
     opcache \
-    redis \
-    mysqli
+    redis
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

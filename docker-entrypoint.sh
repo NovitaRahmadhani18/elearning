@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🚀 Starting FrankenPHP E-Learning Platform..."
+echo "🚀 Starting FrankenPHP E-Learning Platform with SQLite..."
 
 # Check if vendor directory exists
 if [ ! -d "/app/vendor" ]; then
@@ -23,9 +23,15 @@ if ! grep -q "APP_KEY=" /app/.env || grep -q "APP_KEY=$" /app/.env; then
     php artisan key:generate --force
 fi
 
-# Wait for database to be ready
-echo "Waiting for database..."
-sleep 10
+# Create SQLite database directory and file
+echo "Setting up SQLite database..."
+mkdir -p /app/database
+if [ ! -f "/app/database/database.sqlite" ]; then
+    echo "Creating SQLite database file..."
+    touch /app/database/database.sqlite
+    chmod 664 /app/database/database.sqlite
+    chown www-data:www-data /app/database/database.sqlite
+fi
 
 # Run migrations
 echo "Running database migrations..."

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Production deployment script untuk FrankenPHP E-Learning
+# Simple SQLite deployment script untuk FrankenPHP E-Learning
 set -e
 
-echo "🚀 Deploying E-Learning Platform with FrankenPHP..."
+echo "🚀 Deploying E-Learning Platform with FrankenPHP + SQLite..."
 
 # Warna untuk output
 RED='\033[0;31m'
@@ -43,16 +43,10 @@ if ! docker compose version &> /dev/null; then
 fi
 
 # Check domain parameter
-if [ -z "$1" ]; then
-    print_error "Domain diperlukan!"
-    echo "Usage: ./deploy-production.sh yourdomain.com"
-    exit 1
-fi
-
-DOMAIN=$1
+DOMAIN=${1:-localhost}
 
 # Create environment file
-print_status "Membuat file environment production..."
+print_status "Membuat file environment untuk SQLite..."
 cat > .env << EOF
 APP_NAME="E-Learning Platform"
 APP_ENV=production
@@ -60,13 +54,8 @@ APP_KEY=
 APP_DEBUG=false
 APP_URL=https://$DOMAIN
 
-DB_CONNECTION=mysql
-DB_HOST=database
-DB_PORT=3306
-DB_DATABASE=elearning_prod
-DB_USERNAME=elearning
-DB_PASSWORD=$(openssl rand -base64 32)
-DB_ROOT_PASSWORD=$(openssl rand -base64 32)
+DB_CONNECTION=sqlite
+DB_DATABASE=/app/database/database.sqlite
 
 REDIS_HOST=redis
 REDIS_PORT=6379
@@ -88,7 +77,7 @@ cat > Caddyfile << EOF
 {
     frankenphp {
         worker /app/public/index.php
-        num_threads 8
+        num_threads 4
     }
 }
 
@@ -122,66 +111,37 @@ $DOMAIN {
 }
 EOF
 
-# Create backup directory
-mkdir -p backups
+# Create database directory
+mkdir -p database
 
 # Build dan start containers
 print_status "Building dan starting containers..."
-docker compose -f docker-compose.prod.yml down --remove-orphans
-docker compose -f docker-compose.prod.yml build --no-cache
-
-# Start database and redis first
-print_status "Starting database and redis..."
-docker compose -f docker-compose.prod.yml up -d database redis
-
-# Wait for database port to be ready
-print_status "Menunggu database port ready..."
-timeout=60
-while ! docker compose -f docker-compose.prod.yml exec database mysqladmin ping --silent; do
-    echo "Waiting for database... ($timeout seconds remaining)"
-    sleep 5
-    timeout=$((timeout-5))
-    if [ $timeout -le 0 ]; then
-        print_error "Database failed to start in time"
-        exit 1
-    fi
-done
-
-print_success "Database is ready!"
-
-# Start application
-print_status "Starting application..."
-docker compose -f docker-compose.prod.yml up -d app
+docker compose -f docker-compose.sqlite.yml down --remove-orphans
+docker compose -f docker-compose.sqlite.yml build --no-cache
+docker compose -f docker-compose.sqlite.yml up -d
 
 # Wait for application to be ready
 print_status "Menunggu aplikasi siap..."
-sleep 20
-
-# Laravel setup sudah di-handle oleh entrypoint script
-print_status "Laravel setup akan di-handle otomatis oleh container..."
+sleep 15
 
 # Verify application is running
 print_status "Verifying application status..."
-docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.sqlite.yml ps
 
-# Set permissions (backup)
+# Set final permissions
 print_status "Setting final permissions..."
-docker compose -f docker-compose.prod.yml exec -T app chown -R www-data:www-data /app/storage /app/bootstrap/cache
-
-# Setup backup cron
-print_status "Setting up backup cron..."
-(crontab -l 2>/dev/null; echo "0 2 * * * cd $(pwd) && docker compose -f docker-compose.prod.yml run --rm backup") | crontab -
+docker compose -f docker-compose.sqlite.yml exec -T app chown -R www-data:www-data /app/storage /app/bootstrap/cache /app/database
 
 print_success "🎉 Deployment selesai!"
 echo ""
 echo "✅ Domain: https://$DOMAIN"
+echo "✅ Database: SQLite (no external dependencies)"
 echo "✅ HTTPS: Otomatis (FrankenPHP + Caddy)"
 echo "✅ Worker Mode: Aktif"
 echo "✅ HTTP/2 & HTTP/3: Aktif"
-echo "✅ Backup: Daily otomatis"
 echo ""
 echo "📋 Management Commands:"
-echo "   Start: docker compose -f docker-compose.prod.yml up -d"
-echo "   Stop:  docker compose -f docker-compose.prod.yml down"
-echo "   Logs:  docker compose -f docker-compose.prod.yml logs -f"
-echo "   Backup: docker compose -f docker-compose.prod.yml run --rm backup"
+echo "   Start: docker compose -f docker-compose.sqlite.yml up -d"
+echo "   Stop:  docker compose -f docker-compose.sqlite.yml down"
+echo "   Logs:  docker compose -f docker-compose.sqlite.yml logs -f"
+echo "   Shell: docker compose -f docker-compose.sqlite.yml exec app bash"
