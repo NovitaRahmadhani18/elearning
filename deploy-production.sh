@@ -129,23 +129,32 @@ mkdir -p backups
 print_status "Building dan starting containers..."
 docker compose -f docker-compose.prod.yml down --remove-orphans
 docker compose -f docker-compose.prod.yml build --no-cache
-docker compose -f docker-compose.prod.yml up -d
+
+# Start database and redis first
+print_status "Starting database and redis..."
+docker compose -f docker-compose.prod.yml up -d database redis
 
 # Wait for database
 print_status "Menunggu database siap..."
 sleep 30
 
-# Laravel setup
-print_status "Setting up Laravel..."
-docker compose -f docker-compose.prod.yml exec -T app php artisan key:generate --force
-docker compose -f docker-compose.prod.yml exec -T app php artisan migrate --force
-docker compose -f docker-compose.prod.yml exec -T app php artisan db:seed --force
-docker compose -f docker-compose.prod.yml exec -T app php artisan storage:link
-docker compose -f docker-compose.prod.yml exec -T app php artisan config:cache
-docker compose -f docker-compose.prod.yml exec -T app php artisan route:cache
-docker compose -f docker-compose.prod.yml exec -T app php artisan view:cache
+# Start application
+print_status "Starting application..."
+docker compose -f docker-compose.prod.yml up -d app
 
-# Set permissions
+# Wait for application to be ready
+print_status "Menunggu aplikasi siap..."
+sleep 20
+
+# Laravel setup sudah di-handle oleh entrypoint script
+print_status "Laravel setup akan di-handle otomatis oleh container..."
+
+# Verify application is running
+print_status "Verifying application status..."
+docker compose -f docker-compose.prod.yml ps
+
+# Set permissions (backup)
+print_status "Setting final permissions..."
 docker compose -f docker-compose.prod.yml exec -T app chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
 # Setup backup cron

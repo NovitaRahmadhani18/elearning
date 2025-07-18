@@ -1,9 +1,5 @@
 FROM dunglas/frankenphp
 
-# Copy your app
-WORKDIR /app
-COPY . /app
-
 # Install additional PHP extensions for Laravel
 RUN install-php-extensions \
     pdo_mysql \
@@ -17,8 +13,15 @@ RUN install-php-extensions \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Copy your app
+WORKDIR /app
+COPY . /app
+
 # Install dependencies
-RUN composer install --optimize-autoloader --no-dev
+RUN composer install --optimize-autoloader --no-dev --no-scripts
+
+# Generate optimized autoloader
+RUN composer dump-autoload --optimize
 
 # Set proper permissions
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
