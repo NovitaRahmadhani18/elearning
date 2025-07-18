@@ -10,7 +10,7 @@ Route::group(
         'as' => 'user.',
         'middleware' => [
             'auth',
-            /* 'role:user' */
+            'role:user'
         ],
     ],
     function () {

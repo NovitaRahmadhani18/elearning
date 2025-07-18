@@ -8,7 +8,7 @@ Route::group(
         'as' => 'teacher.',
         'middleware' => [
             'auth',
-            /* 'role:teacher' */
+            'role:teacher'
         ],
     ],
     function () {

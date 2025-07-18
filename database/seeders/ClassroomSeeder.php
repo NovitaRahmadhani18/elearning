@@ -14,6 +14,11 @@ class ClassroomSeeder extends Seeder
      */
     public function run(): void
     {
+
+        User::factory(100)->create()->each(function ($user) {
+            $user->assignRole('user');
+        });
+
         Classroom::factory(10)->create();
 
         // make 10 random quiz or material content for first classroom

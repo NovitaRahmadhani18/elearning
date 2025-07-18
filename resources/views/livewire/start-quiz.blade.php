@@ -80,7 +80,17 @@
                             >
                                 {{ chr(65 + $index) }}
                             </div>
-                            <span class="flex-1 text-lg font-medium text-white">{{ $option['option_text'] }}</span>
+                            <span class="flex-1 text-lg font-medium text-white">
+                                @if ($option['image_path'])
+                                    <img
+                                        src="{{ Storage::url($option['image_path']) }}"
+                                        alt="Option Image"
+                                        class="mb-2 w-full rounded-lg object-cover shadow-md"
+                                    />
+                                @endif
+
+                                {{ $option['option_text'] }}
+                            </span>
                         </div>
                     </button>
                 @endforeach

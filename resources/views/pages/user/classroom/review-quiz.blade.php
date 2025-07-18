@@ -177,6 +177,14 @@
                                                 {{ chr(65 + $optionIndex) }}
                                             </div>
                                             <span class="flex-1 text-sm font-medium leading-relaxed sm:text-lg">
+                                                @if ($option->image_path)
+                                                    <img
+                                                        src="{{ Storage::url($option->image_path) }}"
+                                                        alt="Option Image"
+                                                        class="mb-2 max-h-24 w-full rounded-lg object-contain shadow-sm sm:mb-3 sm:max-h-32"
+                                                    />
+                                                @endif
+
                                                 {{ $option->option_text }}
                                             </span>
 

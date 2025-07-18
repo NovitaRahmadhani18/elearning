@@ -9,7 +9,7 @@ Route::group(
         'as' => 'admin.',
         'middleware' => [
             'auth',
-            /* 'role:admin' */
+            'role:admin'
         ],
     ],
     function () {
