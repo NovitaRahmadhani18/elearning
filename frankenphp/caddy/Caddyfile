@@ -2,7 +2,7 @@
 	order php_server before file_server
 }
 
-elearningsmpsdb.site {
+dev.elearningsmpsdb.site {
 	root /app/public
 	encode zstd gzip
 	php_server

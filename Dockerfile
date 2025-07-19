@@ -23,6 +23,7 @@ COPY frankenphp/caddy/Caddyfile /etc/caddy/Caddyfile
 COPY . .
 
 COPY --from=vendor /app/vendor /app/vendor
+COPY --from=frontend /app/public /app/public
 
 RUN ls -la
 
