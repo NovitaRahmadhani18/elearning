@@ -15,17 +15,13 @@ RUN apk add --no-cache sqlite-dev \
     && docker-php-ext-install pdo_sqlite
 
 WORKDIR /app
-
-# Copy Caddyfile konfigurasi server
 COPY frankenphp/caddy/Caddyfile /etc/caddy/Caddyfile
-
-# Copy file aplikasi
 COPY . .
 
-# Copy direktori vendor dari tahap 'vendor'
 COPY --from=vendor /app/vendor /app/vendor
 
-# Optimisasi Laravel untuk produksi
+RUN ls -la
+
 RUN php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache
