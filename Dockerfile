@@ -5,12 +5,8 @@ COPY database/ database/
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-interaction --optimize-autoloader
 
-# -----------------------------------------------------------------------------
-
-# Tahap 2: Build image produksi final
 FROM dunglas/frankenphp:1-php8.3-alpine AS final
 
-# Install ekstensi PHP yang dibutuhkan untuk SQLite
 RUN apk add --no-cache sqlite-dev \
     && docker-php-ext-install pdo_sqlite
 
@@ -21,10 +17,6 @@ COPY . .
 COPY --from=vendor /app/vendor /app/vendor
 
 RUN ls -la
-
-RUN php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
 
 # Buat file database SQLite kosong sebelum mengatur permission
 RUN mkdir -p database && touch database/database.sqlite
