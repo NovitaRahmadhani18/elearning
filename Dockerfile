@@ -11,7 +11,8 @@ RUN composer install --no-dev --no-interaction --optimize-autoloader
 FROM dunglas/frankenphp:1-php8.3-alpine AS final
 
 # Install ekstensi PHP yang dibutuhkan untuk SQLite
-RUN docker-php-ext-install pdo_sqlite
+RUN apk add --no-cache sqlite-dev \
+    && docker-php-ext-install pdo_sqlite
 
 WORKDIR /app
 
