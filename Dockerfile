@@ -21,13 +21,6 @@ RUN ls -la
 # Buat file database SQLite kosong sebelum mengatur permission
 RUN mkdir -p database && touch database/database.sqlite
 
-RUN addgroup -S frankenphp \
-    && adduser -S -G frankenphp frankenphp \
-    && chown -R frankenphp:frankenphp storage bootstrap/cache database
-
-# Ganti user ke non-root untuk keamanan
-USER frankenphp
-
 # Expose port yang digunakan oleh Caddy (FrankenPHP)
 EXPOSE 80 443 443/udp
 
