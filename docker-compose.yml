@@ -22,3 +22,5 @@ volumes:
         driver: local
     app_database:
         driver: local
+    caddy_data:
+        driver: local
