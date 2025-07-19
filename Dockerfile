@@ -3,7 +3,7 @@ FROM composer:2.7 AS vendor
 WORKDIR /app
 COPY database/ database/
 COPY composer.json composer.lock ./
-RUN composer install --no-interaction --optimize-autoloader
+RUN composer install --no-dev --no-interaction --optimize-autoloader --no-scripts
 
 FROM dunglas/frankenphp:1-php8.3-alpine AS final
 
