@@ -5,6 +5,17 @@ COPY database/ database/
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-interaction --optimize-autoloader --no-scripts
 
+FROM node:20-alpine AS frontend
+
+WORKDIR /app
+# Salin file-file yang dibutuhkan untuk build frontend
+COPY package.json package-lock.json vite.config.js ./
+COPY resources/ resources/
+# Install dependensi npm
+RUN npm install
+# Build aset untuk produksi
+RUN npm run build
+
 FROM dunglas/frankenphp:1-php8.3-alpine AS final
 
 RUN apk add --no-cache sqlite-dev \
