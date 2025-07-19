@@ -10,6 +10,7 @@ FROM node:20-alpine AS frontend
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY . .
+COPY --from=vendor /app/vendor /app/vendor
 RUN npm install
 RUN npm run build
 
