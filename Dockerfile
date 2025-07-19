@@ -8,12 +8,9 @@ RUN composer install --no-dev --no-interaction --optimize-autoloader --no-script
 FROM node:20-alpine AS frontend
 
 WORKDIR /app
-# Salin file-file yang dibutuhkan untuk build frontend
-COPY package.json package-lock.json vite.config.js ./
-COPY resources/ resources/
-# Install dependensi npm
+COPY package.json package-lock.json ./
+COPY . .
 RUN npm install
-# Build aset untuk produksi
 RUN npm run build
 
 FROM dunglas/frankenphp:1-php8.3-alpine AS final
