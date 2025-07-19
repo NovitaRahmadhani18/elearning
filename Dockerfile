@@ -1,44 +1,45 @@
-FROM dunglas/frankenphp
+FROM composer:2.7 AS vendor
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    sqlite3 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install additional PHP extensions for Laravel
-RUN install-php-extensions \
-    pdo_sqlite \
-    sqlite3 \
-    gd \
-    intl \
-    zip \
-    opcache \
-    redis
-
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Copy your app
 WORKDIR /app
-COPY . /app
+COPY database/ database/
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-interaction --optimize-autoloader
 
-# Install dependencies
-RUN composer install --optimize-autoloader --no-dev --no-scripts
+# -----------------------------------------------------------------------------
 
-# Generate optimized autoloader
-RUN composer dump-autoload --optimize
+# Tahap 2: Build image produksi final
+FROM dunglas/frankenphp:1-php8.3-alpine AS final
 
-# Set proper permissions
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
-RUN chmod -R 775 /app/storage /app/bootstrap/cache
+# Install ekstensi PHP yang dibutuhkan untuk SQLite
+RUN docker-php-ext-install pdo_sqlite
 
-# Copy entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+WORKDIR /app
 
-# Enable worker mode for better performance (disabled for debugging)
-# ENV FRANKENPHP_CONFIG="worker /app/public/index.php"
+# Copy Caddyfile konfigurasi server
+COPY frankenphp/caddy/Caddyfile /etc/caddy/Caddyfile
 
-ENTRYPOINT ["docker-entrypoint.sh"]
+# Copy file aplikasi
+COPY . .
 
-EXPOSE 80 443
+# Copy direktori vendor dari tahap 'vendor'
+COPY --from=vendor /app/vendor /app/vendor
+
+# Optimisasi Laravel untuk produksi
+RUN php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
+
+# Buat file database SQLite kosong sebelum mengatur permission
+RUN mkdir -p database && touch database/database.sqlite
+
+# Setel kepemilikan file agar server (FrankenPHP) bisa menulis
+RUN chown -R frankenphp:frankenphp storage bootstrap/cache database/database.sqlite
+
+# Ganti user ke non-root untuk keamanan
+USER frankenphp
+
+# Expose port yang digunakan oleh Caddy (FrankenPHP)
+EXPOSE 80 443 443/udp
+
+# Perintah default untuk menjalankan server
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]

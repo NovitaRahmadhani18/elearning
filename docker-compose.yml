@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: laravel_production_app
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+            - "443:443/udp"
+        volumes:
+            # Gunakan named volume agar data storage dan database tetap aman
+            - app_storage:/app/storage
+            - app_database:/app/database
+        env_file:
+            - .env
+
+volumes:
+    app_storage:
+        driver: local
+    app_database:
+        driver: local

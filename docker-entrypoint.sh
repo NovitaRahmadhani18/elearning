@@ -36,7 +36,8 @@ fi
 # Run migrations
 echo "Running database migrations..."
 cd /app
-php artisan migrate --force
+php artisan migrate
+echo "Database migrations completed."
 
 # Seed database if in development
 if [ "${APP_ENV:-local}" != "production" ]; then
