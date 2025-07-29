@@ -9,12 +9,18 @@
                     </div>
                     <div class="ml-6 flex space-x-4">
                         @foreach ($menu['userMenu'] as $item)
-                            <a href="{{ route($item->url) }}" @class([
-                                'space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:bg-primary-light hover:text-gray-900',
-                                'text-primary-dark' => in_array(
-                                    request()->route()->getName(),
-                                    $item->routes ?? []),
-                            ])>
+                            <a
+                                href="{{ route($item->url) }}"
+                                @class([
+                                    'space-x-1 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:bg-primary-light hover:text-gray-900',
+                                    'text-primary-dark' => in_array(
+                                        request()
+                                            ->route()
+                                            ->getName(),
+                                        $item->routes ?? [],
+                                    ),
+                                ])
+                            >
                                 <x-icon :name="$item->icon" class="ml-1 inline h-5 w-5" />
                                 <span>
                                     {{ $item->label }}
@@ -27,17 +33,19 @@
                     <button class="mr-4 text-gray-500">
                         <x-gmdi-notifications-o class="h-6 w-6" />
                     </button>
-                    <div class="flex items-center">
-                        <x-layouts.components.settings-dropdown />
-                    </div>
                     <div
-                        class="ml-4 flex items-center rounded-lg bg-gradient-to-r from-secondary/10 to-secondary/20 px-3 py-2 shadow-sm">
+                        class="ml-4 flex items-center rounded-lg bg-gradient-to-r from-secondary/10 to-secondary/20 px-3 py-2 shadow-sm"
+                    >
                         <x-gmdi-stars class="mr-2 h-5 w-5 text-secondary" />
                         <div class="flex flex-col">
                             <span class="text-xs text-gray-600">Points</span>
-                            <span
-                                class="text-sm font-bold text-secondary-dark">{{ number_format(auth()->user()->getPoints()) }}</span>
+                            <span class="text-sm font-bold text-secondary-dark">
+                                {{ number_format( auth()->user()->getPoints(),) }}
+                            </span>
                         </div>
+                    </div>
+                    <div class="flex items-center">
+                        <x-layouts.components.settings-dropdown />
                     </div>
                 </div>
             </div>
@@ -47,7 +55,7 @@
     <!-- Page Content -->
     <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <h1 class="mb-4 text-2xl font-semibold text-gray-900">
-            {{ $header ?? 'User Dashboard' }}
+            {{ $header ?? '' }}
         </h1>
         @if (session('success'))
             <div class="mb-4 rounded bg-green-100 p-4 text-green-800">

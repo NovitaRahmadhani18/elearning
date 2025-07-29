@@ -16,7 +16,7 @@
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="mb-4 md:mb-0">
                     <h2 class="mb-2 text-2xl font-bold">Continue Learning</h2>
-                    <h3 class="mb-2 text-xl">{{ $featuredClassroom->title }}</h3>
+                    <h3 class="mb-2 text-xl">{{ $featuredClassroom->fullTitle }}</h3>
                     <p class="mb-4 text-blue-100">
                         {{ $featuredClassroom->description ?? 'Keep up the great work!' }}
                     </p>

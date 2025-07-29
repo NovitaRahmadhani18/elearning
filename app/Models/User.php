@@ -188,6 +188,21 @@ class User extends Authenticatable
         return $this->quizSubmissions()->count();
     }
 
+    public function upcomingQuizzes()
+    {
+        // get all classrooms where the user is enrolled
+        $classrooms = $this->classrooms()
+            ->with('quizzes')
+            ->get();
+
+        // filter quizzes that are upcoming
+        return $classrooms->flatMap(function ($classroom) {
+            return $classroom->quizzes->filter(function ($quiz) {
+                return $quiz->end_time < now() && !$this->quizSubmissions()->where('quiz_id', $quiz->id)->exists();
+            });
+        })->sortBy('end_time');
+    }
+
     public function getClassroomProgress($classroomId)
     {
         // Get total contents in the classroom

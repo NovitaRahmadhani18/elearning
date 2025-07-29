@@ -28,6 +28,11 @@ class Classroom extends Model
         return $this->hasMany(Content::class, 'classroom_id');
     }
 
+    public function getFullTitleAttribute()
+    {
+        return $this->title . ' - ' . $this->category;
+    }
+
     public function quizzes()
     {
         return $this->hasManyThrough(Quiz::class, Content::class, 'classroom_id', 'id', 'id', 'contentable_id')

@@ -37,6 +37,39 @@ class DashboardController extends Controller
 
     public function userDashboard()
     {
-        return view('pages.user.dashboard');
+        $classrooms = auth()->user()->classrooms()
+            ->with([
+                'teacher',
+                'contents',
+                'quizzes',
+                'materials'
+            ])
+            ->withCount(['contents', 'quizzes', 'materials'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        foreach ($classrooms as $classroom) {
+            $realProgress = auth()->user()->getClassroomProgress($classroom->id);
+
+            // Update pivot table with real progress
+            auth()->user()->classrooms()->updateExistingPivot($classroom->id, [
+                'progress' => $realProgress
+            ]);
+
+            // Update the current object to reflect the new progress
+            $classroom->pivot->progress = $realProgress;
+        }
+
+        $classroomInProgress = $classrooms->filter(function ($classroom) {
+            return $classroom->pivot->progress < 100;
+        });
+
+        $classroomCompleted = $classrooms->filter(function ($classroom) {
+            return $classroom->pivot->progress >= 100;
+        });
+
+        $upcomingQuizzes = auth()->user()->upcomingQuizzes();
+
+        return view('pages.user.dashboard', compact('classrooms', 'classroomInProgress', 'classroomCompleted', 'upcomingQuizzes'));
     }
 }

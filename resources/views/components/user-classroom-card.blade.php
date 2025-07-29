@@ -56,7 +56,7 @@
                 class="block transition-colors group-hover:text-primary"
             >
                 <h3 class="mb-1 line-clamp-1 text-lg font-semibold text-gray-900">
-                    {{ $classroom->title }}
+                    {{ $classroom->fullTitle }}
                 </h3>
             </a>
 
