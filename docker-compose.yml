@@ -10,9 +10,6 @@ services:
             - "443:443"
             - "443:443/udp"
         volumes:
-            # Gunakan named volume agar data storage dan database tetap aman
-            - app_storage:/app/storage
-            - app_database:/app/database
             - caddy_data:/data
         env_file:
             - .env
