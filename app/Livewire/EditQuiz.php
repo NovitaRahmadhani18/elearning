@@ -46,6 +46,11 @@ class EditQuiz extends Component
     {
         $this->quiz = $quiz;
 
+        if ($quiz->start_time && $quiz->start_time->isPast()) {
+            session()->flash('error', 'Quiz cannot be edited as the start time is in the past.');
+            return $this->redirect(route('teacher.quizes.index'));
+        }
+
         if ($quiz->due_time && $quiz->due_time->isPast()) {
             session()->flash('error', 'Quiz cannot be edited as the due time is in the past.');
             return $this->redirect(route('teacher.quizes.index'));

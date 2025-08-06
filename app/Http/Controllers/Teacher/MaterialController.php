@@ -18,11 +18,21 @@ class MaterialController extends Controller
     public function index()
     {
         $materials = Material::query()
+            ->when(request('search'), function ($query, $search) {
+                return $query->where('title', 'like', "%{$search}%");
+            })
             ->with(['contents.classroom'])
-            ->latest()
-            ->paginate(10);
+            ->whereHas('contents.classroom', function ($query) {
+                $query->whereIn('classroom_id', auth()->user()->classrooms()->pluck('id'));
+            })
+            ->get();
 
-        return view('pages.teacher.material.index', compact('materials'));
+        // student engagement
+        $studentEngagement = ContentUser::query()
+            ->whereIn('content_id', $materials->pluck('contents')->flatten()->pluck('id'))
+            ->count();
+
+        return view('pages.teacher.material.index', compact('materials', 'studentEngagement'));
     }
 
     /**

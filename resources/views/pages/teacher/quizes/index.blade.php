@@ -1,5 +1,5 @@
 <x-layouts.teacher-layout>
-    <x-slot name="header">Quiz Management</x-slot>
+    <x-slot name="header">Quizzes Management</x-slot>
     <!-- Quiz Management -->
     <div class="mb-8 rounded-lg border border-primary/20 bg-white p-6">
         <div class="mb-6 flex items-center justify-between">
@@ -17,13 +17,23 @@
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <x-gmdi-search class="h-5 w-5 text-gray-400" />
             </div>
-            <input type="text"
-                class="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder-gray-500 focus:border-primary focus:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
-                placeholder="Search quizzes..." />
+            <form x-init x-target.replace="quizzes-grid">
+                <input
+                    type="text"
+                    type="search"
+                    name="search"
+                    id="search"
+                    autocomplete="off"
+                    @input.debounce="$el.form.requestSubmit()"
+                    @search="$el.form.requestSubmit()"
+                    class="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder-gray-500 focus:border-primary focus:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
+                    placeholder="Search..."
+                />
+            </form>
         </div>
 
         <!-- Quizzes Grid -->
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3" id="quizzes-grid">
             @forelse ($quizes as $quiz)
                 <x-quiz-card :quiz="$quiz" />
             @empty

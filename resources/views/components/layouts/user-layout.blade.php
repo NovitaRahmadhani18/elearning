@@ -5,7 +5,9 @@
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <!-- Logo -->
-                        <div class="flex items-center">LOGO</div>
+                        <div class="flex items-center">
+                            <img src="{{ asset('images/achievements/Logo SDB.png') }}" alt="Logo" class="h-12 w-12" />
+                        </div>
                     </div>
                     <div class="ml-6 flex space-x-4">
                         @foreach ($menu['userMenu'] as $item)
@@ -37,12 +39,9 @@
                         class="ml-4 flex items-center rounded-lg bg-gradient-to-r from-secondary/10 to-secondary/20 px-3 py-2 shadow-sm"
                     >
                         <x-gmdi-stars class="mr-2 h-5 w-5 text-secondary" />
-                        <div class="flex flex-col">
-                            <span class="text-xs text-gray-600">Points</span>
-                            <span class="text-sm font-bold text-secondary-dark">
-                                {{ number_format( auth()->user()->getPoints(),) }}
-                            </span>
-                        </div>
+                        <span class="text-sm font-bold text-secondary-dark">
+                            {{ number_format( auth()->user()->getPoints(),) }} Point
+                        </span>
                     </div>
                     <div class="flex items-center">
                         <x-layouts.components.settings-dropdown />
@@ -54,6 +53,9 @@
 
     <!-- Page Content -->
     <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <!-- Achievement Notification -->
+        <x-achievement-notification />
+
         <h1 class="mb-4 text-2xl font-semibold text-gray-900">
             {{ $header ?? '' }}
         </h1>

@@ -33,7 +33,14 @@ class MonitoringController extends Controller
             id: 'log-activity-table',
         );
 
-        return view('pages.admin.monitoring.index', compact('tableData'));
+        $dailyActiveUsers = Activity::query()
+            ->where('event', 'login')
+            ->whereDate('created_at', now())
+            ->distinct('causer_id')
+            ->count();
+
+
+        return view('pages.admin.monitoring.index', compact('tableData', 'dailyActiveUsers'));
     }
 
     /**

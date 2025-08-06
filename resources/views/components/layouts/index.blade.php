@@ -26,7 +26,7 @@
     </head>
 
     <body
-        class="bg-primary antialiased"
+        class="bg-hero-pattern antialiased"
         x-data="{
             notifications: [],
         }"

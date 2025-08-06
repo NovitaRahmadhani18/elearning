@@ -1,5 +1,5 @@
 <x-layouts.admin-layout>
-    <x-slot name="header">Class</x-slot>
+    <x-slot name="header">Classroom Management</x-slot>
     <!-- Header with Add Class Button -->
     <div class="mb-6 flex items-center justify-between">
         <h2 class="text-lg font-semibold text-gray-800">All Classes</h2>

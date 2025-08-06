@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use LevelUp\Experience\Concerns\GiveExperience;
+use LevelUp\Experience\Models\Achievement;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -29,8 +30,6 @@ class User extends Authenticatable
         'email',
         'password',
         'profile_photo_path',
-        'last_name',
-        'photo_profile_path',
         'is_active',
         'nomor_induk',
         'address',
@@ -232,5 +231,13 @@ class User extends Authenticatable
         ]);
 
         return $newProgress;
+    }
+
+    public function achievements()
+    {
+        return $this->belongsToMany(
+            Achievement::class,
+            'achievement_user'
+        )->withPivot('progress')->withTimestamps();
     }
 }

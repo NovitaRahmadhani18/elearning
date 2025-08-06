@@ -4,10 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Content;
-use App\Models\Material;
 use App\Models\Quiz;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class LeaderboardController extends Controller

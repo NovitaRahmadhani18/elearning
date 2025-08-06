@@ -16,6 +16,9 @@ class QuizesController extends Controller
     public function index()
     {
         $quizes = \App\Models\Quiz::query()
+            ->when(request('search'), function ($query, $search) {
+                return $query->where('title', 'like', "%{$search}%");
+            })
             ->with('classroom')
             ->latest()
             ->paginate(10);

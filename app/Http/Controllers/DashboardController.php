@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContentUser;
+use App\Services\AchievementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
+    public function __construct(protected AchievementService $achievementService) {}
+
+
     public function index()
     {
         return match (Auth::user()->getRoleNames()->first()) {
@@ -27,7 +32,11 @@ class DashboardController extends Controller
 
     public function adminDashboard()
     {
-        return view('pages.admin.dashboard');
+        $totalUsers = \App\Models\User::count();
+        $totalClassrooms = \App\Models\Classroom::count();
+        $totalCompletedContents = ContentUser::count();
+
+        return view('pages.admin.dashboard', compact('totalUsers', 'totalClassrooms', 'totalCompletedContents'));
     }
 
     public function teacherDashboard()
@@ -70,6 +79,14 @@ class DashboardController extends Controller
 
         $upcomingQuizzes = auth()->user()->upcomingQuizzes();
 
-        return view('pages.user.dashboard', compact('classrooms', 'classroomInProgress', 'classroomCompleted', 'upcomingQuizzes'));
+        $achievements = $this->achievementService->getUserAchievements(auth()->user());
+
+        return view('pages.user.dashboard', compact(
+            'classrooms',
+            'classroomInProgress',
+            'classroomCompleted',
+            'upcomingQuizzes',
+            'achievements'
+        ));
     }
 }

@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\QuizSubmission;
+use App\Observers\QuizSubmissionObserver;
+use App\Services\AchievementService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register AchievementService as singleton
+        $this->app->singleton(AchievementService::class, function ($app) {
+            return new AchievementService();
+        });
     }
 
     /**
@@ -19,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register model observers
+        QuizSubmission::observe(QuizSubmissionObserver::class);
+
         // mengambil menu dari file JSON
         $adminMenu = json_decode(file_get_contents(base_path('resources/menu/admin.json')));
         $teacherMenu = json_decode(file_get_contents(base_path('resources/menu/teacher.json')));

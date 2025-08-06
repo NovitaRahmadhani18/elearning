@@ -73,13 +73,6 @@
             </div>
             <h3 class="mb-2 text-lg font-medium text-gray-900">No Classrooms Yet</h3>
             <p class="mb-6 text-gray-500">Join your first classroom to start learning!</p>
-            <a
-                href="{{ route('user.classroom.join.form', ['classroom' => 'demo']) }}"
-                class="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-medium text-white transition-colors hover:bg-primary-dark"
-            >
-                <x-gmdi-add class="mr-2 h-4 w-4" />
-                Join Classroom
-            </a>
         </div>
     @endif
 </x-layouts.user-layout>

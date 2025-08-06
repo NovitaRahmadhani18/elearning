@@ -2,8 +2,8 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <div class="text-center mb-8">
-        <h1 class="text-2xl font-bold text-gray-800 mb-2">Welcome back</h1>
+    <div class="mb-8 text-center">
+        <h1 class="mb-2 text-2xl font-bold text-gray-800">Welcome back</h1>
         <p class="text-gray-600">Please enter your details to sign in</p>
     </div>
 
@@ -13,7 +13,16 @@
         <!-- Email Address -->
         <div class="mb-6">
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            <x-text-input
+                id="email"
+                class="mt-1 block w-full"
+                type="email"
+                name="email"
+                :value="old('email')"
+                required
+                autofocus
+                autocomplete="username"
+            />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
@@ -25,14 +34,17 @@
         </div>
 
         <!-- Remember Me and Forgot Password -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="mb-6 flex items-center justify-between">
             <label for="remember_me" class="inline-flex items-center">
                 <x-checkbox id="remember_me" name="remember" />
                 <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
             </label>
 
             @if (Route::has('password.request'))
-                <a class="text-sm text-primary hover:text-primary-dark focus:outline-none focus:underline" href="{{ route('password.request') }}">
+                <a
+                    class="text-sm text-primary-dark hover:text-primary-dark focus:underline focus:outline-none"
+                    href="{{ route('password.request') }}"
+                >
                     {{ __('Forgot password') }}
                 </a>
             @endif
@@ -43,8 +55,11 @@
         </x-primary-button>
 
         @if (Route::has('register'))
-            <div class="text-center mt-6">
-                <a href="{{ route('register') }}" class="text-sm text-gray-600 hover:text-primary focus:outline-none focus:underline">
+            <div class="mt-6 text-center">
+                <a
+                    href="{{ route('register') }}"
+                    class="text-sm text-gray-600 hover:text-primary focus:underline focus:outline-none"
+                >
                     {{ __('Create an account') }}
                 </a>
             </div>

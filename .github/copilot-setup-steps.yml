@@ -1,0 +1,29 @@
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, dom, fileinfo, mysql, zip, bcmath, gd, intl
+          ini-values: post_max_size=256M, upload_max_filesize=256M, memory_limit=512M
+          coverage: none
+
+      - name: Install Laravel Installer globally
+        run: composer global require laravel/installer
+
+      - name: Verify Laravel installation
+        run: laravel --version

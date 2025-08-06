@@ -2,7 +2,13 @@
     <div class="flex h-screen">
         <!-- Sidebar -->
         <div class="hidden min-h-screen w-72 border-r border-r-primary-dark bg-primary-light md:block">
-            <div class="h-16 border-b border-b-primary-dark"></div>
+            <div class="flex h-16 items-center space-x-2 border-b border-b-primary-dark p-2">
+                <img src="{{ asset('images/achievements/Logo SDB.png') }}" alt="Logo" class="h-12 w-12" />
+                <div class="flex flex-col">
+                    <h1 class="font-semibold">E-Learning</h1>
+                    <h2>Sekolah Darma Bangsa</h2>
+                </div>
+            </div>
             <div class="mt-4 space-y-1 px-4">
                 @foreach ($menu['teacherMenu'] as $item)
                     <x-sidebar-link

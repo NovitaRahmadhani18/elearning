@@ -17,6 +17,10 @@ export default {
             fontFamily: {
                 sans: ["Poppins", "Figtree", ...defaultTheme.fontFamily.sans],
             },
+            backgroundImage: {
+                "hero-pattern": "url('/resources/images/pattern.png')",
+                school: "url('/resources/images/Gambar SDB.png')",
+            },
             colors: {
                 primary: {
                     DEFAULT: "#bbe9fe", // Blue from logo

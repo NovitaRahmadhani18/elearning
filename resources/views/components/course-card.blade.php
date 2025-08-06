@@ -4,7 +4,7 @@
 
 <div class="mb-4 rounded-lg bg-white p-4">
     <div class="flex items-start">
-        <div class="mr-4 h-16 w-16 rounded-md bg-gray-200">
+        <div class="mr-4 h-16 w-16 rounded-md bg-secondary-light">
             @if ($classroom->thumbnail_path)
                 <img
                     src="{{ Storage::url($classroom->thumbnail_path) }}"

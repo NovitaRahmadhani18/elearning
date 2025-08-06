@@ -1,6 +1,6 @@
 [
     {
-        "label": "Material Creation",
+        "label": "Material Manaegement",
         "url": "teacher.material.index",
         "icon": "fas-book-open",
         "routes": [
@@ -11,7 +11,7 @@
         ]
     },
     {
-        "label": "Quizes",
+        "label": "Quizzes Management",
         "url": "teacher.quizes.index",
         "icon": "fas-list",
         "routes": ["teacher.quizes.index", "teacher.quizes.create", "teacher.quizes.edit", "teacher.quizes.show"]

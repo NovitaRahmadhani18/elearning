@@ -12,7 +12,9 @@ class LencanaController extends Controller
      */
     public function index()
     {
-        return view('pages.user.lencana.index');
+        return view('pages.user.lencana.index', [
+            'component' => 'user-achievements'
+        ]);
     }
 
     /**

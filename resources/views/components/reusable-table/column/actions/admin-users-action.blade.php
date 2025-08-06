@@ -11,7 +11,7 @@
         action="{{ route('admin.users.destroy', $value) }}"
         method="post"
         x-target="user-management-table"
-        @ajax:before="confirm('Are you sure?') || $event.preventDefault()"
+        @ajax:before="confirm('Are you sure to delete this user?') || $event.preventDefault()"
     >
         @csrf
         @method('DELETE')

@@ -22,8 +22,8 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="flex min-h-screen flex-col items-center justify-center bg-primary">
+    <body class="bg-school font-sans text-gray-900 antialiased">
+        <div class="flex min-h-screen flex-col items-center justify-center bg-black/50">
             <div class="w-full overflow-hidden bg-white px-8 py-8 shadow-md sm:max-w-md sm:rounded-lg">
                 {{ $slot }}
             </div>

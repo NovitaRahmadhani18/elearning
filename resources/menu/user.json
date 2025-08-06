@@ -18,7 +18,7 @@
         "routes": ["user.leaderboard.index"]
     },
     {
-        "label": "Lencana",
+        "label": "Achievements",
         "url": "user.lencana.index",
         "icon": "fas-award",
         "routes": ["user.lencana.index", "user.lencana.create", "user.lencana.edit"]

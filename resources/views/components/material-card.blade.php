@@ -1,12 +1,21 @@
-@props(['material'])
+@props([
+    'material',
+])
 
-<div class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:border-secondary/30"
-    x-init id="material-{{ $material->id }}">
+<div
+    class="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:border-secondary/30 hover:shadow-md"
+    x-init
+    id="material-{{ $material->id }}"
+>
     <!-- Material Thumbnail -->
-    <div class="relative h-40 bg-gradient-to-br from-secondary-light to-secondary/30 overflow-hidden">
-        @if (!empty($material->thumbnailUrl))
-            <img src="{{ $material->thumbnailUrl }}" alt="{{ $material->title }}" class="h-full w-full object-cover"
-                loading="lazy" />
+    <div class="relative h-40 overflow-hidden bg-gradient-to-br from-secondary-light to-secondary/30">
+        @if (! empty($material->thumbnailUrl))
+            <img
+                src="{{ $material->thumbnailUrl }}"
+                alt="{{ $material->title }}"
+                class="h-full w-full object-cover"
+                loading="lazy"
+            />
         @else
             <div class="flex h-full items-center justify-center">
                 <x-gmdi-description class="h-16 w-16 text-secondary/50" />
@@ -14,9 +23,10 @@
         @endif
 
         <!-- Material Type Badge -->
-        <div class="absolute top-3 right-3">
+        <div class="absolute right-3 top-3">
             <span
-                class="inline-flex items-center rounded-full bg-secondary px-2 py-1 text-xs font-medium text-gray-800">
+                class="inline-flex items-center rounded-full bg-secondary px-2 py-1 text-xs font-medium text-gray-800"
+            >
                 <x-gmdi-book class="mr-1 h-3 w-3" />
                 Material
             </span>
@@ -26,10 +36,18 @@
     <!-- Material Content -->
     <div class="flex flex-1 flex-col p-4">
         <!-- Title -->
-        <a href="{{ route('teacher.material.show', $material->id) }}"
-            class="mb-2 block font-semibold text-gray-800 transition-colors hover:text-secondary">
+        <a
+            href="{{ route('teacher.material.show', $material->id) }}"
+            class="mb-2 block font-semibold text-gray-800 transition-colors hover:text-secondary"
+        >
             {{ Str::limit($material->title, 50) }}
         </a>
+
+        <!-- Points -->
+        <div class="flex items-center text-xs text-secondary-dark">
+            <x-gmdi-stars class="mr-1 h-3 w-3" />
+            <span>{{ $material->points ?? 10 }} pts</span>
+        </div>
 
         <!-- Classroom Info -->
         @if ($material->classroom)
@@ -40,7 +58,8 @@
                 </div>
                 @if ($material->classroom->category)
                     <span
-                        class="inline-flex items-center rounded-full bg-secondary/20 px-2 py-1 text-xs font-medium text-secondary-dark">
+                        class="inline-flex items-center rounded-full bg-secondary/20 px-2 py-1 text-xs font-medium text-secondary-dark"
+                    >
                         {{ $material->classroom->category }}
                     </span>
                 @endif
@@ -49,8 +68,10 @@
 
         <!-- Description Preview -->
         @if ($material->description)
-            <p class="mb-3 text-sm text-gray-500 overflow-hidden"
-                style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+            <p
+                class="mb-3 overflow-hidden text-sm text-gray-500"
+                style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical"
+            >
                 {{ Str::limit(strip_tags($material->description), 80) }}
             </p>
         @endif
@@ -64,34 +85,37 @@
                     <x-gmdi-update class="mr-1 h-3 w-3" />
                     <span>{{ $material->updated_at->diffForHumans() }}</span>
                 </div>
-
-                <!-- Points -->
-                <div class="flex items-center text-xs text-secondary-dark">
-                    <x-gmdi-stars class="mr-1 h-3 w-3" />
-                    <span>{{ $material->points ?? 10 }} pts</span>
-                </div>
             </div>
 
             <!-- Actions -->
             <div class="flex items-center space-x-1">
                 <!-- Edit Button -->
-                <a href="{{ route('teacher.material.edit', $material->id) }}"
+                <a
+                    href="{{ route('teacher.material.edit', $material->id) }}"
                     class="flex items-center justify-center rounded-lg bg-secondary/20 px-3 py-1.5 text-sm font-medium text-secondary-dark transition-colors hover:bg-secondary/30 hover:text-secondary-dark"
-                    title="Edit Material">
+                    title="Edit Material"
+                >
                     <x-gmdi-edit class="mr-1 h-4 w-4" />
                     <span>Edit</span>
                 </a>
 
                 <!-- Delete Button -->
-                <form action="{{ route('teacher.material.destroy', $material->id) }}" method="POST" x-init
-                    x-target='material-{{ $material->id }}' class="inline-block">
+                <form
+                    action="{{ route('teacher.material.destroy', $material->id) }}"
+                    method="POST"
+                    x-init
+                    x-target='material-{{ $material->id }}'
+                    class="inline-block"
+                >
                     @csrf
                     @method('DELETE')
 
-                    <button type="submit"
+                    <button
+                        type="submit"
                         class="flex items-center justify-center rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100 hover:text-red-700"
                         title="Delete Material"
-                        onclick="return confirm('Are you sure you want to delete this material?')">
+                        onclick="return confirm('Are you sure you want to delete this material?')"
+                    >
                         <x-gmdi-delete class="mr-1 h-4 w-4" />
                         <span>Delete</span>
                     </button>

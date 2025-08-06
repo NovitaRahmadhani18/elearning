@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Models\Classroom;
+use App\Models\ClassroomStudent;
+use App\Models\ContentUser;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -12,7 +15,53 @@ class StudentController extends Controller
      */
     public function index()
     {
-        return view('pages.teacher.student.index');
+
+        // count all student in the classroom that the teacher is teaching
+        $studentCount = auth()->user()->classrooms()
+            ->withCount('students')
+            ->get()
+            ->sum('students_count');
+
+        // get all count contents in the classroom that the teacher is teaching
+        $contentCount = auth()->user()->classrooms()
+            ->withCount('contents')
+            ->get()
+            ->sum('contents_count');
+
+        // get all completed contents by students in the classroom that the teacher is teaching
+        $contentUserCount = ContentUser::query()
+            ->whereHas('content', function ($query) {
+                $query->whereIn('classroom_id', auth()->user()->classrooms()->pluck('id'));
+            })
+            ->count();
+
+        // then get rate of completed contents by students
+        $completionRate = $contentCount > 0 ? ($contentUserCount / $contentCount) * 100 : 0;
+
+        // classrooms ids that the teacher is teaching
+        $classroomIds = auth()->user()->classrooms()->pluck('id');
+
+        $query = ClassroomStudent::query()
+            ->with(['user', 'classroom'])
+            ->whereIn('classroom_id', $classroomIds)
+            ->select('classroom_user.*')
+            ->latest();
+
+        $tableData = \App\CustomClasses\TableData::make(
+            $query,
+            [
+                \App\CustomClasses\Column::make('user.name', 'student name'),
+                \App\CustomClasses\Column::make('classroom.title', 'classroom'),
+                \App\CustomClasses\Column::make('progress', 'progress')
+                    ->setView('reusable-table.column.progress'),
+                \App\CustomClasses\Column::make('progress', 'completion')
+                    ->setView('reusable-table.column.completion'),
+            ],
+            perPage: request('perPage', 10),
+            id: 'student-content-table',
+        );
+
+        return view('pages.teacher.student.index', compact('studentCount', 'contentCount', 'contentUserCount', 'completionRate', 'tableData'));
     }
 
     /**

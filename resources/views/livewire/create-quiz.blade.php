@@ -177,7 +177,7 @@
                             <button
                                 type="button"
                                 wire:click="addOption({{ $qIndex }})"
-                                class="ml-6 text-sm text-primary hover:underline"
+                                class="ml-6 text-sm text-primary-dark hover:underline"
                             >
                                 Add Option
                             </button>
