@@ -33,7 +33,7 @@
                     />
                     <button
                         type="submit"
-                        class="w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-primary-dark"
+                        class="w-full rounded-md bg-primary-dark px-4 py-2 text-white hover:bg-primary-dark"
                     >
                         Join Classroom
                     </button>

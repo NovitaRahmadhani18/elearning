@@ -13,12 +13,13 @@ use Illuminate\Support\Facades\Storage;
 use LevelUp\Experience\Concerns\GiveExperience;
 use LevelUp\Experience\Models\Achievement;
 use Spatie\Activitylog\Models\Activity;
+use Spatie\Activitylog\Traits\CausesActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, GiveExperience;
+    use HasFactory, Notifiable, HasRoles, GiveExperience, CausesActivity;
 
     /**
      * The attributes that are mass assignable.

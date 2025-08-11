@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Classroom;
+use App\Models\ClassroomStudent;
+use App\Models\ContentUser;
 use App\Models\Material;
 use App\Models\Quiz;
 use Illuminate\Http\Request;
@@ -88,7 +90,11 @@ class ClassroomController extends Controller
         }
 
         // Enroll user in the classroom
-        auth()->user()->classrooms()->attach($classroom);
+        /* auth()->user()->classrooms()->attach($classroom); */
+        ClassroomStudent::create([
+            'user_id' => auth()->id(),
+            'classroom_id' => $classroom->id,
+        ]);
 
         return to_route('user.classroom.show', $classroom)
             ->with('success', 'You have successfully joined the classroom.');
@@ -151,12 +157,19 @@ class ClassroomController extends Controller
             auth()->user()->addPoints($pointsToAward);
 
             // Mark the content as completed with leaderboard data
-            auth()->user()->completedContents()->syncWithoutDetaching([
-                $currentContent->id => [
-                    'completion_time' => $completionTime,
-                    'points_earned' => $pointsToAward,
-                    'score' => null // Materials don't have scores
-                ]
+            /* auth()->user()->completedContents()->syncWithoutDetaching([ */
+            /*     $currentContent->id => [ */
+            /*         'completion_time' => $completionTime, */
+            /*         'points_earned' => $pointsToAward, */
+            /*         'score' => null // Materials don't have scores */
+            /*     ] */
+            /* ]); */
+            ContentUser::create([
+                'user_id' => auth()->id(),
+                'content_id' => $currentContent->id,
+                'completion_time' => $completionTime,
+                'points_earned' => $pointsToAward,
+                'score' => $pointsToAward // Use points as score for leaderboard
             ]);
 
             // Update classroom progress

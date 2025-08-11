@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
+#[ObservedBy(\App\Observers\QuizSubmissionObserver::class)]
 class QuizSubmission extends Model
 {
+    use LogsActivity;
     protected $fillable = [
         'quiz_id',
         'user_id',
@@ -65,4 +70,22 @@ class QuizSubmission extends Model
         }
         return 'In Progress';
     }
-} 
+
+    /**
+     * Configure activity logging options
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['score', 'total_questions', 'correct_answers', 'time_spent', 'is_completed'])
+            ->logOnlyDirty()
+            ->useLogName('quiz_completion')
+            ->setDescriptionForEvent(fn(string $eventName) => match ($eventName) {
+                'created' => 'Quiz submission started',
+                'updated' => $this->is_completed ? 'Quiz completed' : 'Quiz submission updated',
+                'deleted' => 'Quiz submission deleted',
+                default => "Quiz submission {$eventName}"
+            })
+            ->dontSubmitEmptyLogs();
+    }
+}

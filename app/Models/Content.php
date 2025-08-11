@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class Content extends Model
 {
+    use LogsActivity;
+
     protected $table = 'contentable';
     protected $guarded = [];
 
@@ -33,5 +38,23 @@ class Content extends Model
             return false;
         }
         return $this->completedByUser()->where('user_id', $user->id)->exists();
+    }
+
+    /**
+     * Configure activity logging options
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['title', 'contentable_type', 'contentable_id', 'classroom_id'])
+            ->logOnlyDirty()
+            ->useLogName('material_completion')
+            ->setDescriptionForEvent(fn(string $eventName) => match ($eventName) {
+                'created' => 'Content created',
+                'updated' => 'Content updated',
+                'deleted' => 'Content deleted',
+                default => "Content {$eventName}"
+            })
+            ->dontSubmitEmptyLogs();
     }
 }

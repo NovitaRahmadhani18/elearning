@@ -17,10 +17,30 @@ class ClassroomController extends Controller
      */
     public function index()
     {
-        $classrooms = \App\Models\Classroom::orderBy('created_at', 'desc')
+        $query = \App\Models\Classroom::query()
+            ->orderBy('created_at', 'desc')
             ->with(['teacher'])
-            ->withCount(['students', 'contents', 'quizzes', 'materials'])
-            ->get();
+            ->withCount(['students', 'contents', 'quizzes', 'materials']);
+
+        // Add simple search functionality
+        if (request('search')) {
+            $search = request('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('category', 'like', "%{$search}%")
+                    ->orWhereHas('teacher', function ($teacherQuery) use ($search) {
+                        $teacherQuery->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $classrooms = $query->get();
+
+        // Return partial view for AJAX requests
+        if (request()->header('X-Alpine-Request') || request()->ajax()) {
+            return view('pages.admin.classroom.partials.classroom-grid', compact('classrooms'))->render();
+        }
 
         return view('pages.admin.classroom.index', compact('classrooms'));
     }

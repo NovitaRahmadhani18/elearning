@@ -37,7 +37,7 @@ class UserAchievements extends Component
     public function loadStats()
     {
         $user = auth()->user();
-        
+
         $this->stats = [
             'total_achievements' => count($this->achievements),
             'unlocked_achievements' => count(array_filter($this->achievements, fn($a) => $a['unlocked'])),
@@ -50,3 +50,4 @@ class UserAchievements extends Component
         return view('livewire.user-achievements');
     }
 }
+

@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 
+
+#[ObservedBy(\App\Observers\ClassroomActivityObserver::class)]
 class ClassroomStudent extends Model
 {
     protected $table = 'classroom_user';
