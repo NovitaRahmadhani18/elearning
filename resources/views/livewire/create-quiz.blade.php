@@ -209,8 +209,8 @@
                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
                 >
                     <option value="" disabled>Select a course</option>
-                    @foreach ($classrooms as $id => $classroom)
-                        <option value="{{ $id }}">{{ $classroom }}</option>
+                    @foreach ($classrooms as $classroom)
+                        <option value="{{ $classroom['id'] }}">{{ $classroom['title'] }}</option>
                     @endforeach
                 </select>
                 @error('classroom_id')

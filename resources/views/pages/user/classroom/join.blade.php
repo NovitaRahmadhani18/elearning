@@ -3,7 +3,7 @@
     <div class="mb-8 rounded-lg bg-white p-6 shadow-sm">
         <div class="flex">
             <!-- Course Image Placeholder -->
-            <div class="mr-6 h-28 w-28 flex-shrink-0 rounded-lg bg-gray-300">
+            <div class="mr-6 h-28 w-28 flex-shrink-0 rounded-lg bg-secondary-light">
                 @if ($classroom->imageUrl)
                     <img
                         src="{{ $classroom->imageUrl }}"

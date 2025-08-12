@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
         activity()
             ->causedBy(Auth::user())
             ->event('login')
-            ->log('User logged in');
+            ->log('logged in');
 
         return redirect()->intended(route('dashboard', absolute: false));
     }

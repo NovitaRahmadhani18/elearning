@@ -40,8 +40,15 @@ class MaterialController extends Controller
      */
     public function create()
     {
-        $classrooms = auth()->user()->classrooms()
-            ->pluck('title', 'id');
+        $classrooms = Classroom::query()
+            ->where('teacher_id', auth()->id())
+            ->get()
+            ->map(function ($classroom) {
+                return [
+                    'id' => $classroom->id,
+                    'title' => $classroom->full_title,
+                ];
+            });
 
         return view('pages.teacher.material.create', compact('classrooms'));
     }

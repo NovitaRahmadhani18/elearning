@@ -31,7 +31,7 @@ class CreateQuiz extends Component
 
     public $custom_time_limit = false;
 
-    #[Validate('required|date|after_or_equal:now')]
+    #[Validate('required|date')]
     public $start_time = '';
 
     #[Validate('required|date|after_or_equal:start_time')]
@@ -51,7 +51,15 @@ class CreateQuiz extends Component
 
     public function mount()
     {
-        $this->classrooms = Classroom::pluck('title', 'id')->toArray();
+        $this->classrooms = Classroom::query()
+            ->where('teacher_id', auth()->id())
+            ->get()
+            ->map(function ($classroom) {
+                return [
+                    'id' => $classroom->id,
+                    'title' => $classroom->full_title,
+                ];
+            })->toArray();
         $this->start_time = now()->format('Y-m-d\TH:i');
 
         // Initialize with one default question

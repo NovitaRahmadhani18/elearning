@@ -38,6 +38,8 @@ class StudentController extends Controller
         // then get rate of completed contents by students
         $completionRate = $contentCount > 0 ? ($contentUserCount / $contentCount) * 100 : 0;
 
+        $completionRate = $completionRate > 0 ? round($completionRate, 2) : 0;
+
         // classrooms ids that the teacher is teaching
         $classroomIds = auth()->user()->classrooms()->pluck('id');
 

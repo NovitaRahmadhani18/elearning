@@ -6,6 +6,7 @@ use App\Models\ContentUser;
 use App\Services\AchievementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Models\Activity;
 
 class DashboardController extends Controller
 {
@@ -36,7 +37,13 @@ class DashboardController extends Controller
         $totalClassrooms = \App\Models\Classroom::count();
         $totalCompletedContents = ContentUser::count();
 
-        return view('pages.admin.dashboard', compact('totalUsers', 'totalClassrooms', 'totalCompletedContents'));
+        $activities = Activity::query()
+            ->with('causer', 'subject')
+            ->latest()
+            ->take(10)
+            ->get();
+
+        return view('pages.admin.dashboard', compact('totalUsers', 'totalClassrooms', 'totalCompletedContents', 'activities'));
     }
 
     public function teacherDashboard()

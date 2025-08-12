@@ -25,9 +25,15 @@
         <h2 class="mb-4 text-lg font-semibold text-gray-800">Recent Activities</h2>
 
         <div class="border-t border-gray-100">
-            <x-activity-item user="Sarah" action="completed Teknologi Informasi" time="2 hours ago" />
-            <x-activity-item user="Sarah" action="completed Teknologi Informasi" time="2 hours ago" />
-            <x-activity-item user="Sarah" action="completed Teknologi Informasi" time="2 hours ago" />
+            @forelse ($activities as $activity)
+                <x-activity-item
+                    :user="$activity?->causer"
+                    :action="$activity->description"
+                    :time="$activity->created_at->diffForHumans()"
+                />
+            @empty
+                <p class="text-gray-500">No recent activities found.</p>
+            @endforelse
         </div>
     </div>
 </x-layouts.admin-layout>
