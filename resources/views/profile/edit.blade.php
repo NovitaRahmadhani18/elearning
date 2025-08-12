@@ -23,7 +23,7 @@
                             </p>
                         </div>
                         <a
-                            href="{{ route('dashboard') }}"
+                            href="{{ route('profile.show') }}"
                             class="flex items-center gap-2 rounded-lg bg-white/60 px-3 py-2 text-sm text-neutral-600 hover:bg-white/80 hover:text-neutral-800"
                         >
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

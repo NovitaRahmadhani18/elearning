@@ -68,6 +68,11 @@ class StartQuiz extends Component
                 'is_completed' => false
             ]);
 
+            // Backfill started_at if missing (legacy data)
+            if (empty($this->submission->started_at)) {
+                $this->submission->forceFill(['started_at' => now()])->save();
+            }
+
             // Check if already completed
             if ($this->submission->is_completed) {
                 $this->isCompleted = true;
@@ -141,9 +146,10 @@ class StartQuiz extends Component
         }
 
         try {
-            // Calculate final time spent
-            $this->totalTimeSpent = $this->submission->started_at ?
-                now()->diffInSeconds($this->submission->started_at) : 0;
+            // Calculate final time spent using safe start timestamp
+            $start = $this->submission->started_at ?: $this->submission->created_at;
+            $elapsed = $start ? now()->diffInSeconds($start) : 0;
+            $this->totalTimeSpent = $start ? max(1, $elapsed) : 0;
 
             // Calculate score using the formula: (quiz_points / total_questions) * correct_answers
             $finalScore = ($this->quiz->points / count($this->questions)) * $this->correctAnswers;
@@ -158,6 +164,9 @@ class StartQuiz extends Component
                 'score' => $finalScore,
                 'answers' => $this->userAnswers
             ]);
+
+            // Refresh to ensure accessors reflect updated values
+            $this->submission->refresh();
 
             // Mark content as completed and award points
             $content = $this->quiz->contents()->where('classroom_id', $this->classroom->id)->first();

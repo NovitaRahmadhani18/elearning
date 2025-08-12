@@ -21,9 +21,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [App\Http\Controllers\DashboardController::class, 'index'])->name('welcome');
     Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'dashboard'])->name('dashboard');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Replace legacy profile routes with singleton resource routes
+    Route::singleton('profile', ProfileController::class);
 
     // Notification Routes
     Route::prefix('notifications')->name('notifications.')->group(function () {

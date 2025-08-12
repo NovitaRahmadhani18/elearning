@@ -115,7 +115,7 @@
                         </div>
                     </div>
                     <div class="mt-3 space-y-1 px-2">
-                        <a href="{{ route('profile.edit') }}" @click="mobileMenuOpen = false"
+                        <a href="{{ route('profile.show') }}" @click="mobileMenuOpen = false"
                             class="block rounded-md px-3 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900">
                             Profile
                         </a>

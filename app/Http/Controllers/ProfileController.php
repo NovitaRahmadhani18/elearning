@@ -13,6 +13,33 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     /**
+     * Show profile preview page.
+     */
+    public function show(Request $request): View
+    {
+        $user = $request->user();
+
+        // Role-agnostic, general stats only
+        $stats = [
+            'classrooms' => $user->classrooms()->count(),
+            'last_login' => $user->last_login,
+            'email_verified' => (bool) $user->email_verified_at,
+        ];
+
+        $recentActivities = \Spatie\Activitylog\Models\Activity::query()
+            ->where('causer_id', $user->id)
+            ->latest()
+            ->limit(5)
+            ->get(['id', 'description', 'created_at']);
+
+        return view('profile.show', [
+            'user' => $user,
+            'stats' => $stats,
+            'recentActivities' => $recentActivities,
+        ]);
+    }
+
+    /**
      * Display the user's profile form.
      */
     public function edit(Request $request): View
@@ -60,7 +87,8 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // Redirect to preview page after update
+        return Redirect::route('profile.show')->with('status', 'profile-updated');
     }
 
     /**

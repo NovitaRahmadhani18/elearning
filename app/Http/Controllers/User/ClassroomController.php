@@ -238,8 +238,8 @@ class ClassroomController extends Controller
         try {
             DB::transaction(function () use ($submission, $quiz, $classroom) {
                 // Calculate final time spent
-                $totalTimeSpent = $submission->started_at ?
-                    now()->diffInSeconds($submission->started_at) : 0;
+                $elapsed = $submission->started_at ? now()->diffInSeconds($submission->started_at) : 0;
+                $totalTimeSpent = $submission->started_at ? max(1, $elapsed) : 0;
 
                 // Get user answers from submission
                 $userAnswers = $submission->answers ?? [];

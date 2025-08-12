@@ -58,9 +58,14 @@ class QuizSubmission extends Model
 
     public function getTimeSpentFormattedAttribute(): string
     {
-        $minutes = floor($this->time_spent / 60);
-        $seconds = $this->time_spent % 60;
-        return sprintf('%02d:%02d', $minutes, $seconds);
+        $seconds = max(0, (int) $this->time_spent);
+        if ($seconds === 0 && $this->started_at && $this->completed_at) {
+            // Fallback: derive from timestamps if time_spent wasn't persisted
+            $seconds = max(0, $this->completed_at->diffInSeconds($this->started_at));
+        }
+        $minutes = intdiv($seconds, 60);
+        $remainder = $seconds % 60;
+        return sprintf('%02d:%02d', $minutes, $remainder);
     }
 
     public function getStatusAttribute(): string

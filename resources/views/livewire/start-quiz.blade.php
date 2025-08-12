@@ -1,5 +1,6 @@
-<div class="min-h-screen w-full bg-slate-900 p-2" x-data="quizHandler()" x-init="init()">
-    @if (! $isCompleted)
+<div class="min-h-screen w-full bg-slate-900 p-2"
+    @if (!$isCompleted) x-data="quizHandler()" x-init="init()" @endif>
+    @if (!$isCompleted)
         {{-- header --}}
         <div class="mb-8 border border-slate-700 bg-slate-800/50 p-6 text-white lg:rounded-2xl">
             <div class="mb-4 flex items-center justify-between">
@@ -14,14 +15,12 @@
                 </div>
 
                 @if ($quiz->time_limit > 0)
-                    <div
-                        class="timer-container rounded-lg px-4 py-2 transition-all duration-300"
+                    <div class="timer-container rounded-lg px-4 py-2 transition-all duration-300"
                         :class="{
                             'bg-red-500/90': timeRemaining <= 60,
                             'bg-yellow-500/90': timeRemaining > 60 && timeRemaining <= 300,
                             'bg-slate-700/40': timeRemaining > 300
-                        }"
-                    >
+                        }">
                         <div class="flex items-center justify-center gap-2">
                             <x-gmdi-schedule class="h-5 w-5 text-white" />
                             <div class="text-xl font-bold text-white">
@@ -35,13 +34,12 @@
             <!-- Progress Bar -->
             <div class="h-3 w-full rounded-full bg-slate-700/50">
                 @php
-                    $progressPercentage = count($questions) > 0 ? round(($currentQuestionIndex / count($questions)) * 100) : 0;
+                    $progressPercentage =
+                        count($questions) > 0 ? round(($currentQuestionIndex / count($questions)) * 100) : 0;
                 @endphp
 
-                <div
-                    class="h-3 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-300 ease-out"
-                    style="width: {{ $progressPercentage }}%"
-                ></div>
+                <div class="h-3 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-300 ease-out"
+                    style="width: {{ $progressPercentage }}%"></div>
             </div>
             <div class="mt-2 flex justify-between text-sm text-white/80">
                 <span>Question {{ $currentQuestionIndex + 1 }} of {{ count($questions) }}</span>
@@ -49,18 +47,15 @@
             </div>
         </div>
 
-        @if (! empty($currentQuestion))
+        @if (!empty($currentQuestion))
             {{-- quiz content --}}
             <div class="mb-8 text-center">
                 <h2 class="mb-4 text-2xl font-bold text-white">{{ $currentQuestion['question_text'] }}</h2>
 
-                @if (! empty($currentQuestion['image_path']))
+                @if (!empty($currentQuestion['image_path']))
                     <div class="mb-6">
-                        <img
-                            src="{{ Storage::url($currentQuestion['image_path']) }}"
-                            alt="Question Image"
-                            class="mx-auto h-auto max-h-64 max-w-full rounded-lg object-contain shadow-lg"
-                        />
+                        <img src="{{ Storage::url($currentQuestion['image_path']) }}" alt="Question Image"
+                            class="mx-auto h-auto max-h-64 max-w-full rounded-lg object-contain shadow-lg" />
                     </div>
                 @endif
             </div>
@@ -68,25 +63,18 @@
             <!-- Answer Options -->
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:px-16">
                 @foreach ($currentQuestion['options'] as $index => $option)
-                    <button
-                        wire:click="selectAnswer({{ $option['id'] }})"
-                        wire:loading.class="cursor-wait opacity-75"
-                        wire:loading.attr="disabled"
-                        class="transform rounded-2xl border-2 border-slate-600 bg-slate-700/20 p-6 text-left transition-all duration-300 hover:border-slate-500 hover:bg-slate-600/30 focus:outline-none focus:ring-4 focus:ring-slate-500/50"
-                    >
+                    <button x-on:click.once="tryEnterFullscreen()" wire:click="selectAnswer({{ $option['id'] }})"
+                        wire:loading.class="cursor-wait opacity-75" wire:loading.attr="disabled"
+                        class="transform rounded-2xl border-2 border-slate-600 bg-slate-700/20 p-6 text-left transition-all duration-300 hover:border-slate-500 hover:bg-slate-600/30 focus:outline-none focus:ring-4 focus:ring-slate-500/50">
                         <div class="flex items-center space-x-4">
                             <div
-                                class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600/50 text-sm font-bold text-slate-300"
-                            >
+                                class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600/50 text-sm font-bold text-slate-300">
                                 {{ chr(65 + $index) }}
                             </div>
                             <span class="flex-1 text-lg font-medium text-white">
                                 @if ($option['image_path'])
-                                    <img
-                                        src="{{ Storage::url($option['image_path']) }}"
-                                        alt="Option Image"
-                                        class="mb-2 w-full rounded-lg object-cover shadow-md"
-                                    />
+                                    <img src="{{ Storage::url($option['image_path']) }}" alt="Option Image"
+                                        class="mb-2 w-full rounded-lg object-cover shadow-md" />
                                 @endif
 
                                 {{ $option['option_text'] }}
@@ -107,7 +95,7 @@
                         hasUnsavedChanges: true,
 
                         init() {
-                            this.enterFullscreen();
+                            // Start only the timer and autosubmit hooks; fullscreen must be triggered by a user gesture
                             this.startTimer();
                             this.setupAutoSubmitTriggers();
                         },
@@ -134,12 +122,7 @@
                                 }
                             });
 
-                            // Auto-submit on window focus lost (additional safety)
-                            window.addEventListener('blur', (event) => {
-                                if (this.hasUnsavedChanges) {
-                                    this.autoSubmitQuiz();
-                                }
-                            });
+                            // Removed blur-based auto-submit to avoid premature submissions
                         },
 
                         autoSubmitQuiz() {
@@ -171,16 +154,23 @@
                             this.$wire.submitQuiz();
                         },
 
-                        enterFullscreen() {
-                            if (document.documentElement.requestFullscreen) {
-                                document.documentElement
-                                    .requestFullscreen()
-                                    .then(() => {
-                                        this.isFullscreen = true;
-                                    })
-                                    .catch((err) => {
-                                        console.log('Fullscreen failed:', err);
-                                    });
+                        tryEnterFullscreen() {
+                            // Feature-detect and require a user gesture
+                            if (this.isFullscreen) return;
+                            const el = document.documentElement;
+                            try {
+                                if (document.fullscreenEnabled && el.requestFullscreen && !document.fullscreenElement) {
+                                    el.requestFullscreen()
+                                        .then(() => {
+                                            this.isFullscreen = true;
+                                        })
+                                        .catch((err) => {
+                                            console.warn('Fullscreen denied:', err?.message || err);
+                                            this.isFullscreen = false;
+                                        });
+                                }
+                            } catch (err) {
+                                console.warn('Fullscreen not available:', err?.message || err);
                             }
                         },
 
@@ -208,7 +198,8 @@
                         },
 
                         formatTime(seconds) {
-                            const totalSeconds = Math.floor(seconds);
+                            const safe = Math.max(0, Number.isFinite(seconds) ? seconds : 0);
+                            const totalSeconds = Math.floor(safe);
                             const minutes = Math.floor(totalSeconds / 60);
                             const secs = totalSeconds % 60;
                             return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
@@ -232,18 +223,9 @@
     @else
         {{-- completed notice --}}
         <div class="flex items-center justify-center">
-            <x-quiz.results-card
-                :score="$submission->score_percentage"
-                :total-questions="count($questions)"
-                :correct-answers="$correctAnswers"
-                :time-spent="$submission->time_spent_formatted"
-                :performance-level="$this->getPerformanceLevel()"
-                :encouragement-message="$this->getEncouragementMessage()"
-                :classroom="$classroom"
-                :quiz="$quiz"
-                :quiz-answers="$userAnswers"
-                :quiz-questions="$questions"
-            />
+            <x-quiz.results-card :score="$submission->score_percentage" :total-questions="count($questions)" :correct-answers="$correctAnswers" :time-spent="$submission->time_spent_formatted"
+                :performance-level="$this->getPerformanceLevel()" :encouragement-message="$this->getEncouragementMessage()" :classroom="$classroom" :quiz="$quiz" :quiz-answers="$userAnswers"
+                :quiz-questions="$questions" />
         </div>
     @endif
 </div>

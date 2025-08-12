@@ -46,10 +46,12 @@ class ExpiredQuizService
                 ]);
             } else if (!$existingSubmission->is_completed) {
                 // If user has incomplete submission, complete it with current progress
+                $elapsed = $existingSubmission->started_at ? max(0, now()->diffInSeconds($existingSubmission->started_at)) : 0;
                 $existingSubmission->update([
                     'completed_at' => now(),
                     'is_completed' => true,
-                    'score' => $existingSubmission->score ?: 0
+                    'score' => $existingSubmission->score ?: 0,
+                    'time_spent' => $elapsed,
                 ]);
 
                 Log::info("Auto-completed expired quiz for user", [
