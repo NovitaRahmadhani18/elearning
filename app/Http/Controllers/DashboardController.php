@@ -48,7 +48,7 @@ class DashboardController extends Controller
 
     public function teacherDashboard()
     {
-        return redirect()->route('teacher.material.index');
+        return redirect()->route('teacher.classroom.index');
     }
 
     public function userDashboard()

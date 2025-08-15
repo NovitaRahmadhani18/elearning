@@ -13,15 +13,6 @@
             <p class="mt-2 text-gray-600">
                 You haven't enrolled in any classrooms yet, or your classrooms don't have any content.
             </p>
-            <div class="mt-6">
-                <a
-                    href="{{ route('user.classroom.index') }}"
-                    class="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-dark"
-                >
-                    <x-gmdi-add class="mr-2 h-4 w-4" />
-                    Join a Classroom
-                </a>
-            </div>
         </div>
     @else
         <!-- Content Leaderboards Grid -->

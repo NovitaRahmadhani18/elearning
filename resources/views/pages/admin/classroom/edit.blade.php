@@ -1,21 +1,21 @@
 <x-layouts.admin-layout>
-    <x-slot name="header">Class &gt; Edit Class</x-slot>
+    <x-slot name="header">Classroom &gt; Edit Classroom</x-slot>
     <div class="">
         <div class="flex min-h-[70vh] items-center justify-center">
             <form class="w-full max-w-3xl rounded-lg border border-primary/20 bg-white p-10" method="POST"
                 enctype="multipart/form-data" action="{{ route('admin.classroom.update', $classroom->id) }}">
                 @csrf
                 @method('PUT')
-                <h2 class="mb-8 text-xl font-semibold text-gray-800">Edit Class</h2>
+                <h2 class="mb-8 text-xl font-semibold text-gray-800">Edit Classroom</h2>
                 <div class="mb-6">
-                    <x-input-label for="title" value="Class Title" />
-                    <x-text-input id="title" name="title" type="text" required placeholder="Enter class title"
-                        :value="old('title', $classroom->title)" />
+                    <x-input-label for="title" value="Classroom Title" />
+                    <x-text-input id="title" name="title" type="text" required
+                        placeholder="Enter classroom title" :value="old('title', $classroom->title)" />
                     <x-input-error :messages="$errors->get('title')" class="mt-2" />
                 </div>
                 <div class="mb-6">
-                    <x-input-label for="description" value="Class Description" />
-                    <textarea id="description" name="description" rows="4" required placeholder="Enter class description"
+                    <x-input-label for="description" value="Classroom Description" />
+                    <textarea id="description" name="description" rows="4" required placeholder="Enter classroom description"
                         class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
 {{ old('description', $classroom->description) }}</textarea>
                     <x-input-error :messages="$errors->get('description')" class="mt-2" />
@@ -86,7 +86,7 @@
                 <div class="flex justify-end">
                     <div class="flex flex-row justify-end gap-2">
                         <x-secondary-button type="button" onclick="window.history.back()">Cancel</x-secondary-button>
-                        <x-primary-button type="submit" class="w-fit">Update Class</x-primary-button>
+                        <x-primary-button type="submit" class="w-fit">Update Classroom</x-primary-button>
                     </div>
                 </div>
             </form>

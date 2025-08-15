@@ -1,8 +1,8 @@
-<x-layouts.admin-layout>
-    <x-slot name="header">Classroom &gt; Add Classroom</x-slot>
+<x-layouts.teacher-layout>
+    <x-slot name="header">Classroom › Add Classroom</x-slot>
     <div class="flex min-h-[70vh] items-center justify-center">
         <form class="w-full max-w-3xl rounded-lg border border-primary/20 bg-white p-10" method="POST"
-            enctype="multipart/form-data" action="{{ route('admin.classroom.store') }}">
+            enctype="multipart/form-data" action="{{ route('teacher.classroom.store') }}">
             @csrf
             <h2 class="mb-8 text-xl font-semibold text-gray-800">Add New Classroom</h2>
             <div class="mb-6">
@@ -13,14 +13,14 @@
             </div>
             <div class="mb-6">
                 <x-input-label for="description" value="Classroom Description" />
-                <textarea id="description" name="description" rows="4" required placeholder="Enter classroom description"
+                <textarea id="description" name="description" rows="4" placeholder="Enter classroom description"
                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">{{ old('description') }}</textarea>
                 <x-input-error :messages="$errors->get('description')" class="mt-2" />
             </div>
             <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                     <x-input-label for="category" value="Category" />
-                    <select id="category" name="category" required
+                    <select id="category" name="category"
                         class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
                         <option value="">Select Category</option>
                         @foreach (['7A', '7B', '7C', '8A', '8B', '8C', '9A', '9B', '9C'] as $category)
@@ -30,20 +30,6 @@
                         @endforeach
                     </select>
                     <x-input-error :messages="$errors->get('category')" class="mt-2" />
-                </div>
-                <div>
-                    <x-input-label for="teacher_id" value="Teacher" />
-                    <select id="teacher_id" name="teacher_id"
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                        <option value="">Select Teacher</option>
-                        @foreach ($teachers as $teacher)
-                            <option value="{{ $teacher->id }}"
-                                {{ old('teacher_id') == $teacher->id ? 'selected' : '' }}>
-                                {{ $teacher->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <x-input-error :messages="$errors->get('teacher_id')" class="mt-2" />
                 </div>
             </div>
             <div class="mb-6">
@@ -84,4 +70,4 @@
             </div>
         </form>
     </div>
-</x-layouts.admin-layout>
+</x-layouts.teacher-layout>

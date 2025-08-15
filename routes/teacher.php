@@ -24,5 +24,6 @@ Route::group(
         ])->except(['create', 'edit']);
 
         Route::resource('student', App\Http\Controllers\Teacher\StudentController::class);
+        Route::resource('classroom', App\Http\Controllers\Teacher\ClassroomController::class);
     }
 );

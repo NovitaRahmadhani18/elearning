@@ -32,6 +32,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 return redirect('/')
                     ->with('error', 'Sesi kamu sudah kadaluarsa. Silakan coba lagi.');
             }
+
+
+
+
             return $response;
+        });
+
+        $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
+            return redirect()->route('welcome');
         });
     })->create();

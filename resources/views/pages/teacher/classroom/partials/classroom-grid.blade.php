@@ -1,7 +1,7 @@
-<!-- Classroom Cards Grid -->
+<!-- Classroom Cards Grid (Teacher) -->
 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
     @forelse ($classrooms as $classroom)
-        <x-classroom-card :classroom="$classroom" />
+        <x-teacher-classroom-card :classroom="$classroom" />
     @empty
         <div class="col-span-full py-12 text-center">
             @if (request('search'))
@@ -17,7 +17,7 @@
                         <x-gmdi-clear class="-ml-1 mr-2 h-5 w-5" />
                         Clear Search
                     </button>
-                    <a href="{{ route('admin.classroom.create') }}"
+                    <a href="{{ route('teacher.classroom.create') }}"
                         class="ml-3 inline-flex items-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-dark">
                         <x-gmdi-add class="-ml-1 mr-2 h-5 w-5" />
                         Create New Classroom
@@ -29,7 +29,7 @@
                 <h3 class="mt-2 text-sm font-medium text-gray-900">No classrooms</h3>
                 <p class="mt-1 text-sm text-gray-500">Get started by creating a new classroom.</p>
                 <div class="mt-6">
-                    <a href="{{ route('admin.classroom.create') }}"
+                    <a href="{{ route('teacher.classroom.create') }}"
                         class="inline-flex items-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-dark">
                         <x-gmdi-add class="-ml-1 mr-2 h-5 w-5" />
                         New Classroom

@@ -1,14 +1,14 @@
-<x-layouts.admin-layout>
+<x-layouts.teacher-layout>
     <x-slot name="header">Classroom Management</x-slot>
 
     <div x-data="classroomSearch()" x-init="init()">
         <!-- Header with Search and Add Classroom Button -->
         <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div class="flex-1">
-                <h2 class="text-lg font-semibold text-gray-800">All Classrooms</h2>
+                <h2 class="text-lg font-semibold text-gray-800">My Classrooms</h2>
                 <p class="text-sm text-gray-600">Manage and organize your classrooms</p>
             </div>
-            <a href="{{ route('admin.classroom.create') }}">
+            <a href="{{ route('teacher.classroom.create') }}">
                 <x-primary-button class="flex items-center justify-center">
                     <x-gmdi-add class="mr-2 h-4 w-4" />
                     Add Classroom
@@ -30,7 +30,7 @@
                         </div>
                         <input x-ref="searchInput" x-model="searchTerm" @input.debounce.500ms="performSearch()"
                             @keydown.escape="clearSearch()" type="search" name="search" id="search"
-                            placeholder="Search by title, description, category, or teacher..."
+                            placeholder="Search by title, description, or category..."
                             class="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm" />
                         <div x-show="searchTerm.length > 0" class="absolute inset-y-0 right-0 flex items-center pr-3">
                             <button @click="clearSearch()" type="button" class="text-gray-400 hover:text-gray-600">
@@ -57,7 +57,7 @@
 
         <!-- Results Container -->
         <div x-ref="resultsContainer" id="classroom-results">
-            @include('pages.admin.classroom.partials.classroom-grid', ['classrooms' => $classrooms])
+            @include('pages.teacher.classroom.partials.classroom-grid', ['classrooms' => $classrooms])
         </div>
     </div>
 
@@ -84,7 +84,7 @@
 
                         try {
                             const response = await fetch(
-                                `{{ route('admin.classroom.index') }}?search=${encodeURIComponent(this.searchTerm)}`, {
+                                `{{ route('teacher.classroom.index') }}?search=${encodeURIComponent(this.searchTerm)}`, {
                                     method: 'GET',
                                     headers: {
                                         'X-Alpine-Request': 'true',
@@ -122,4 +122,4 @@
             }
         </script>
     @endpush
-</x-layouts.admin-layout>
+</x-layouts.teacher-layout>

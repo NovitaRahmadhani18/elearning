@@ -1,5 +1,16 @@
 [
     {
+        "label": "Classroom Management",
+        "url": "teacher.classroom.index",
+        "icon": "gmdi-class",
+        "routes": [
+            "teacher.classroom.index",
+            "teacher.classroom.create",
+            "teacher.classroom.edit",
+            "teacher.classroom.show"
+        ]
+    },
+    {
         "label": "Material Manaegement",
         "url": "teacher.material.index",
         "icon": "fas-book-open",

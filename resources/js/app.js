@@ -7,8 +7,8 @@ import morph from "@alpinejs/morph";
 
 window.Alpine = Alpine;
 
+Alpine.plugin(ajax);
 Alpine.plugin(morph);
 Alpine.plugin(Clipboard);
-Alpine.plugin(ajax);
 
 Livewire.start();

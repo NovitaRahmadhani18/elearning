@@ -1,3 +1,14 @@
+<div
+    x-data
+    x-init="
+        () => {
+            const reload = () =>
+                $ajax('', { target: '{{ $tableData->id }}', swap: 'replace' })
+            reload()
+            setInterval(reload, 5000)
+        }
+    "
+/>
 <div id="{{ $tableData->id }}" class="overflow-hidden rounded border border-primary/30 bg-white">
     @if (isset($title))
         <div class="w-full p-4 py-6 text-xl">{{ $title }}</div>
