@@ -31,6 +31,12 @@ RUN ls -la
 # Buat file database SQLite kosong sebelum mengatur permission
 RUN mkdir -p database && touch database/database.sqlite
 
+RUN php artisan key:generate \
+    && php artisan migrate --force \
+    && php artisan db:seed --force \
+    && php artisan storage:link
+
+
 # Expose port yang digunakan oleh Caddy (FrankenPHP)
 EXPOSE 80 443 443/udp
 
