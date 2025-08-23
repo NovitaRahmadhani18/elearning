@@ -2,35 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Spatie\Activitylog\LogOptions;
 
-#[ObservedBy(\App\Observers\QuizSubmissionObserver::class)]
 class QuizSubmission extends Model
 {
-    use LogsActivity;
+    use HasFactory;
+
     protected $fillable = [
         'quiz_id',
-        'user_id',
+        'student_id',
+        'score',
         'started_at',
         'completed_at',
-        'score',
-        'total_questions',
-        'correct_answers',
-        'time_spent',
-        'is_completed',
-        'answers'
+        'duration_seconds',
     ];
 
     protected $casts = [
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
-        'answers' => 'array',
-        'is_completed' => 'boolean'
     ];
 
     public function quiz(): BelongsTo
@@ -38,59 +30,16 @@ class QuizSubmission extends Model
         return $this->belongsTo(Quiz::class);
     }
 
-    public function user(): BelongsTo
+    public function student(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'student_id');
     }
 
-    public function quizAnswers(): HasMany
+    public function answers(): HasMany
     {
-        return $this->hasMany(QuizAnswer::class);
-    }
-
-    public function getScorePercentageAttribute(): float
-    {
-        if ($this->total_questions == 0) {
-            return 0;
-        }
-        return round(($this->correct_answers / $this->total_questions) * 100, 2);
-    }
-
-    public function getTimeSpentFormattedAttribute(): string
-    {
-        $seconds = max(0, (int) $this->time_spent);
-        if ($seconds === 0 && $this->started_at && $this->completed_at) {
-            // Fallback: derive from timestamps if time_spent wasn't persisted
-            $seconds = max(0, $this->completed_at->diffInSeconds($this->started_at));
-        }
-        $minutes = intdiv($seconds, 60);
-        $remainder = $seconds % 60;
-        return sprintf('%02d:%02d', $minutes, $remainder);
-    }
-
-    public function getStatusAttribute(): string
-    {
-        if ($this->is_completed) {
-            return 'Completed';
-        }
-        return 'In Progress';
-    }
-
-    /**
-     * Configure activity logging options
-     */
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['score', 'total_questions', 'correct_answers', 'time_spent', 'is_completed'])
-            ->logOnlyDirty()
-            ->useLogName('quiz_completion')
-            ->setDescriptionForEvent(fn(string $eventName) => match ($eventName) {
-                'created' => 'Quiz submission started',
-                'updated' => $this->is_completed ? 'Quiz completed' : 'Quiz submission updated',
-                'deleted' => 'Quiz submission deleted',
-                default => "Quiz submission {$eventName}"
-            })
-            ->dontSubmitEmptyLogs();
+        return $this->hasMany(SubmissionAnswer::class)
+            ->with('question', 'answer')
+            ->orderBy('created_at');
     }
 }
+

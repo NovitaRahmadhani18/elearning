@@ -1,0 +1,52 @@
+import { ActionButton } from '@/components/action-button';
+import HeadingSmall from '@/components/heading-small';
+import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
+import { ShowClassroomPageProps } from '@/pages/admin/classroom/types';
+import AdminInviteClassroomDialog from '@/pages/admin/partials/components/admin-invite-classroom-dialog';
+import { BreadcrumbItem } from '@/types';
+import { Head, usePage } from '@inertiajs/react';
+import { useState } from 'react';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/',
+    },
+    {
+        title: 'Classrooms Management',
+        href: '/teacher/classrooms',
+    },
+    {
+        title: 'Classroom Details',
+        href: '/teacher/classrooms/show',
+    },
+];
+
+const ClassroomShowPage = () => {
+    const { classroom } = usePage<ShowClassroomPageProps>().props;
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <AdminTeacherLayout breadcrumbs={breadcrumbs}>
+            <Head title="Classrooms Management" />
+            <div className="flex flex-1 flex-col gap-4">
+                <section className="flex items-center justify-between">
+                    <HeadingSmall
+                        title={classroom.data.fullName}
+                        description={`1 Students`}
+                    />
+                    <ActionButton action="create" onClick={() => setIsOpen(true)}>
+                        Add Student
+                    </ActionButton>
+                </section>
+            </div>
+            <AdminInviteClassroomDialog
+                isOpen={isOpen}
+                onClose={() => setIsOpen(false)}
+                classroom={classroom.data}
+            />
+        </AdminTeacherLayout>
+    );
+};
+
+export default ClassroomShowPage;

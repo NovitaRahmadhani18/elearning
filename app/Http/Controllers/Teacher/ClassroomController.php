@@ -3,132 +3,146 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ClassroomResource;
 use App\Models\Classroom;
+use App\Services\ClassroomService;
+use App\Http\Resources\ContentResource;
+use App\Models\Material;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class ClassroomController extends Controller
 {
+    public function __construct(protected ClassroomService $classroomService) {}
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $query = Classroom::query()
-            ->where('teacher_id', auth()->id())
-            ->orderByDesc('created_at')
-            ->with(['teacher'])
-            ->withCount(['students', 'contents', 'quizzes', 'materials']);
-
-        if (request('search')) {
-            $search = request('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('category', 'like', "%{$search}%");
-            });
-        }
-
-        $classrooms = $query->get();
-
-        if (request()->header('X-Alpine-Request') || request()->ajax()) {
-            return view('pages.teacher.classroom.partials.classroom-grid', compact('classrooms'))->render();
-        }
-
-        return view('pages.teacher.classroom.index', compact('classrooms'));
+        return inertia('teacher/classroom/index', [
+            'classrooms' => $this->classroomService->index(),
+        ]);
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        return view('pages.teacher.classroom.create');
+        return inertia('teacher/classroom/create', [
+            'categories' => $this->classroomService->getClassroomCategories(),
+        ]);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category' => 'nullable|string|max:255',
-            'thumbnail' => 'nullable|image|max:2048',
-        ]);
-
-        DB::transaction(function () use ($request) {
-            $data = $request->only(['title', 'description', 'category']);
-            $data['teacher_id'] = auth()->id();
-
-            if ($request->hasFile('thumbnail')) {
-                $path = $request->file('thumbnail')->store('classroom_thumbnails', 'public');
-                $data['thumbnail_path'] = $path;
-            }
-
-            Classroom::create($data);
-        });
-
-        return to_route('teacher.classroom.index')->with('success', 'Class created successfully.');
-    }
-
-    public function show(Classroom $classroom)
-    {
-        abort_unless($classroom->teacher_id === auth()->id(), 403);
-
-        $contents = $classroom->contents()->with(['contentable'])->get();
-
-        return view('pages.teacher.classroom.show', compact('classroom', 'contents'));
-    }
-
-    public function edit(Classroom $classroom)
-    {
-        abort_unless($classroom->teacher_id === auth()->id(), 403);
-        return view('pages.teacher.classroom.edit', compact('classroom'));
-    }
-
-    public function update(Request $request, Classroom $classroom)
-    {
-        abort_unless($classroom->teacher_id === auth()->id(), 403);
-
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category' => 'nullable|string|max:255',
-            'thumbnail' => 'nullable|image|max:2048',
-        ]);
-
-        DB::transaction(function () use ($request, $classroom) {
-            $data = $request->only(['title', 'description', 'category']);
-
-            if ($request->hasFile('thumbnail')) {
-                $path = $request->file('thumbnail')->store('classroom_thumbnails', 'public');
-                $data['thumbnail_path'] = $path;
-            }
-
-            $classroom->update($data);
-        });
-
-        return to_route('teacher.classroom.index')->with('success', 'Class updated successfully.');
-    }
-
-    public function destroy(Classroom $classroom)
-    {
-        abort_unless($classroom->teacher_id === auth()->id(), 403);
+        $data = $request->validate(
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'description' => ['nullable', 'string'],
+                'category_id' => ['required', 'integer', 'exists:classrooms_categories,id'],
+                'thumbnail' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'], // 2MB max
+            ]
+        );
 
         try {
-            DB::transaction(function () use ($classroom) {
-                if ($classroom->thumbnail_path) {
-                    Storage::disk('public')->delete($classroom->thumbnail_path);
-                }
-                $classroom->students()->detach();
-                $classroom->contents()->delete();
-                $classroom->delete();
-            });
-
-            if (request()->header('X-Alpine-Request')) {
-                return response()->json(['success' => true, 'message' => 'Classroom deleted successfully.']);
+            $classroom = $this->classroomService->createClassroom($data);
+            if ($classroom) {
+                return to_route('teacher.classrooms.index')->with('success', 'Classroom created successfully!');
+            } else {
+                return to_route('teacher.classrooms.create')->withErrors(['error' => 'Failed to create classroom.'])->withInput();
             }
+        } catch (\Throwable $th) {
+            return to_route('teacher.classrooms.create')->withErrors(['error' => 'Failed to create classroom: ' . $th->getMessage()])->withInput();
+        }
+    }
 
-            return redirect()->route('teacher.classroom.index')->with('success', 'Classroom deleted successfully.');
-        } catch (\Exception $e) {
-            if (request()->header('X-Alpine-Request')) {
-                return response()->json(['success' => false, 'message' => 'Failed to delete classroom: ' . $e->getMessage()], 500);
+    /**
+     * Display the specified resource.
+     */
+    public function show(Classroom $classroom)
+    {
+
+        return inertia('teacher/classroom/show', [
+            'classroom' => ClassroomResource::make($classroom),
+        ]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Classroom $classroom)
+    {
+
+        return inertia('teacher/classroom/edit', [
+            'classroom' => ClassroomResource::make($classroom),
+            'categories' => $this->classroomService->getClassroomCategories(),
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Classroom $classroom)
+    {
+        $data = $request->validate(
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'description' => ['nullable', 'string'],
+                'category_id' => ['required', 'integer', 'exists:classrooms_categories,id'],
+                'thumbnail' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'], // 2MB max
+            ]
+        );
+
+        try {
+            $updated = $this->classroomService->updateClassroom($classroom, $data);
+            if ($updated) {
+                return to_route('teacher.classrooms.index')->with('success', 'Classroom updated successfully!');
+            } else {
+                return to_route('teacher.classrooms.edit', $classroom)->withErrors('error', 'Failed to update classroom.')->withInput();
             }
-            return redirect()->route('teacher.classroom.index')->with('error', 'Failed to delete classroom: ' . $e->getMessage());
+        } catch (\Throwable $th) {
+            return to_route('teacher.classrooms.edit', $classroom)->withErrors('error', 'Failed to update classroom: ' . $th->getMessage())->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Classroom $classroom)
+    {
+        // cek apakah classroom memiliki teacher_id yang sama dengan login
+        if ($classroom->teacher_id != auth()->id()) {
+            return to_route('teacher.classrooms.index')->withErrors('error', 'Failed to delete classroom');
+        }
+
+        try {
+            $this->classroomService->deleteClassroom($classroom);
+            return to_route('teacher.classrooms.index')->with('success', 'Classroom deleted successfully!');
+        } catch (\Throwable $th) {
+            return to_route('teacher.classrooms.index')->withErrors('error', 'Failed to delete classroom: ' . $th->getMessage());
+        }
+    }
+
+    public function generateInviteCode(Classroom $classroom)
+    {
+        try {
+            $inviteCode = $this->classroomService->regenerateInviteCode($classroom);
+            return back()->with('success', 'Invite code generated successfully: ' . $inviteCode);
+        } catch (\Throwable $th) {
+            return back()->withErrors('error', 'Failed to generate invite code: ' . $th->getMessage());
+        }
+    }
+
+    public function generateCode(Classroom $classroom)
+    {
+        try {
+            $code = $this->classroomService->regenerateCode($classroom);
+            return  back()->with('success', 'Classroom code regenerated successfully: ' . $code);
+        } catch (\Throwable $th) {
+            return back()->withErrors('error', 'Failed to regenerate classroom code: ' . $th->getMessage());
         }
     }
 }

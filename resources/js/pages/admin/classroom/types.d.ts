@@ -1,0 +1,56 @@
+import { SharedData } from '@/types';
+import { TUser } from '@/types/users';
+
+export interface TClassroomCategory {
+    id: number;
+    name: string;
+    value: string;
+}
+
+export interface TStatus {
+    id: number;
+    name: string;
+    value: string;
+}
+
+export interface TClassroom {
+    id: number;
+    name: string;
+    fullName: string; // Full name for the classroom
+    code: string;
+    teacher: TUser;
+    description: string;
+    thumbnail?: string; // Optional property for thumbnail
+    created_at: string;
+    updated_at: string;
+    category: TClassroomCategory;
+    status: TStatus;
+    invite_code: string;
+}
+
+export interface ClassroomIndexPageProps extends SharedData {
+    classrooms: PaginatedData<TClassroom>;
+}
+
+export interface CreateClassroomPageProps extends SharedData {
+    categories: TClassroomCategory[];
+    teachers: {
+        data: TUser[];
+    };
+}
+
+export interface EditClassroomPageProps extends SharedData {
+    classroom: {
+        data: TClassroom;
+    };
+    categories: TClassroomCategory[];
+    teachers: {
+        data: TUser[];
+    };
+}
+
+export interface ShowClassroomPageProps extends SharedData {
+    classroom: {
+        data: TClassroom;
+    };
+}

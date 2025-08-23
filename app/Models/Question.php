@@ -3,23 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Question extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'quiz_id',
+        'question_text',
+        'image_path',
+    ];
 
-    public function quiz()
+    protected $with = [
+        'answers'
+    ];
+
+    public function quiz(): BelongsTo
     {
         return $this->belongsTo(Quiz::class);
     }
 
-    public function options()
+    public function answers(): HasMany
     {
-        return $this->hasMany(QuestionOption::class);
-    }
-
-    public function correctOption()
-    {
-        return $this->hasOne(QuestionOption::class)->where('is_correct', true);
+        return $this->hasMany(Answer::class);
     }
 }
+

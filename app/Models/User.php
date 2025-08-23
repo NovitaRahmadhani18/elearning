@@ -3,23 +3,19 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\RoleEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use LevelUp\Experience\Concerns\GiveExperience;
-use LevelUp\Experience\Models\Achievement;
-use Spatie\Activitylog\Models\Activity;
-use Spatie\Activitylog\Traits\CausesActivity;
-use Spatie\Permission\Traits\HasRoles;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles, GiveExperience, CausesActivity;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -29,12 +25,13 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
-        'profile_photo_path',
-        'is_active',
-        'nomor_induk',
+        'role',
+        'id_number',
         'address',
-        'jk',
+        'gender',
+        'avatar',
+        'is_active',
+        'password',
     ];
 
     /**
@@ -56,189 +53,72 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'role' => RoleEnum::class,
             'is_active' => 'boolean',
+            'password' => 'hashed',
         ];
     }
 
-    /**
-     * Get the user's initials
-     */
-    public function initials(): string
+    public function teachedClassrooms()
     {
-        return Str::of($this->name)
-            ->explode(' ')
-            ->take(2)
-            ->map(fn($word) => Str::substr($word, 0, 1))
-            ->implode('');
-    }
-
-    public function getProfilePhotoUrlAttribute(): string
-    {
-        if ($this->profile_photo_path) {
-            // Jika ada path di database, kembalikan URL dari disk 'public'
-            return Storage::disk('public')->url($this->profile_photo_path);
-        }
-
-        // Jika tidak ada, kembalikan URL default yang digenerate dari nama pengguna
-        return $this->defaultProfilePhotoUrl();
-    }
-
-    /**
-     * Membuat URL foto profil default.
-     */
-    protected function defaultProfilePhotoUrl(): string
-    {
-        $name = trim(collect(explode(' ', $this->name))->map(function ($segment) {
-            return mb_substr($segment, 0, 1);
-        })->join(' '));
-
-        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=7F9CF5&background=EBF4FF';
-    }
-
-    protected function getFirstRoleAttribute(): string
-    {
-        return $this->roles->first()?->name ?? 'user';
-    }
-
-    protected function getFullNameAttribute(): string
-    {
-        return trim("{$this->name} {$this->last_name}");
-    }
-
-    public function addMedia($file)
-    {
-        // handle uploading media files as profile photos to proper storage without libraries with unique name file name
-
-        // check if user has a profile photo
-        if ($this->profile_photo_path) {
-            // delete the old profile photo
-            Storage::disk('public')->delete($this->profile_photo_path);
-        }
-
-        $path = $file->store('profile-photos', 'public');
-
-        // update the profile photo path
-        $this->profile_photo_path = $path;
-        $this->save();
-
-        return $this;
-    }
-
-    public function getLastLoginAttribute(): ?string
-    {
-        // Get the last login time from the activity log
-        $lastLogin = Activity::query()
-            ->with('causer')
-            ->where('causer_id', $this->id)
-            ->where('event', 'login')
-            ->latest()
-            ->first();
-
-        if ($lastLogin) {
-            return $lastLogin->created_at;
-        }
-
-        return null;
+        return $this->hasMany(Classroom::class, 'teacher_id');
     }
 
     public function classrooms()
     {
-        if ($this->hasRole('teacher') || $this->hasRole('admin')) {
-            return $this->hasMany(Classroom::class, 'teacher_id');
-        }
+        return $this->belongsToMany(Classroom::class, 'classroom_students', 'student_id', 'classroom_id')
+            ->withTimestamps();
+    }
 
-        return $this->belongsToMany(Classroom::class, 'classroom_user')
-            ->withPivot('progress')
-            ->withTimestamps()
-            ->orderBy('created_at', 'desc');
+    public function contents()
+    {
+        return $this->belongsToMany(Content::class, 'content_student', 'user_id', 'content_id')
+            ->withPivot('status', 'completed_at', 'score')
+            ->withTimestamps();
     }
 
     public function classroomStudents()
     {
-        if (!$this->role('user')) {
-            return collect();
+        return $this->hasMany(ClassroomStudent::class, 'student_id');
+    }
+
+    public function studentPoints(): HasMany
+    {
+        return $this->hasMany(StudentPoint::class);
+    }
+
+    public function quizSubmissions(): HasMany
+    {
+        return $this->hasMany(QuizSubmission::class, 'student_id');
+    }
+
+    public function achievements(): BelongsToMany
+    {
+        return $this->belongsToMany(Achievement::class, 'user_achievements')->withTimestamps();
+    }
+
+
+
+
+
+    public function hasRole(RoleEnum $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    /**
+     * @param array<string> $roles
+     */
+    public function hasAnyRole(array $roles): bool
+    {
+        if (!$this->role) {
+            return false;
         }
-
-        // Get the classrooms where the user is a studenta
-        return $this->belongsToMany(Classroom::class, 'classroom_user')
-            ->withPivot('progress')
-            ->withTimestamps()
-            ->orderBy('created_at', 'desc');
+        return in_array($this->role->value, $roles);
     }
 
-    public function completedContents()
+    public function isAdmin(): bool
     {
-        return $this->belongsToMany(Content::class, 'content_users')
-            ->withTimestamps();
-    }
-
-    public function quizSubmissions()
-    {
-        return $this->hasMany(QuizSubmission::class);
-    }
-
-    public function quizAnswers()
-    {
-        return $this->hasManyThrough(QuizAnswer::class, QuizSubmission::class);
-    }
-
-    public function getQuizSubmissionsCountAttribute(): int
-    {
-        return $this->quizSubmissions()->count();
-    }
-
-    public function upcomingQuizzes()
-    {
-        // get all classrooms where the user is enrolled
-        $classrooms = $this->classrooms()
-            ->with('quizzes')
-            ->get();
-
-        // filter quizzes that are upcoming
-        return $classrooms->flatMap(function ($classroom) {
-            return $classroom->quizzes->filter(function ($quiz) {
-                return $quiz->end_time < now() && !$this->quizSubmissions()->where('quiz_id', $quiz->id)->exists();
-            });
-        })->sortBy('end_time');
-    }
-
-    public function getClassroomProgress($classroomId)
-    {
-        // Get total contents in the classroom
-        $totalContents = \App\Models\Content::where('classroom_id', $classroomId)->count();
-
-        if ($totalContents === 0) {
-            return 0;
-        }
-
-        // Get completed contents for this classroom
-        $completedContents = $this->completedContents()
-            ->where('classroom_id', $classroomId)
-            ->count();
-
-        // Calculate progress percentage
-        return round(($completedContents / $totalContents) * 100, 2);
-    }
-
-    public static function updateClassroomProgress($userId, $classroomId)
-    {
-        $user = self::find($userId);
-        if (!$user) return;
-
-        $newProgress = $user->getClassroomProgress($classroomId);
-        $user->classrooms()->updateExistingPivot($classroomId, [
-            'progress' => $newProgress
-        ]);
-
-        return $newProgress;
-    }
-
-    public function achievements()
-    {
-        return $this->belongsToMany(
-            Achievement::class,
-            'achievement_user'
-        )->withPivot('progress')->withTimestamps();
+        return $this->hasRole(RoleEnum::ADMIN);
     }
 }

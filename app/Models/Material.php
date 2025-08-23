@@ -3,37 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Support\Facades\Storage;
-use Te7aHoudini\LaravelTrix\Traits\HasTrixRichText;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Material extends Model
 {
-    use HasTrixRichText;
+    protected $fillable = [
+        'body',
+        'attachment_path',
+    ];
 
-
-    protected $guarded = [];
-
-    public function getThumbnailUrlAttribute()
+    public function content(): MorphOne
     {
-
-        // get from trix rich text
-        $trixAttachment = $this->trixAttachments()->first();
-        if ($trixAttachment && $trixAttachment->attachment) {
-            return Storage::disk($trixAttachment->disk)->url($trixAttachment->attachment);
-        }
-
-        return '';
-    }
-
-    public function contents(): MorphMany
-    {
-        return $this->morphMany(Content::class, 'contentable');
-    }
-
-    public function classroom()
-    {
-        return $this->hasOneThrough(Classroom::class, Content::class, 'contentable_id', 'id', 'id', 'classroom_id')
-            ->where('contentable_type', self::class);
+        return $this->morphOne(Content::class, 'contentable');
     }
 }

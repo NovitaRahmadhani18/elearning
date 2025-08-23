@@ -2,23 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 
-
-#[ObservedBy(\App\Observers\ClassroomActivityObserver::class)]
 class ClassroomStudent extends Model
 {
-    protected $table = 'classroom_user';
-    protected $guarded = [];
+
+    public $fillable = [
+        'classroom_id',
+        'student_id',
+    ];
 
     public function classroom()
     {
         return $this->belongsTo(Classroom::class, 'classroom_id');
     }
 
-    public function user()
+    public function student()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'student_id');
     }
 }
