@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class ContentStatusService
 {
@@ -34,6 +35,11 @@ class ContentStatusService
 
             $statuses->put($content->id, $status);
         }
+
+        Log::debug('Content statuses calculated', [
+            'student_id' => auth()->id(),
+            'statuses' => $statuses->toArray(),
+        ]);
 
         return $statuses;
     }

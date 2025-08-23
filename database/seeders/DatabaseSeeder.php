@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             'id_number' => 'ID123456789',
         ]);
 
-        User::create([
+        $teacher = User::create([
             'name' => 'Teacher',
             'email' => 'teacher@teacher.com',
             'password' => bcrypt('password'),
@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             'id_number' => 'ID987654321',
         ]);
 
-        User::create([
+        $student = User::create([
             'name' => 'Student',
             'email' => 'student@student.com',
             'password' => bcrypt('password'),
@@ -41,6 +41,23 @@ class DatabaseSeeder extends Seeder
             'address' => '789 Student Boulevard',
             'gender' => 'male',
             'id_number' => 'ID1122334455',
+        ]);
+
+        // create 1 classroom with 1 teacher and 1 student
+        $classroom = \App\Models\Classroom::create([
+            'name' => 'Sample Classroom',
+            'description' => 'This is a sample classroom.',
+            'teacher_id' => $teacher->id,
+            'code' => 'CLASS123',
+            'category_id' => 1,
+            'status_id' => 1,
+            'thumbnail' => null,
+            'invite_code' => 'INVITE123',
+        ]);
+
+        \App\Models\ClassroomStudent::create([
+            'classroom_id' => $classroom->id,
+            'student_id' => $student->id,
         ]);
     }
 }

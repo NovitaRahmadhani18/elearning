@@ -2,6 +2,9 @@
 
 namespace App\Http\Resources\Api;
 
+use App\Http\Resources\QuizResource;
+use App\Http\Resources\SubmissionAnswerResource;
+use App\Services\ContentService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,27 +17,28 @@ class QuizSubmissionResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $stats = $this->when(
+            $this->relationLoaded('answers') && $this->relationLoaded('quiz') && $this->quiz->relationLoaded('questions'),
+            function () {
+                return resolve(ContentService::class)->calculateSubmissionStats($this->resource);
+            },
+            []
+        );
+
         return [
             'id' => $this->id,
             'student_id' => $this->student_id,
             'started_at' => $this->started_at,
+            'duration_seconds' => $this->duration_seconds,
             'completed_at' => $this->completed_at,
-            'score' => $this->score,
-            'correct_answers_count' => $this->whenNotNull($this->correct_answers_count),
-            'total_questions' => $this->whenNotNull($this->total_questions),
-            'accuracy' => $this->whenNotNull($this->accuracy),
-            'incorrect_answers_count' => $this->whenNotNull($this->incorrect_answers_count),
-            'quiz' => [
-                'id' => $this->quiz->id,
-                'title' => $this->quiz->content->title,
-                'description' => $this->quiz->content->description,
-                'duration_minutes' => $this->quiz->duration_minutes,
-                'questions' => QuestionResource::collection($this->whenLoaded('quiz.questions.answers')),
-            ],
-            'submitted_answers' => $this->whenLoaded('answers', function () {
-                return AnswerResource::collection($this->answers);
+
+            $this->merge($stats),
+
+            'quiz' => $this->whenLoaded('quiz', function () {
+                return new QuizResource($this->quiz);
             }),
+
+            'submitted_answers' => SubmissionAnswerResource::collection($this->whenLoaded('answers')),
         ];
     }
 }
-

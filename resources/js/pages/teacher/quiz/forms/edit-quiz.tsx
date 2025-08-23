@@ -26,9 +26,6 @@ const createNewQuestion = (): TQuestionState => ({
     answers: [createNewAnswer(true), createNewAnswer()],
 });
 
-// ====================================================================
-// SUB-KOMPONEN 1: AnswerForm
-// ====================================================================
 interface AnswerFormProps {
     qIndex: number;
     aIndex: number;
@@ -175,7 +172,7 @@ const QuestionForm = ({
             >
                 {question.answers.map((answer, aIndex) => (
                     <AnswerForm
-                        key={aIndex}
+                        key={answer.id || aIndex} // Gunakan ID jika ada, untuk stabilitas render
                         qIndex={qIndex}
                         aIndex={aIndex}
                         answer={answer}
@@ -214,19 +211,20 @@ const QuestionForm = ({
 // KOMPONEN UTAMA: EditQuizForm
 // ====================================================================
 const EditQuizForm = () => {
-    const { quiz, classrooms } = usePage<EditQuizPageProps>().props;
+    const { quiz: quizData, classrooms } = usePage<EditQuizPageProps>().props;
+
+    const quiz = quizData.data;
 
     const { data, setData, post, processing, errors } = useForm({
         _method: 'PUT',
-        title: quiz.data.title,
-        description: quiz.data.description || '',
-        points: quiz.data.points,
-        start_time: new Date(quiz.data.details.start_time),
-        end_time: quiz.data.details.end_time
-            ? new Date(quiz.data.details.end_time)
-            : null,
-        duration_minutes: quiz.data.details.duration_minutes,
-        questions: quiz.data.details.questions.map((q) => ({
+        title: quiz.title,
+        description: quiz.description || '',
+        classroom_id: quiz.classroom_id.toString(),
+        points: quiz.points,
+        start_time: new Date(quiz.details.start_time),
+        end_time: quiz.details.end_time ? new Date(quiz.details.end_time) : null,
+        duration_minutes: quiz.details.duration_minutes,
+        questions: quiz.details.questions.map((q) => ({
             id: q.id,
             question_text: q.question_text,
             image: null,
@@ -311,7 +309,7 @@ const EditQuizForm = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('teacher.quizzes.update', quiz.data.id), {
+        post(route('teacher.quizzes.update', quiz.id), {
             onSuccess: () => toast.success('Quiz updated successfully!'),
             onError: (errs) => {
                 console.error(errs);
@@ -352,7 +350,7 @@ const EditQuizForm = () => {
                     <h2 className="text-xl font-bold">Questions</h2>
                     {data.questions.map((question, qIndex) => (
                         <QuestionForm
-                            key={qIndex}
+                            key={question.id || qIndex} // Gunakan ID jika ada, untuk stabilitas render
                             qIndex={qIndex}
                             question={question}
                             canBeRemoved={data.questions.length > 1}
@@ -383,13 +381,14 @@ const EditQuizForm = () => {
                         id="classroom_id"
                         label="Select Course"
                         placeholder="Select a course"
-                        value={quiz.data.classroom_id.toString()}
-                        disabled
+                        value={data.classroom_id}
+                        disabled // Umumnya kelas tidak diubah saat edit
                         onChange={() => {}}
                         options={classrooms.data.map((c) => ({
                             value: c.id.toString(),
                             label: c.name,
                         }))}
+                        error={errors.classroom_id}
                     />
                     <div className="space-y-2">
                         <SelectInput

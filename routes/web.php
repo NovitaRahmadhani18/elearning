@@ -34,6 +34,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ],
         function () {
             Route::resource('classrooms', \App\Http\Controllers\Teacher\ClassroomController::class);
+
+            Route::get('classrooms/{classroom}/student/{student}', [\App\Http\Controllers\Teacher\ClassroomController::class, 'showStudent'])
+                ->name('classrooms.student.show');
+
+
             Route::resource('materials', \App\Http\Controllers\Teacher\MaterialController::class)->parameters(['materials' => 'content']);
             Route::resource('quizzes', \App\Http\Controllers\Teacher\QuizController::class)->parameters(['quizzes' => 'content']);
 
@@ -73,6 +78,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::get('/quizzes/{content}/result', [\App\Http\Controllers\Student\ContentController::class, 'resultQuiz'])
                 ->name('quizzes.result');
+
+            Route::get('/quizzes/{content}/review', [\App\Http\Controllers\Student\ContentController::class, 'reviewQuiz'])
+                ->name('quizzes.review');
 
             // leaderboard
             Route::get('leaderboard', [\App\Http\Controllers\Student\LeaderboardController::class, 'index'])->name('leaderboard.index');

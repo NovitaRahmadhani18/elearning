@@ -3,6 +3,7 @@ import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { GraduationCap, Users } from 'lucide-react';
 import AdminDashboardCard from '../partials/components/admin-dashboard-card';
+import MonitoringTable from './tables/data-table';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -33,6 +34,7 @@ const MonitoringPage = () => {
                         icon={GraduationCap} // Replace with an actual icon if needed
                     />
                 </div>
+                <MonitoringTable />
             </div>
         </AdminTeacherLayout>
     );

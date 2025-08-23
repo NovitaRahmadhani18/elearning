@@ -1,8 +1,10 @@
 import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
 import AdminDashboardCard from '@/pages/admin/partials/components/admin-dashboard-card';
 import { BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { BookOpenText, ChartBar } from 'lucide-react';
+import StudentTrackingTable from './table/data-table';
+import { TStudentTrackingPageProps } from './types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -12,6 +14,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const StudentTrackingPage = () => {
+    const { studentClassrooms } = usePage<TStudentTrackingPageProps>().props;
+
+    const totalStudents = studentClassrooms.data?.length ?? 0; // Get the total number of students from the props
+
     return (
         <AdminTeacherLayout breadcrumbs={breadcrumbs}>
             <Head title="Student Tracking" />
@@ -19,16 +25,17 @@ const StudentTrackingPage = () => {
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
                     <AdminDashboardCard
                         title="Total Students"
-                        value="0" // Placeholder value, replace with actual data if available'
+                        value={totalStudents.toString()} // Placeholder value, replace with actual data if available'
                         icon={BookOpenText} // Replace with an actual icon if needed
                     />
 
                     <AdminDashboardCard
                         title="Average Completion Rate"
-                        value="0" // Placeholder value, replace with actual data if available
+                        value="80%" // Placeholder value, replace with actual data if available
                         icon={ChartBar} // Replace with an actual icon if needed
                     />
                 </div>
+                <StudentTrackingTable />
             </div>
         </AdminTeacherLayout>
     );

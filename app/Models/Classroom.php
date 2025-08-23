@@ -50,9 +50,14 @@ class Classroom extends Model
         return $this->hasMany(ClassroomStudent::class, 'classroom_id');
     }
 
+    public function studentUsers()
+    {
+        return $this->belongsToMany(User::class, 'classroom_students', 'classroom_id', 'student_id')
+            ->withTimestamps();
+    }
+
     public function contents(): HasMany
     {
         return $this->hasMany(Content::class);
     }
 }
-

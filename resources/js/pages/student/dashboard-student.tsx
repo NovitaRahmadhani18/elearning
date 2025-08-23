@@ -5,11 +5,18 @@ import { SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { BookOpen, CheckCircle2 } from 'lucide-react';
 import AdminDashboardCard from '../admin/partials/components/admin-dashboard-card';
+import { TStudentClassroom } from './classrooms/types';
 import DashboardClassroomCard from './partials/components/dashboard-classroom-card';
 import UpcomingDeadlineCard from './partials/components/upcoming-deadline-card';
 
+interface DashboardStudentProps extends SharedData {
+    classrooms: {
+        data: TStudentClassroom[];
+    };
+}
+
 const DashboardStudent = () => {
-    const { auth } = usePage<SharedData>().props;
+    const { auth, classrooms } = usePage<DashboardStudentProps>().props;
 
     return (
         <StudentLayout>
@@ -41,11 +48,18 @@ const DashboardStudent = () => {
                     <div className="mb-6 space-y-4 rounded-lg bg-white p-6 shadow-sm lg:col-span-2">
                         <HeadingSmall title="Current Courses" />
                         <section className="space-y-2">
-                            {Array(3)
-                                .fill(0)
-                                .map((_, index) => (
-                                    <DashboardClassroomCard key={index} />
-                                ))}
+                            {classrooms.data.length > 0 ? (
+                                classrooms.data.map((classroom) => (
+                                    <DashboardClassroomCard
+                                        key={classroom.id}
+                                        classroom={classroom}
+                                    />
+                                ))
+                            ) : (
+                                <p className="text-sm text-muted-foreground">
+                                    No current courses available.
+                                </p>
+                            )}
                         </section>
                     </div>
 

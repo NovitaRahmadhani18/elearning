@@ -18,7 +18,7 @@ class AnswerResource extends JsonResource
         return [
             'id' => $this->id,
             'answer_text' => $this->answer_text,
-            'image_path' => $this->image_path ? Storage::url($this->image_path) : null,
+            'image_path' => $this->image_path ? Storage::disk('public')->url($this->image_path) : null,
             'is_correct' => $this->is_correct,
         ];
     }

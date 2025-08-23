@@ -8,6 +8,7 @@ use App\Models\Quiz;
 use App\Models\StudentPoint;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProcessContentCompletion implements ShouldQueue
 {
@@ -16,22 +17,34 @@ class ProcessContentCompletion implements ShouldQueue
      */
     public function handle(ContentCompleted $event): void
     {
-        DB::transaction(function () use ($event) {
+        try {
+            DB::transaction(function () use ($event) {
 
-            // 2. Award points based on content type
-            $pointsToAward = 0;
-            $description = '';
+                // 2. Award points based on content type
+                $pointsToAward = 0;
+                $description = '';
 
-            if ($event->content->contentable_type === Material::class) {
-                $pointsToAward = $event->content->points;
-                $description = 'Completed material: ' . $event->content->title;
-            } elseif ($event->content->contentable_type === Quiz::class && isset($event->data['score'])) {
-                // For quizzes, points are based on the score passed in the event data
-                $pointsToAward = $event->data['score']; // Or some calculation based on score
-                $description = 'Completed quiz: ' . $event->content->title;
-            }
+                Log::info('Handling content completion event', [
+                    'user_id' => $event->user->id,
+                    'content_id' => $event->content->id,
+                    'contentable_type' => $event->content->contentable_type,
+                    'event_data' => $event->data,
+                ]);
 
-            if ($pointsToAward > 0) {
+                if ($event->content->contentable_type === Material::class) {
+                    $pointsToAward = $event->content->points;
+                    $description = 'Completed material: ' . $event->content->title;
+                } elseif ($event->content->contentable_type === Quiz::class && isset($event->data['score'])) {
+                    $pointsToAward = $event->data['score'];
+                    $description = 'Completed quiz: ' . $event->content->title;
+                }
+
+                Log::info('Processing content completion', [
+                    'user_id' => $event->user->id,
+                    'content_id' => $event->content->id,
+                    'points_to_award' => $pointsToAward,
+                ]);
+
                 // Check if points have already been awarded for this specific content
                 $alreadyAwarded = StudentPoint::where('user_id', $event->user->id)
                     ->where('sourceable_id', $event->content->id)
@@ -61,8 +74,22 @@ class ProcessContentCompletion implements ShouldQueue
                                 ]
                             ]
                         );
+
+                    Log::info('Points awarded and content marked as completed', [
+                        'user_id' => $event->user->id,
+                        'content_id' => $event->content->id,
+                        'points_awarded' => $pointsToAward,
+                    ]);
                 }
-            }
-        });
+            });
+        } catch (\Throwable $th) {
+            // Log the error for debugging
+            Log::error('Failed to process content completion', [
+                'error' => $th->getMessage(),
+                'user_id' => $event->user->id,
+                'content_id' => $event->content->id,
+            ]);
+            // Optionally, rethrow or handle the exception as needed
+        }
     }
 }

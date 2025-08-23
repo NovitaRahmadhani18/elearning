@@ -44,7 +44,7 @@ const MaterialPage = () => {
                         icon={ChartBar} // Replace with an actual icon if needed
                     />
                 </div>
-                <section className="flex flex-col gap-4 rounded-lg bg-white p-6 shadow-md">
+                <section className="flex min-h-full flex-col gap-4 rounded-lg bg-white p-6 shadow-md">
                     <section className="flex items-center justify-between">
                         <HeadingSmall
                             title="Materials Management"
@@ -67,7 +67,7 @@ const MaterialPage = () => {
                             autoComplete="off"
                         />
                     </section>
-                    <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <section className="grid min-h-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {materials.data.length > 0 ? (
                             materials.data.map((material) => (
                                 <MaterialCard key={material.id} content={material} />
@@ -78,11 +78,14 @@ const MaterialPage = () => {
                             </p>
                         )}
                     </section>
-                </section>
 
-                {materials.data.length > 0 && (
-                    <TablePagination links={materials.links} meta={materials.meta} />
-                )}
+                    {materials.data.length > 0 && (
+                        <TablePagination
+                            links={materials.links}
+                            meta={materials.meta}
+                        />
+                    )}
+                </section>
             </div>
         </AdminTeacherLayout>
     );

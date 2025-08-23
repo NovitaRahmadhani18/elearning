@@ -52,7 +52,7 @@ class ClassroomService
             ->when(auth()->user()->role === RoleEnum::STUDENT, function ($query) {
                 return $query->whereHas('students', function ($q) {
                     $q->where('student_id', auth()->id());
-                });
+                })->with(['contents']);
             });
 
         $result =  DataTable::query($query)

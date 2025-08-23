@@ -1,3 +1,5 @@
+import { TContent } from '@/pages/teacher/material/types';
+import { TStudentClassroom } from '@/pages/teacher/student-tracking/types';
 import { SharedData } from '@/types';
 import { TUser } from '@/types/users';
 
@@ -26,6 +28,9 @@ export interface TClassroom {
     category: TClassroomCategory;
     status: TStatus;
     invite_code: string;
+    contents?: TContent[];
+    students?: TStudentClassroom[];
+    studentUsers?: TUser[];
 }
 
 export interface ClassroomIndexPageProps extends SharedData {

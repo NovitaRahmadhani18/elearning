@@ -32,5 +32,11 @@ class Content extends Model
     {
         return $this->morphTo();
     }
-}
 
+    public function students()
+    {
+        return $this->belongsToMany(User::class, 'content_user', 'content_id', 'user_id')
+            ->withPivot('status', 'score', 'completed_at')
+            ->withTimestamps();
+    }
+}

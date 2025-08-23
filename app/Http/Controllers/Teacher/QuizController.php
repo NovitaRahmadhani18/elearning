@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateQuizRequest;
 use App\Http\Resources\ContentResource;
 use App\Models\Classroom;
 use App\Models\Content;
@@ -24,6 +25,13 @@ class QuizController extends Controller
         return inertia('teacher/quiz/index', [
             'quizzes' => $this->contentService->getQuizzes(),
             'classrooms' => $this->contentService->getClassrooms(),
+        ]);
+    }
+
+    public function show(Content $content)
+    {
+        return inertia('teacher/quiz/show', [
+            'quiz' => ContentResource::make($content->load('contentable')),
         ]);
     }
 
@@ -54,11 +62,11 @@ class QuizController extends Controller
 
             'questions' => ['required', 'array', 'min:1'],
             'questions.*.question_text' => ['required', 'string'],
-            'questions.*.image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:1024'], // 1MB max
+            'questions.*.image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'], // 1MB max
 
             'questions.*.answers' => ['required', 'array', 'min:2', 'max:5'],
             'questions.*.answers.*.answer_text' => ['required_without:questions.*.answers.*.image', 'nullable', 'string', 'max:255'], // Teks wajib jika tidak ada gambar
-            'questions.*.answers.*.image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:1024'],
+            'questions.*.answers.*.image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'questions.*.answers.*.is_correct' => ['required', 'boolean'],
         ]);
 
@@ -83,33 +91,16 @@ class QuizController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Content $content)
+    public function update(UpdateQuizRequest $request, Content $content)
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'points' => ['required', 'integer', 'min:0'],
-            'start_time' => ['required', 'date'],
-            'end_time' => ['nullable', 'date', 'after_or_equal:start_time'],
-            'duration_minutes' => ['required', 'integer', 'min:1'],
-
-            'questions' => ['required', 'array', 'min:1'],
-            'questions.*.question_text' => ['required', 'string'],
-            'questions.*.image' => ['nullable', 'image', 'max:1024'],
-            'questions.*.answers' => ['required', 'array', 'min:2', 'max:5'],
-            'questions.*.answers.*.answer_text' => ['required_without:questions.*.answers.*.image', 'nullable', 'string', 'max:255'],
-            'questions.*.answers.*.image' => ['nullable', 'image', 'max:1024'],
-            'questions.*.answers.*.is_correct' => ['required', 'boolean'],
-        ]);
-
         try {
-            $this->contentService->updateQuiz($content, $validated);
-            return to_route('teacher.quizzes.index')->with('success', 'Quiz updated successfully.');
-        } catch (\Throwable $th) {
-            return to_route('teacher.quizzes.edit', $content->id)
-                ->withErrors('error', 'Failed to update quiz: ' . $th->getMessage())
-                ->withInput();
+            $this->contentService->updateQuiz($content, $request->validated());
+        } catch (\Exception $e) {
+            report($e);
+            return back()->with('error', 'Failed to update quiz: ' . $e->getMessage());
         }
+
+        return redirect()->route('teacher.quizzes.index')->with('success', 'Quiz updated successfully.');
     }
 
     /**

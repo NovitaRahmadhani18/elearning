@@ -27,7 +27,9 @@ const ClassroomPage = () => {
                         <StudentClassroomCard
                             classroom={classroom}
                             key={index}
-                            progress={Math.random() * 100} // Simulated progress, replace with actual data if available
+                            progress={
+                                Math.floor(Math.random() * 100) // Simulated progress, replace with actual data if available
+                            } // Simulated progress, replace with actual data if available
                         />
                     ))}
                 </section>

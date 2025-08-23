@@ -1,5 +1,6 @@
 import Heading from '@/components/heading';
 import StudentLayout from '@/layouts/student-layout';
+import StudentProgressPage from './leaderboard';
 
 const LeaderboardPage = () => {
     return (
@@ -9,6 +10,8 @@ const LeaderboardPage = () => {
                     title="Leaderboard"
                     description="See how you rank among your peers."
                 />
+
+                <StudentProgressPage />
             </div>
         </StudentLayout>
     );

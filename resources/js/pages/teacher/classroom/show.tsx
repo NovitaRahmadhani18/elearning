@@ -7,6 +7,9 @@ import { BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ClassroomShowStudents from './partials/classroom-show-students';
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
@@ -38,6 +41,21 @@ const ClassroomShowPage = () => {
                     <ActionButton action="create" onClick={() => setIsOpen(true)}>
                         Add Student
                     </ActionButton>
+                </section>
+
+                <section>
+                    <Tabs defaultValue="students" className="">
+                        <TabsList>
+                            <TabsTrigger value="students">Students</TabsTrigger>
+                            <TabsTrigger value="contents">Contents</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="students">
+                            <ClassroomShowStudents />
+                        </TabsContent>
+                        <TabsContent value="contents">
+                            Change your password here.
+                        </TabsContent>
+                    </Tabs>
                 </section>
             </div>
             <AdminInviteClassroomDialog

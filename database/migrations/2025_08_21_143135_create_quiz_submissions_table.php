@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('score')->default(0);
             $table->timestamp('started_at');
             $table->timestamp('completed_at')->nullable();
-            $table->integer('duration_seconds')->nullable();
+            $table->integer('duration_seconds')->default(0);
             $table->timestamps();
         });
     }
@@ -31,4 +31,3 @@ return new class extends Migration
         Schema::dropIfExists('quiz_submissions');
     }
 };
-

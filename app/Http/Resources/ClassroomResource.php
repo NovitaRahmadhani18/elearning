@@ -15,6 +15,7 @@ class ClassroomResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -36,6 +37,15 @@ class ClassroomResource extends JsonResource
             'invite_code' => $this->invite_code,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'contents' => $this->whenLoaded('contents', function () {
+                return ContentResource::collection($this->contents);
+            }),
+            'students' => $this->whenLoaded('students', function () {
+                return ClassroomStudentResource::collection($this->students);
+            }),
+            'studentUsers' => $this->whenLoaded('studentUsers', function () {
+                return UserResource::collection($this->studentUsers);
+            }),
         ];
     }
 }

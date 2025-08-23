@@ -129,29 +129,52 @@ class ContentController extends Controller
             ->first();
 
         if (!$submission) {
-            return to_route('student.contents.show', $content)
+            return to_route('student.quizzes.start', $content)
                 ->withErrors(['error' => 'You have not completed this quiz yet.']);
         }
 
-        // update submission to mark it as completed if it hasn't been done yet
-        /* if (!$submission->completed_at) { */
-        /*     // update the submission to mark it as completed */
-        /*     $submission->completed_at = now(); */
-        /*     $submission->duration_seconds = now()->diffInSeconds($submission->started_at); */
-        /*     $submission->score = 100; // Assuming full score for simplicity */
-        /*     $submission->save(); */
-        /**/
-        /*     ContentCompleted::dispatch(auth()->user(), $content, [ */
-        /*         'score' => 100 */
-        /*     ]); */
-        /* } */
+        if (!$submission->completed_at) {
+            $submission->completed_at = now();
+            $submission->duration_seconds = $submission->started_at->diffInSeconds($submission->completed_at);
+            $submission->score = $this->contentService->calculateQuizPoint(
+                $content,
+                $submission
+            );
 
-        ContentCompleted::dispatch(auth()->user(), $content, [
-            'score' => 100
-        ]);
+            $submission->save();
+            ContentCompleted::dispatch(auth()->user(), $content, [
+                'score' => $submission->score,
+                'duration' => $submission->duration_seconds,
+            ]);
+        }
+
 
 
         return inertia('student/content/quiz-result', [
+            'content' => ContentResource::make($content->load('contentable')),
+            'quizSubmission' => QuizSubmissionResource::make($submission->load('quiz.questions.answers', 'answers')),
+        ]);
+    }
+
+    public function reviewQuiz(Content $content)
+    {
+
+        if ($content->contentable_type !== 'App\Models\Quiz') {
+            return redirect()->back()->withErrors(['error' => 'This content is not a quiz.']);
+        }
+
+        $submission = auth()->user()->quizSubmissions()
+            ->where('quiz_id', $content->contentable->id)
+            ->whereNotNull('completed_at')
+            ->first();
+
+        if (!$submission) {
+            return to_route('student.quizzes.start', $content)
+                ->withErrors(['error' => 'You have not completed this quiz yet.']);
+        }
+
+
+        return inertia('student/content/quiz-review', [
             'content' => ContentResource::make($content->load('contentable')),
             'quizSubmission' => QuizSubmissionResource::make($submission->load('quiz.questions.answers', 'answers')),
         ]);

@@ -64,9 +64,24 @@ class ClassroomController extends Controller
      */
     public function show(Classroom $classroom)
     {
+        $classroom->load([
+            'students',
+            'contents',
+            'studentUsers'
+        ]);
 
         return inertia('teacher/classroom/show', [
             'classroom' => ClassroomResource::make($classroom),
+        ]);
+    }
+
+    public function showStudent(Classroom $classroom, $studentId)
+    {
+        $student = $classroom->students()->where('student_id', $studentId)->firstOrFail();
+
+        return inertia('teacher/classroom/show-student', [
+            'classroom' => ClassroomResource::make($classroom),
+            'student' => $student,
         ]);
     }
 

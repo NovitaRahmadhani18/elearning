@@ -18,7 +18,7 @@ class QuestionResource extends JsonResource
         return [
             'id' => $this->id,
             'question_text' => $this->question_text,
-            'image_path' => $this->image_path ? Storage::url($this->image_path) : null,
+            'image_path' => $this->image_path ? Storage::disk('public')->url($this->image_path) : null,
             'answers' => AnswerResource::collection($this->whenLoaded('answers')),
         ];
     }

@@ -9,9 +9,12 @@ use App\Http\Resources\ContentResource;
 use App\Models\Classroom;
 use App\Models\Content;
 use App\Models\Material;
+use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\QuizSubmission;
 use App\Models\SubmissionAnswer;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -199,64 +202,66 @@ class ContentService
         return DB::transaction(function () use ($content, $data) {
             $quiz = $content->contentable;
 
-            // 1. HAPUS SEMUA PERTANYAAN & JAWABAN LAMA BESERTA FILENYA
-            foreach ($quiz->questions as $question) {
-                // Hapus gambar pertanyaan lama
-                if ($question->image_path) {
-                    Storage::disk('public')->delete($question->image_path);
-                }
-                // Hapus gambar jawaban lama
-                foreach ($question->answers as $answer) {
-                    if ($answer->image_path) {
-                        Storage::disk('public')->delete($answer->image_path);
-                    }
-                }
-                // Hapus record jawaban & pertanyaan dari database
-                $question->answers()->delete();
-                $question->delete();
-            }
+            // 1. UPDATE RECORD UTAMA (QUIZ & CONTENT)
+            $quiz->update(Arr::only($data, ['start_time', 'end_time', 'duration_minutes']));
+            $content->update(Arr::only($data, ['title', 'description', 'points', 'classroom_id']));
 
-            // 2. UPDATE RECORD UTAMA (QUIZ & CONTENT)
-            $quiz->update([
-                'start_time' => $data['start_time'],
-                'end_time' => $data['end_time'],
-                'duration_minutes' => $data['duration_minutes'],
-            ]);
+            $incomingQuestionIds = [];
+            $incomingAnswerIds = [];
 
-            $content->update([
-                'title' => $data['title'],
-                'description' => $data['description'],
-                'points' => $data['points'],
-            ]);
-
-            // 3. BUAT ULANG PERTANYAAN & JAWABAN DARI DATA BARU
-            //    (Logika ini sama persis dengan di metode createQuiz)
+            // 2. UPDATE ATAU BUAT PERTANYAAN & JAWABAN
             foreach ($data['questions'] as $questionData) {
-                $questionImagePath = $questionData['_existingImage'] ?? null;
+                $questionPayload = ['question_text' => $questionData['question_text']];
+                $existingQuestion = isset($questionData['id']) ? Question::find($questionData['id']) : null;
+
                 if (isset($questionData['image']) && $questionData['image'] instanceof UploadedFile) {
-                    $questionImagePath = $questionData['image']->store('question-images', 'public');
+                    if ($existingQuestion && $existingQuestion->image_path) {
+                        Storage::disk('public')->delete($existingQuestion->image_path);
+                    }
+                    $questionPayload['image_path'] = $questionData['image']->store('question-images', 'public');
                 }
 
-                $question = $quiz->questions()->create([
-                    'question_text' => $questionData['question_text'],
-                    'image_path' => $questionImagePath,
-                ]);
+                $question = $quiz->questions()->updateOrCreate(['id' => $questionData['id'] ?? null], $questionPayload);
+                $incomingQuestionIds[] = $question->id;
 
                 foreach ($questionData['answers'] as $answerData) {
-                    $answerImagePath = $answerData['_existingImage'] ?? null;
+                    $answerPayload = [
+                        'answer_text' => $answerData['answer_text'],
+                        'is_correct' => $answerData['is_correct'],
+                    ];
+                    $existingAnswer = isset($answerData['id']) ? \App\Models\Answer::find($answerData['id']) : null;
+
                     if (isset($answerData['image']) && $answerData['image'] instanceof UploadedFile) {
-                        $answerImagePath = $answerData['image']->store('answer-images', 'public');
+                        if ($existingAnswer && $existingAnswer->image_path) {
+                            Storage::disk('public')->delete($existingAnswer->image_path);
+                        }
+                        $answerPayload['image_path'] = $answerData['image']->store('answer-images', 'public');
                     }
 
-                    $question->answers()->create([
-                        'answer_text' => $answerData['answer_text'],
-                        'image_path' => $answerImagePath,
-                        'is_correct' => $answerData['is_correct'],
-                    ]);
+                    $answer = $question->answers()->updateOrCreate(['id' => $answerData['id'] ?? null], $answerPayload);
+                    $incomingAnswerIds[] = $answer->id;
                 }
             }
 
-            return $content->fresh(); // Ambil versi terbaru dari database
+            // 3. HAPUS PERTANYAAN & JAWABAN YANG TIDAK ADA DALAM DATA BARU
+            $questionsToDelete = $quiz->questions()->whereNotIn('id', $incomingQuestionIds)->get();
+            foreach ($questionsToDelete as $q) {
+                if ($q->image_path) Storage::disk('public')->delete($q->image_path);
+                foreach ($q->answers as $a) {
+                    if ($a->image_path) Storage::disk('public')->delete($a->image_path);
+                }
+                $q->delete(); // Jawaban akan terhapus secara cascade jika diatur di database
+            }
+
+            // Menangani jawaban yang dihapus dari pertanyaan yang masih ada
+            $answersToDelete = \App\Models\Answer::whereIn('question_id', $incomingQuestionIds)
+                ->whereNotIn('id', $incomingAnswerIds)->get();
+            foreach ($answersToDelete as $a) {
+                if ($a->image_path) Storage::disk('public')->delete($a->image_path);
+                $a->delete();
+            }
+
+            return $content->fresh();
         });
     }
 
@@ -313,5 +318,46 @@ class ContentService
 
             return $submission->load('quiz.questions.answers', 'answers');
         });
+    }
+
+    static public function calculateQuizPoint(Content $content, QuizSubmission $quizSubmission): int
+    {
+        $correctAnswers = $quizSubmission->answers->where('is_correct', true)->count();
+        $totalQuestions = $content->contentable->questions->count();
+
+        $pointsPerQuestion = $content->points / $totalQuestions;
+        $totalPoints = $correctAnswers * $pointsPerQuestion;
+
+        if ($totalPoints < 0) {
+            $totalPoints = 0; // Ensure points cannot be negative
+        }
+
+        return round($totalPoints);
+    }
+
+    public function calculateSubmissionStats(QuizSubmission $submission): array
+    {
+        $correctAnswersCount = $submission->answers->where('is_correct', true)->count();
+        $totalQuestions = $submission->quiz->questions->count();
+
+        if ($totalQuestions === 0) {
+            return [
+                'score' => 0,
+                'correct_answers_count' => 0,
+                'incorrect_answers_count' => 0,
+                'total_questions' => 0,
+                'accuracy' => 0.0,
+            ];
+        }
+
+        $accuracy = round(($correctAnswersCount / $totalQuestions) * 100, 2);
+
+        return [
+            'score' => (int) round($accuracy), // Skor seringkali integer (misal: 87 dari 100)
+            'correct_answers_count' => $correctAnswersCount,
+            'incorrect_answers_count' => $totalQuestions - $correctAnswersCount,
+            'total_questions' => $totalQuestions,
+            'accuracy' => $accuracy, // Akurasi bisa float (misal: 86.67)
+        ];
     }
 }

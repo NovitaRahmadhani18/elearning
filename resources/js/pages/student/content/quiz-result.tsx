@@ -4,7 +4,7 @@ import { SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { useMemo } from 'react';
 import { QuizResult, QuizResultsView } from '../partials/quiz-results-view';
-import { QuizSubmission } from './quiz-start';
+import { TQuizSubmission } from './types';
 
 interface QuizResultPageProps extends SharedData {
     content: {
@@ -12,26 +12,26 @@ interface QuizResultPageProps extends SharedData {
     };
 
     quizSubmission: {
-        data: QuizSubmission;
+        data: TQuizSubmission;
     };
 }
 
 const QuizResultPage = () => {
     const { quizSubmission, content } = usePage<QuizResultPageProps>().props;
 
-    const quiz = content.data?.details;
-    const submission = quizSubmission.data;
-
     const result: QuizResult = useMemo(() => {
         return {
-            accuracy: 10,
-            correct_answers_count: submission.score || 0,
-            final_score: submission.score || 0,
-            incorrect_answers_count: quiz.questions.length - (submission.score || 0),
-            time_spent_seconds: 10,
-            total_questions: quiz.questions.length || 0,
+            // total jumlah pertanyaan yang benar
+            accuracy: quizSubmission.data.accuracy || 0,
+
+            correct_answers_count: quizSubmission.data.correct_answers_count || 0,
+            final_score: quizSubmission.data.score || 0,
+            incorrect_answers_count:
+                quizSubmission.data.incorrect_answers_count || 0,
+            time_spent_seconds: quizSubmission.data.duration_seconds || 0,
+            total_questions: content.data.details.questions.length || 0,
         };
-    }, [quiz.questions.length, submission.score]);
+    }, [quizSubmission, content.data.details.questions.length]);
 
     return (
         <main>

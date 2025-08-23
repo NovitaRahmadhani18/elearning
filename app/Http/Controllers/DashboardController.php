@@ -3,10 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleEnum;
+use App\Models\Classroom;
+use App\Models\StudentPoint;
+use App\Models\User;
+use App\Services\ClassroomService;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+
+    public function __construct(protected ClassroomService $classroomService) {}
+
+
     public function index()
     {
         $role = request()->user()->role;
@@ -27,7 +35,19 @@ class DashboardController extends Controller
 
     public function admin()
     {
-        return inertia('admin/dashboard-admin');
+
+        $classroomCount = Classroom::count();
+        $totalUserCount = User::count();
+        $completionCount = StudentPoint::count();
+
+        return inertia(
+            'admin/dashboard-admin',
+            [
+                'classroomCount' => $classroomCount,
+                'totalUserCount' => $totalUserCount,
+                'completionCount' => $completionCount,
+            ]
+        );
     }
 
     public function teacher()
@@ -37,6 +57,8 @@ class DashboardController extends Controller
 
     public function student()
     {
-        return inertia('student/dashboard-student', []);
+        return inertia('student/dashboard-student', [
+            'classrooms' => $this->classroomService->index(),
+        ]);
     }
 }

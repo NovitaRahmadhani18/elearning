@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
 import { TContentQuiz } from '@/pages/teacher/material/types';
 import { Link } from '@inertiajs/react';
 import { ArrowLeft, Lightbulb, Trophy } from 'lucide-react';
@@ -18,12 +19,43 @@ interface QuizResultsViewProps {
     quiz: TContentQuiz;
 }
 
+const quotesAccuracy = [
+    { threshold: 90, quote: 'Excellent work! You nailed it!' },
+    { threshold: 75, quote: 'Great job! You did really well!' },
+    { threshold: 50, quote: 'Good effort! Keep practicing!' },
+    { threshold: 0, quote: 'Keep trying! You can improve!' },
+];
+
+const colorAccuracy = [
+    { threshold: 90, color: 'bg-green-600/90' },
+    { threshold: 75, color: 'bg-blue-600/90' },
+    { threshold: 50, color: 'bg-yellow-600/90' },
+    { threshold: 0, color: 'bg-red-600/90' },
+];
+
+const getColorByAccuracy = (accuracy: number) => {
+    for (const { threshold, color } of colorAccuracy) {
+        if (accuracy >= threshold) {
+            return color;
+        }
+    }
+    return 'bg-gray-600/90';
+};
+
+const getQuoteByAccuracy = (accuracy: number) => {
+    for (const { threshold, quote } of quotesAccuracy) {
+        if (accuracy >= threshold) {
+            return quote;
+        }
+    }
+    return 'Keep trying! You can improve!';
+};
+
 export const QuizResultsView = ({ result, quiz }: QuizResultsViewProps) => (
     <div className="flex min-h-screen flex-col items-center justify-center bg-slate-900 p-4 text-white sm:p-6">
         <div className="mx-auto w-full max-w-2xl text-center">
             <Trophy className="mx-auto mb-4 h-16 w-16 text-amber-400" />
             <h1 className="text-4xl font-extrabold">Quiz Completed!</h1>
-            <p className="mt-2 text-lg text-slate-400">Fair</p>
 
             <div className="my-8 flex items-center justify-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-600 text-xl font-bold">
@@ -38,11 +70,23 @@ export const QuizResultsView = ({ result, quiz }: QuizResultsViewProps) => (
             </div>
 
             <div className="mb-8 grid grid-cols-3 gap-4 text-center">
-                <div className="rounded-lg bg-red-500/90 p-4">
+                <div
+                    className={cn(
+                        'rounded-lg p-4',
+                        getColorByAccuracy(result.accuracy),
+                    )}
+                >
                     <p className="text-sm opacity-80">Final Score</p>
-                    <p className="text-3xl font-bold">{result.final_score.toFixed(1)}%</p>
+                    <p className="text-3xl font-bold">
+                        {result.final_score.toFixed(1)}%
+                    </p>
                 </div>
-                <div className="rounded-lg bg-green-500/90 p-4">
+                <div
+                    className={cn(
+                        'rounded-lg p-4',
+                        getColorByAccuracy(result.accuracy),
+                    )}
+                >
                     <p className="text-sm opacity-80">Correct Answers</p>
                     <p className="text-3xl font-bold">
                         {result.correct_answers_count}/{result.total_questions}
@@ -53,7 +97,10 @@ export const QuizResultsView = ({ result, quiz }: QuizResultsViewProps) => (
                     <p className="text-3xl font-bold">
                         {`${Math.floor(result.time_spent_seconds / 60)
                             .toString()
-                            .padStart(2, '0')}:${(result.time_spent_seconds % 60).toString().padStart(2, '0')}`}
+                            .padStart(
+                                2,
+                                '0',
+                            )}:${(result.time_spent_seconds % 60).toString().padStart(2, '0')}`}
                     </p>
                 </div>
             </div>
@@ -71,25 +118,44 @@ export const QuizResultsView = ({ result, quiz }: QuizResultsViewProps) => (
                 <div className="mt-4 grid grid-cols-2 gap-4">
                     <div className="rounded bg-slate-700 p-4">
                         <p className="text-sm text-slate-400">Incorrect</p>
-                        <p className="text-2xl font-bold">{result.incorrect_answers_count}</p>
+                        <p className="text-2xl font-bold">
+                            {result.incorrect_answers_count}
+                        </p>
                     </div>
                     <div className="rounded bg-slate-700 p-4">
                         <p className="text-sm text-slate-400">Accuracy</p>
-                        <p className="text-2xl font-bold">{result.accuracy.toFixed(1)}%</p>
+                        <p className="text-2xl font-bold">
+                            {result.accuracy.toFixed(1)}%
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <div className="mb-8 flex items-center justify-center gap-3 rounded-lg bg-blue-900/50 p-4">
-                <Lightbulb className="h-6 w-6 text-yellow-300" />
-                <p>Not bad! Review the materials and try again.</p>
+            <div
+                className={cn(
+                    'mb-8 flex items-center justify-center gap-3 rounded-lg bg-green-700 p-4',
+                )}
+            >
+                <Lightbulb className="h-6 w-6" />
+                <p>{getQuoteByAccuracy(result.accuracy)}</p>
             </div>
 
             <div className="space-y-3">
-                <Button size="lg" className="w-full bg-amber-500 font-bold text-black hover:bg-amber-600">
-                    Review Answers
+                <Button
+                    size="lg"
+                    className="w-full bg-amber-500 font-bold text-black hover:bg-amber-600"
+                    asChild
+                >
+                    <Link href={route('student.quizzes.review', quiz.id)}>
+                        Review Answers
+                    </Link>
                 </Button>
-                <Button asChild size="lg" variant="link" className="w-full text-slate-300">
+                <Button
+                    asChild
+                    size="lg"
+                    variant="link"
+                    className="w-full text-slate-300"
+                >
                     <Link href={route('student.classrooms.show', quiz.classroom_id)}>
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Back to Classroom
