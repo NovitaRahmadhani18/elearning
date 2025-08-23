@@ -1,0 +1,9 @@
+{
+	order php_server before file_server
+}
+
+dev.elearningsmpsdb.site {
+	root /app/public
+	encode zstd gzip
+	php_server
+}
