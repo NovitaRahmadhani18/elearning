@@ -54,11 +54,6 @@ class ContentController extends Controller
                 ->withErrors(['error' => 'You have already completed this quiz.']);
         }
 
-        if ($content->contentable_type !== 'App\Models\Quiz') {
-            return to_route('student.contents.show', $content)
-                ->withErrors(['error' => 'This content is not a quiz.']);
-        }
-
 
         if ($content->contentable_type !== Quiz::class) {
             return to_route('student.contents.show', $content)
@@ -68,17 +63,11 @@ class ContentController extends Controller
         $quiz = $content->contentable;
         $user = auth()->user();
 
-        // Check for existing incomplete submission
-        $existingSubmission = QuizSubmission::where('student_id', $user->id)
-            ->where('quiz_id', $quiz->id)
-            ->whereNull('completed_at')
-            ->first();
-
-        if ($existingSubmission) {
-            $existingSubmission->load('quiz.questions.answers', 'answers');
+        if ($submission) {
+            $submission->load('quiz.questions.answers', 'answers');
             return inertia('student/content/quiz-start', [
                 'content' => ContentResource::make($content->load('contentable')),
-                'quizSubmission' => QuizSubmissionResource::make($existingSubmission),
+                'quizSubmission' => QuizSubmissionResource::make($submission),
             ]);
         }
 
@@ -99,6 +88,7 @@ class ContentController extends Controller
 
     public function submitAnswer(Request $request, Content $content)
     {
+
         $data = $request->validate([
             'question_id' => 'required|exists:questions,id',
             'answer_id' => 'required|exists:answers,id',

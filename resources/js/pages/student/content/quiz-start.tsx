@@ -69,8 +69,6 @@ const QuizTakingPage = () => {
     const handleAnswerSelect = async (questionId: number, answerId: number) => {
         const newAnswers = { ...userAnswers, [questionId]: answerId };
         setUserAnswers(newAnswers);
-        console.log('User answers updated:', newAnswers);
-        console.log('Current question index:', currentQuestionIndex);
 
         if (
             quizSubmission &&
@@ -83,9 +81,7 @@ const QuizTakingPage = () => {
                     answer_id: answerId,
                 },
                 {
-                    async: true,
-                    onSuccess: (e) => {
-                        console.log('Answer submitted:', e);
+                    onSuccess: () => {
                         setCurrentQuestionIndex((prev) => prev + 1);
                         toast.success('Answer submitted successfully!');
                     },

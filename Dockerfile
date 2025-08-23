@@ -31,11 +31,11 @@ RUN ls -la
 # # Buat file database SQLite kosong sebelum mengatur permission
 # RUN mkdir -p database && touch database/database.sqlite
 
-RUN cp .env.example .env \
-    && php artisan key:generate \
-    && php artisan storage:link
+# RUN cp .env.example .env \
+#     && php artisan key:generate \
+#     && php artisan storage:link
 
-RUN php artisan storage:link
+# RUN php artisan storage:link
 
 
 # Expose port yang digunakan oleh Caddy (FrankenPHP)
