@@ -35,7 +35,7 @@ RUN ls -la
 #     && php artisan key:generate \
 #     && php artisan storage:link
 
-# RUN php artisan storage:link
+RUN php artisan storage:link
 
 
 # Expose port yang digunakan oleh Caddy (FrankenPHP)
