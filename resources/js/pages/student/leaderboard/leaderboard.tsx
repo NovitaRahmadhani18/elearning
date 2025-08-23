@@ -270,15 +270,15 @@ export const ContentProgressBlock = ({ content }: { content: TProgressContent })
                         </p>
                     </div>
                 </div>
-                <div className="text-right">
-                    <div className="flex items-center gap-1 rounded-md bg-yellow-100 px-2 py-1 font-semibold text-yellow-800">
-                        <Trophy className="h-4 w-4" />
-                        <span>Your Rank: #{content.your_rank}</span>
-                    </div>
-                    <p className="mt-1 text-xs text-slate-500">
-                        of {content.total_students} students
-                    </p>
-                </div>
+                {/* <div className="text-right"> */}
+                {/*     <div className="flex items-center gap-1 rounded-md bg-yellow-100 px-2 py-1 font-semibold text-yellow-800"> */}
+                {/*         <Trophy className="h-4 w-4" /> */}
+                {/*         <span>Your Rank: #{content.your_rank}</span> */}
+                {/*     </div> */}
+                {/*     <p className="mt-1 text-xs text-slate-500"> */}
+                {/*         of {content.total_students} students */}
+                {/*     </p> */}
+                {/* </div> */}
             </header>
             <main className="space-y-2 p-4">
                 {content.submissions

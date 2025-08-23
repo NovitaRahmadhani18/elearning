@@ -19,7 +19,6 @@ import { Link, usePage } from '@inertiajs/react';
 import {
     BookMarked,
     BookOpen,
-    ChartArea,
     LayoutGrid,
     List,
     SquareKanban,
@@ -119,7 +118,7 @@ const teacherNavItems: NavItem[] = [
     {
         title: 'Student Tracking',
         href: '/teacher/student-tracking',
-        icon: ChartArea,
+        icon: LayoutGrid,
     },
 ];
 

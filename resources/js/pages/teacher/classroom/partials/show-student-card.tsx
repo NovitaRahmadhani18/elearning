@@ -1,4 +1,4 @@
-import { format, formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 
 // Import Ikon
 import { Head } from '@inertiajs/react';
@@ -216,27 +216,15 @@ const StudentProfilePage = () => {
                     <div className="mt-8">
                         <h2 className="mb-2 text-sm font-semibold">Quick Stats</h2>
                         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                            <StatCard
-                                label="Courses Enrolled"
-                                value={user.stats.courses_enrolled}
-                            />
+                            <StatCard label="Classroom" value={'Matematika Dasar'} />
+                            <StatCard label="Completion Rate" value={'80%'} />
+                            <StatCard label="Achievements" value={'1'} />
                             <StatCard
                                 label="Last Activity"
                                 value={formatDistanceToNow(
                                     new Date(user.stats.last_activity),
                                     { addSuffix: true },
                                 )}
-                            />
-                            <StatCard
-                                label="Member Since"
-                                value={format(
-                                    new Date(user.stats.member_since),
-                                    'dd MMM yyyy',
-                                )}
-                            />
-                            <StatCard
-                                label="Achievements"
-                                value={user.stats.achievements_unlocked}
                             />
                         </div>
                     </div>

@@ -61,6 +61,7 @@ const ClassroomShowPage = () => {
             <AdminInviteClassroomDialog
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
+                key={classroom.data.id}
                 classroom={classroom.data}
             />
         </AdminTeacherLayout>

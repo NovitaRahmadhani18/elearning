@@ -369,7 +369,7 @@ const CreateQuizForm = () => {
                         onChange={(val) => setData('classroom_id', val)}
                         options={classrooms.data.map((c) => ({
                             value: c.id.toString(),
-                            label: c.name,
+                            label: c.fullName,
                         }))}
                         error={errors.classroom_id}
                         required

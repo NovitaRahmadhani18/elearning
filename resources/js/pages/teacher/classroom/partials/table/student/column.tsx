@@ -40,6 +40,18 @@ export const studentColumn: ColumnDef<TUser>[] = [
         },
     },
     {
+        accessorKey: 'email',
+        header: 'Email',
+        cell: ({ row }) => {
+            const email = row.original.email;
+            return (
+                <span className="text-sm text-gray-600" title={email}>
+                    {email}
+                </span>
+            );
+        },
+    },
+    {
         accessorKey: 'created_at',
         header: 'Joined At',
         cell: ({ row }) => {

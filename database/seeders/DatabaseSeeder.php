@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
 
         // create 1 classroom with 1 teacher and 1 student
         $classroom = \App\Models\Classroom::create([
-            'name' => 'Sample Classroom',
+            'name' => 'Matematika',
             'description' => 'This is a sample classroom.',
             'teacher_id' => $teacher->id,
             'code' => 'CLASS123',
@@ -59,5 +59,22 @@ class DatabaseSeeder extends Seeder
             'classroom_id' => $classroom->id,
             'student_id' => $student->id,
         ]);
+
+        User::factory(30)->create()->each(function ($user) use ($classroom) {
+            $user->classrooms()->attach($classroom->id);
+        });
+
+        for ($i = 1; $i < 5; $i++) {
+            \App\Models\Classroom::create([
+                'name' => 'Matematika',
+                'description' => 'Description for Classroom ' . ($i + 1),
+                'teacher_id' => $teacher->id,
+                'code' => 'CLASS' . ($i + 1) . '123',
+                'category_id' => $i + 1,
+                'status_id' => 1,
+                'thumbnail' => null,
+                'invite_code' => 'INVITE' . ($i + 1) . '123',
+            ]);
+        }
     }
 }

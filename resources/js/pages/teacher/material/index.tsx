@@ -33,14 +33,14 @@ const MaterialPage = () => {
             <div className="flex-1 flex-col gap-4 space-y-4">
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
                     <AdminDashboardCard
-                        title="Daily Active Users"
-                        value="0" // Placeholder value, replace with actual data if available'
+                        title="Total Materials"
+                        value="3" // Placeholder value, replace with actual data if available'
                         icon={BookOpenText} // Replace with an actual icon if needed
                     />
 
                     <AdminDashboardCard
-                        title="Course Completion Rate"
-                        value="0" // Placeholder value, replace with actual data if available
+                        title="Student engagement"
+                        value="50%" // Placeholder value, replace with actual data if available
                         icon={ChartBar} // Replace with an actual icon if needed
                     />
                 </div>

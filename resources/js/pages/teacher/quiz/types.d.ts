@@ -1,3 +1,4 @@
+import { TClassroom } from '@/pages/admin/classroom/types';
 import { PaginatedData, SharedData } from '@/types';
 import { TContent, TContentQuiz } from '../material/types';
 

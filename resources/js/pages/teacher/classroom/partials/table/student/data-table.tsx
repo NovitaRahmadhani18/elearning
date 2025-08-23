@@ -12,7 +12,7 @@ const StudentClassroomTable = () => {
             <DataTable
                 data={classroom.data.studentUsers || []}
                 columns={studentColumn}
-                title="Student Classrooms"
+                title="Students"
             />
         </div>
     );

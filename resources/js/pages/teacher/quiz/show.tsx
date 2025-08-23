@@ -32,6 +32,7 @@ export default function ShowQuiz() {
             <Head title="Detail Material" />
             <div className="">
                 <ContentProgressBlock content={mockProgressData[1]} />
+                {/* <StudentQuizTable /> */}
             </div>
         </AdminTeacherLayout>
     );
