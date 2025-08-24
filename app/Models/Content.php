@@ -19,7 +19,6 @@ class Content extends Model
     ];
 
     protected $with = [
-        'classroom',
         'contentable',
     ];
 
@@ -35,7 +34,7 @@ class Content extends Model
 
     public function students()
     {
-        return $this->belongsToMany(User::class, 'content_user', 'content_id', 'user_id')
+        return $this->belongsToMany(User::class, 'content_student', 'content_id', 'user_id')
             ->withPivot('status', 'score', 'completed_at')
             ->withTimestamps();
     }

@@ -84,6 +84,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             // leaderboard
             Route::get('leaderboard', [\App\Http\Controllers\Student\LeaderboardController::class, 'index'])->name('leaderboard.index');
+            Route::get('contents/{content}/leaderboard', [\App\Http\Controllers\Student\LeaderboardController::class, 'show'])->name('leaderboard.show');
 
             // achievements
             Route::get('achievements', [\App\Http\Controllers\Student\AchievementController::class, 'index'])->name('achievements.index');

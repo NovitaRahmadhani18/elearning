@@ -29,7 +29,7 @@ class MaterialController extends Controller
     public function show(Content $content)
     {
         return inertia('teacher/material/show', [
-            'material' => ContentResource::make($content->load('contentable')),
+            'material' => ContentResource::make($content->load(['contentable', 'classroom', 'students'])),
         ]);
     }
 

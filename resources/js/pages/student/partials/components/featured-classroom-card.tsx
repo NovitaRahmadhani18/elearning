@@ -2,12 +2,12 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { getRandomCardAppearance } from '@/lib/classroomCardUtils';
 import { cn } from '@/lib/utils';
-import { TClassroom } from '@/pages/admin/classroom/types';
 import { router } from '@inertiajs/react';
 import { Play } from 'lucide-react';
+import { TStudentClassroom } from '../../classrooms/types';
 
 interface FeaturedClassroomCardProps extends React.HTMLAttributes<HTMLDivElement> {
-    classroom: TClassroom;
+    classroom: TStudentClassroom;
 }
 
 const FeaturedClassroomCard: React.FC<FeaturedClassroomCardProps> = ({
@@ -15,7 +15,7 @@ const FeaturedClassroomCard: React.FC<FeaturedClassroomCardProps> = ({
 }) => {
     const { color, textColor } = getRandomCardAppearance(classroom.id);
     // const progressNumber = Math.round(Math.random() * 100 || 0);
-    const progressNumber = 100;
+    const progressNumber = classroom.progress || 0; // Use classroom progress if available
 
     return (
         <div

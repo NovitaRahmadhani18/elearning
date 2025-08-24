@@ -10,7 +10,7 @@ class ContentStatusService
 {
     private Collection $completedContentIds;
 
-    public function __construct(User $student, int $classroomId)
+    public function __construct(User $student)
     {
         $this->completedContentIds = $student->contents()->pluck('contents.id');
     }
@@ -35,11 +35,6 @@ class ContentStatusService
 
             $statuses->put($content->id, $status);
         }
-
-        Log::debug('Content statuses calculated', [
-            'student_id' => auth()->id(),
-            'statuses' => $statuses->toArray(),
-        ]);
 
         return $statuses;
     }

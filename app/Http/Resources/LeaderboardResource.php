@@ -14,6 +14,16 @@ class LeaderboardResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [];
+        return [
+            'user' => [
+                'id' => $this->user_id,
+                'name' => $this->name,
+                'avatar' => $this->avatar,
+            ],
+            'rank' => $this->rank,
+            'score' => $this->when(isset($this->score), $this->score),
+            'time_spent' => $this->when(isset($this->duration_seconds), gmdate('i:s', $this->duration_seconds)),
+            'completed_at' => $this->completed_at,
+        ];
     }
 }

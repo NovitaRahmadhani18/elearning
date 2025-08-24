@@ -4,6 +4,7 @@ import StudentLayout from '@/layouts/student-layout';
 import { SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { BookOpen, CheckCircle2 } from 'lucide-react';
+import { useMemo } from 'react';
 import AdminDashboardCard from '../admin/partials/components/admin-dashboard-card';
 import { TStudentClassroom } from './classrooms/types';
 import DashboardClassroomCard from './partials/components/dashboard-classroom-card';
@@ -17,6 +18,16 @@ interface DashboardStudentProps extends SharedData {
 
 const DashboardStudent = () => {
     const { auth, classrooms } = usePage<DashboardStudentProps>().props;
+
+    const counts = useMemo(() => {
+        return {
+            completedClasses:
+                classrooms.data.filter((c) => c.progress === 100)?.length ?? 0,
+            inProgressClasses:
+                classrooms.data.filter((c) => c.progress > 0 && c.progress < 100)
+                    ?.length ?? 0,
+        };
+    }, [classrooms.data]);
 
     return (
         <StudentLayout>
@@ -32,13 +43,13 @@ const DashboardStudent = () => {
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
                     <AdminDashboardCard
                         title="Classroom in Progress"
-                        value="1,234"
+                        value={counts.inProgressClasses.toString()}
                         icon={BookOpen}
                     />
 
                     <AdminDashboardCard
                         title="Completed Class"
-                        value="1,234"
+                        value={counts.completedClasses.toString()}
                         icon={CheckCircle2}
                     />
                 </div>

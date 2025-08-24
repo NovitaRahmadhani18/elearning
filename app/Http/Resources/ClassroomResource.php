@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\RoleEnum;
+use App\Services\ContentStatusService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -46,6 +48,31 @@ class ClassroomResource extends JsonResource
             'studentUsers' => $this->whenLoaded('studentUsers', function () {
                 return UserResource::collection($this->studentUsers);
             }),
+
+            'progress' => $this->when(
+                auth()->user()?->role === RoleEnum::STUDENT,
+                function () {
+                    $contents = $this->contents;
+
+                    if ($contents->isEmpty()) {
+                        return 0;
+                    }
+
+                    $contentStatuses = (new ContentStatusService(auth()->user(), $this->id))->getStatuses($contents);
+
+                    $completedCount = $contentStatuses->filter(function ($status) {
+                        return $status === 'completed';
+                    })->count();
+
+                    if ($completedCount == 0) {
+                        return 0;
+                    }
+
+                    $totalCount = $contents->count();
+
+                    return $totalCount > 0 ? round(($completedCount / $totalCount) * 100, 2) : 0;
+                },
+            )
         ];
     }
 }

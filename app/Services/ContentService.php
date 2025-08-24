@@ -23,7 +23,7 @@ class ContentService
 
     public function getMaterials()
     {
-        $query =  Content::with('contentable')
+        $query =  Content::with(['contentable', 'classroom'])
             ->when(auth()->user()->role == RoleEnum::TEACHER, function ($query) {
                 $query->whereHas('classroom', function ($q) {
                     $q->where('teacher_id', auth()->id());
@@ -40,7 +40,7 @@ class ContentService
 
     public function getQuizzes()
     {
-        $query = Content::with('contentable')
+        $query = Content::with(['contentable', 'classroom'])
             ->when(auth()->user()->role == RoleEnum::TEACHER, function ($query) {
                 $query->whereHas('classroom', function ($q) {
                     $q->where('teacher_id', auth()->id());

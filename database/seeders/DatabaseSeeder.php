@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Services\ContentService;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -43,6 +44,18 @@ class DatabaseSeeder extends Seeder
             'id_number' => 'ID1122334455',
         ]);
 
+        // disini nanti di komen
+
+        $student2 = User::create([
+            'name' => 'Student2',
+            'email' => 'student2@student.com',
+            'password' => bcrypt('password'),
+            'role' => 'student',
+            'address' => '789 Student Boulevard',
+            'gender' => 'male',
+            'id_number' => 'ID11223344552',
+        ]);
+
         // create 1 classroom with 1 teacher and 1 student
         $classroom = \App\Models\Classroom::create([
             'name' => 'Matematika',
@@ -58,6 +71,11 @@ class DatabaseSeeder extends Seeder
         \App\Models\ClassroomStudent::create([
             'classroom_id' => $classroom->id,
             'student_id' => $student->id,
+        ]);
+
+        \App\Models\ClassroomStudent::create([
+            'classroom_id' => $classroom->id,
+            'student_id' => $student2->id,
         ]);
 
         User::factory(30)->create()->each(function ($user) use ($classroom) {
@@ -76,5 +94,21 @@ class DatabaseSeeder extends Seeder
                 'invite_code' => 'INVITE' . ($i + 1) . '123',
             ]);
         }
+
+        // buat 3 konten materi untuk setiap kelas
+        \App\Models\Classroom::all()->each(
+            function ($classroom) {
+                for ($i = 1; $i <= 3; $i++) {
+                    app(ContentService::class)->createMaterial(
+                        [
+                            'body' => 'This is the body of content ' . $i . ' for classroom ' . $classroom->name,
+                            'title' => 'Content ' . $i . ' for ' . $classroom->name,
+                            'points' => 10 * $i,
+                        ],
+                        $classroom,
+                    );
+                }
+            }
+        );
     }
 }

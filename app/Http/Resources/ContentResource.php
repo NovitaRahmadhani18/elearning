@@ -36,6 +36,12 @@ class ContentResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+
+            // leaderboard
+            'leaderboard' => $this->when(
+                isset($this->leaderboard),
+                $this->leaderboard
+            )
         ];
     }
 }

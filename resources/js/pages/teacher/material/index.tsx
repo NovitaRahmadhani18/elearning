@@ -44,7 +44,7 @@ const MaterialPage = () => {
                         icon={ChartBar} // Replace with an actual icon if needed
                     />
                 </div>
-                <section className="flex min-h-full flex-col gap-4 rounded-lg bg-white p-6 shadow-md">
+                <section className="flex flex-col gap-4 rounded-lg bg-white p-6 shadow-md">
                     <section className="flex items-center justify-between">
                         <HeadingSmall
                             title="Materials Management"

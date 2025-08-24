@@ -4,6 +4,7 @@ import { PaginatedData, SharedData } from '@/types';
 
 interface TStudentClassroom extends TClassroom {
     contents?: TContent[]; // Optional property for contents
+    progress: number;
 }
 
 interface StudentClassroomPageProps extends SharedData {

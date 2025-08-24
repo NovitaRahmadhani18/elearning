@@ -28,7 +28,7 @@ const ClassroomPage = () => {
                             classroom={classroom}
                             key={index}
                             progress={
-                                Math.floor(Math.random() * 100) // Simulated progress, replace with actual data if available
+                                classroom.progress || 0 // Ensure progress is defined
                             } // Simulated progress, replace with actual data if available
                         />
                     ))}
