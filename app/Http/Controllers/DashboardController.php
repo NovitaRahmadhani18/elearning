@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleEnum;
+use App\Http\Resources\ContentResource;
 use App\Models\Classroom;
 use App\Models\StudentPoint;
 use App\Models\User;
@@ -58,13 +59,11 @@ class DashboardController extends Controller
 
     public function student()
     {
-
         $upcomingContents = app(ContentService::class)->getUpcommingContents(auth()->user());
-
-
 
         return inertia('student/dashboard-student', [
             'classrooms' => $this->classroomService->index(),
+            'upcomingContents' => ContentResource::collection($upcomingContents),
         ]);
     }
 }

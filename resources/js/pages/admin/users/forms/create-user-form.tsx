@@ -42,7 +42,7 @@ const CreateUserForm = () => {
     };
 
     return (
-        <div className="border-input mx-auto max-w-2xl rounded-xl border bg-white p-6">
+        <div className="mx-auto max-w-2xl rounded-xl border border-input bg-white p-6">
             {/* Connect the handleSubmit function to the form's onSubmit */}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="mx-auto max-w-fit">
@@ -61,6 +61,7 @@ const CreateUserForm = () => {
                     value={data.id_number}
                     onChange={(e) => setData('id_number', e.target.value)}
                     placeholder="Enter ID Number"
+                    type="number"
                     required
                     error={errors.id_number}
                     disabled={processing}
@@ -129,7 +130,7 @@ const CreateUserForm = () => {
                     disabled={processing}
                 />
 
-                <div className="border-input flex items-center justify-between rounded-lg border p-4">
+                <div className="flex items-center justify-between rounded-lg border border-input p-4">
                     <Label htmlFor="is_active" className="text-sm font-medium">
                         Active Status
                     </Label>

@@ -6,6 +6,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { BookOpen, CheckCircle2 } from 'lucide-react';
 import { useMemo } from 'react';
 import AdminDashboardCard from '../admin/partials/components/admin-dashboard-card';
+import { TContentQuiz } from '../teacher/material/types';
 import { TStudentClassroom } from './classrooms/types';
 import DashboardClassroomCard from './partials/components/dashboard-classroom-card';
 import UpcomingDeadlineCard from './partials/components/upcoming-deadline-card';
@@ -14,10 +15,15 @@ interface DashboardStudentProps extends SharedData {
     classrooms: {
         data: TStudentClassroom[];
     };
+    upcomingContents: {
+        data: TContentQuiz[]; // Adjust the type based on your data structure
+    };
 }
 
 const DashboardStudent = () => {
-    const { auth, classrooms } = usePage<DashboardStudentProps>().props;
+    const { auth, classrooms, upcomingContents } =
+        usePage<DashboardStudentProps>().props;
+    console.log('DashboardStudent', upcomingContents);
 
     const counts = useMemo(() => {
         return {
@@ -80,11 +86,18 @@ const DashboardStudent = () => {
                         <div className="mb-6 space-y-4 rounded-lg bg-white p-6 shadow-sm">
                             <HeadingSmall title="Upcoming Deadlines" />
                             <div className="space-y-2">
-                                {Array(3)
-                                    .fill(0)
-                                    .map((_, index) => (
-                                        <UpcomingDeadlineCard key={index} />
-                                    ))}
+                                {upcomingContents.data.length > 0 ? (
+                                    upcomingContents.data.map((content) => (
+                                        <UpcomingDeadlineCard
+                                            key={content.id}
+                                            content={content}
+                                        />
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-muted-foreground">
+                                        No upcoming deadlines.
+                                    </p>
+                                )}
                             </div>
                         </div>
 

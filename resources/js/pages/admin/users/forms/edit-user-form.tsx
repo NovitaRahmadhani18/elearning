@@ -43,7 +43,7 @@ const EditUserForm = ({ user }: { user: TUser }) => {
     };
 
     return (
-        <div className="border-input mx-auto max-w-2xl rounded-xl border bg-white p-6">
+        <div className="mx-auto max-w-2xl rounded-xl border border-input bg-white p-6">
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="mx-auto max-w-fit">
                     {/* value sekarang lebih pintar: jika ada file avatar baru di state (data.avatar),
@@ -64,6 +64,8 @@ const EditUserForm = ({ user }: { user: TUser }) => {
                     value={data.id_number}
                     onChange={(e) => setData('id_number', e.target.value)}
                     placeholder="Enter ID Number"
+                    // number
+                    type="number"
                     required
                     error={errors.id_number}
                     disabled={processing}
@@ -136,7 +138,7 @@ const EditUserForm = ({ user }: { user: TUser }) => {
                     disabled={processing}
                 />
 
-                <div className="border-input flex items-center justify-between rounded-lg border p-4">
+                <div className="flex items-center justify-between rounded-lg border border-input p-4">
                     <Label htmlFor="is_active" className="text-sm font-medium">
                         Active Status
                     </Label>

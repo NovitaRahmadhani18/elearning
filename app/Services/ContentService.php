@@ -371,19 +371,23 @@ class ContentService
             return collect();
         }
 
-        return Content::whereIn('classroom_id', $classroomIds)
+        $contents = Content::with(['contentable', 'classroom'])
+            ->whereIn('classroom_id', $classroomIds)
             ->where('contentable_type', Quiz::class)
-            ->when('contentable_type' == Quiz::class, function ($q) use ($user) {
-                $q->whereHas('contentable.quizSubmissions', function ($qQS) use ($user) {
-                    $qQS->where('user_id', $user->id)
-                        ->whereNotNull('completed_at');
-                });
-            })->whereHas('classroom', function ($query) use ($user) {
-                $query->whereHas('studentUsers', function ($q) use ($user) {
-                    $q->where('users.id', $user->id);
-                });
+            ->whereDoesntHave('students', function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->whereNotNull('completed_at');
             })
-            ->orderBy('start_time')
+            ->whereHas('contentable', function ($query) {
+                $query->where('end_time', '>', now());
+            })
+            ->orderBy(function ($query) {
+                $query->selectRaw('MIN(end_time)')
+                    ->from('quizzes')
+                    ->whereColumn('contents.contentable_id', 'quizzes.id');
+            })
             ->get();
+
+        return $contents;
     }
 }
