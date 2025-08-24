@@ -8,13 +8,15 @@ interface QuizInProgressViewProps {
     currentQuestionIndex: number;
     onAnswerSelect: (questionId: number, answerId: number) => void;
     formattedTime: string;
+    isSubmitting: boolean; // Tambahkan prop ini dari komponen utama
 }
 
-const gridColsByAnswerCount = {
+// Pindahkan map di luar komponen agar tidak dibuat ulang pada setiap render
+const gridColsByAnswerCount: Record<number, string> = {
     2: 'md:grid-cols-2',
     3: 'md:grid-cols-3',
-    4: 'md:grid-cols-4',
-    5: 'md:grid-cols-5',
+    4: 'md:grid-cols-2', // Menghasilkan 2x2 grid yang rapi
+    5: 'md:grid-cols-3', // Menghasilkan 3 di atas, 2 di bawah
 };
 
 export const QuizInProgressView = ({
@@ -22,14 +24,27 @@ export const QuizInProgressView = ({
     currentQuestionIndex,
     onAnswerSelect,
     formattedTime,
+    isSubmitting, // Terima prop isSubmitting
 }: QuizInProgressViewProps) => {
+    // Ambil pertanyaan saat ini, pastikan tidak error jika index di luar batas
     const currentQuestion = quiz.details.questions[currentQuestionIndex];
+    if (!currentQuestion) {
+        // Tampilkan pesan loading atau error jika pertanyaan tidak ditemukan
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
+                Loading question...
+            </div>
+        );
+    }
+
+    // Kalkulasi progress yang lebih intuitif
     const progressPercentage =
         (currentQuestionIndex / quiz.details.questions.length) * 100;
 
+    // Logika pemilihan kelas grid yang aman dari error
+    const numAnswers = currentQuestion.answers?.length || 0;
     const responsiveGridClass =
-        // @ts-expect-error Unknown length
-        gridColsByAnswerCount[currentQuestion.answers?.length] || 'md:grid-cols-2';
+        gridColsByAnswerCount[numAnswers] || 'md:grid-cols-2'; // Fallback aman
 
     return (
         <div className="flex min-h-screen flex-col bg-slate-900 p-4 text-white sm:p-6 lg:p-8">
@@ -64,18 +79,19 @@ export const QuizInProgressView = ({
                 <h2 className="mb-10 text-3xl font-bold">
                     {currentQuestion.question_text}
                 </h2>
-                {/* // image */}
+
                 {currentQuestion.image_path && (
                     <img
                         src={currentQuestion.image_path}
-                        alt="Question Image"
-                        className="mb-6 max-h-64 w-full max-w-md rounded-lg object-cover"
+                        alt={`Image for question: ${currentQuestion.question_text}`}
+                        className="mb-6 max-h-64 w-full max-w-lg rounded-lg object-contain"
                     />
                 )}
+
                 <div
                     className={cn(
-                        'grid w-full grid-cols-1 gap-4', // Default 1 kolom untuk HP (Mobile-first)
-                        responsiveGridClass, // Terapkan kelas dinamis untuk layar lebih besar
+                        'grid w-full max-w-4xl grid-cols-1 gap-4',
+                        responsiveGridClass,
                     )}
                 >
                     {currentQuestion.answers.map((answer, index) => (
@@ -84,8 +100,12 @@ export const QuizInProgressView = ({
                             onClick={() =>
                                 onAnswerSelect(currentQuestion.id, answer.id)
                             }
-                            // Anda bisa membuat tinggi item konsisten jika perlu dengan `h-full`
-                            className="flex h-full flex-col rounded-lg border-2 border-slate-700 p-4 text-left transition-colors hover:border-purple-500 hover:bg-slate-800"
+                            disabled={isSubmitting} // Gunakan prop isSubmitting di sini
+                            className={cn(
+                                'flex h-full flex-col rounded-lg border-2 border-slate-700 p-4 text-left transition-colors',
+                                'hover:border-primary hover:bg-slate-800 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-none',
+                                'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-slate-700 disabled:hover:bg-transparent',
+                            )}
                         >
                             <div className="flex items-center">
                                 <span className="mr-4 font-bold text-slate-500">
@@ -97,7 +117,7 @@ export const QuizInProgressView = ({
                             {answer.image_path && (
                                 <img
                                     src={answer.image_path}
-                                    alt="Answer Image" // Beri alt text yang lebih deskriptif jika memungkinkan
+                                    alt={`Image for answer option ${index + 1}`}
                                     className="mt-4 w-full flex-1 rounded-lg object-cover"
                                 />
                             )}

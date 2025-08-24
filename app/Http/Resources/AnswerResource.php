@@ -34,7 +34,7 @@ class AnswerResource extends JsonResource
             'image_path' => $this->image_path ? Storage::disk('public')->url($this->image_path) : null,
 
             'is_correct' => $this->when(
-                $request->routeIs('student.quizzes.review'),
+                $request->routeIs(['student.quizzes.review', 'teacher.quizzes.show', 'teacher.quizzes.edit']),
                 $this->is_correct
             )
 
