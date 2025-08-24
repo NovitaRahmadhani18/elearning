@@ -15,7 +15,7 @@ fi
 echo "Docker containers started successfully."
 
 # Check if the containers are running
-docker compose exec app php artisan migrate:fresh --force --seed
+# docker compose exec app php artisan migrate:fresh --force --seed
 
 docker compose exec app php artisan optimize
 

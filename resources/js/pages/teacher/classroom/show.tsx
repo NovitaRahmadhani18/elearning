@@ -5,29 +5,30 @@ import { ShowClassroomPageProps } from '@/pages/admin/classroom/types';
 import AdminInviteClassroomDialog from '@/pages/admin/partials/components/admin-invite-classroom-dialog';
 import { BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ClassroomShowStudents from './partials/classroom-show-students';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/',
-    },
-    {
-        title: 'Classrooms Management',
-        href: '/teacher/classrooms',
-    },
-    {
-        title: 'Classroom Details',
-        href: '/teacher/classrooms/show',
-    },
-];
-
 const ClassroomShowPage = () => {
     const { classroom } = usePage<ShowClassroomPageProps>().props;
     const [isOpen, setIsOpen] = useState(false);
+
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => [
+            {
+                title: 'Classrooms Management',
+                href: '/teacher/classrooms',
+            },
+            {
+                title: classroom.data.fullName,
+                href: route('teacher.classrooms.show', {
+                    classroom: classroom.data.id,
+                }),
+            },
+        ],
+        [classroom],
+    );
 
     return (
         <AdminTeacherLayout breadcrumbs={breadcrumbs}>

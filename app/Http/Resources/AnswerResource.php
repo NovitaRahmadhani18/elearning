@@ -13,13 +13,31 @@ class AnswerResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    public bool $withCorrectAnswer = false;
+
+    /**
+     * Metode "fluent" untuk mengaktifkan flag dari luar.
+     *
+     * @return self
+     */
+    public function withCorrectAnswer(): self
+    {
+        $this->withCorrectAnswer = true;
+        return $this;
+    }
+
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'answer_text' => $this->answer_text,
             'image_path' => $this->image_path ? Storage::disk('public')->url($this->image_path) : null,
-            'is_correct' => $this->is_correct,
+
+            'is_correct' => $this->when(
+                $request->routeIs('student.quizzes.review'),
+                $this->is_correct
+            )
+
         ];
     }
 }

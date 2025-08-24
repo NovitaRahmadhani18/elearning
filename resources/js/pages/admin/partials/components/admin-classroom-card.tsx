@@ -21,11 +21,15 @@ const AdminClassroomCard = ({
     routeName = 'admin.classrooms',
 }: AdminClassroomCardProps) => {
     const { color, Icon } = getRandomCardAppearance(classroom.id);
+    console.log(classroom);
 
-    const studentCount = 1;
-    const contentCount = 2;
-    const quizCount = 1;
-    const materialCount = 1;
+    const studentCount = classroom.students?.length ?? 0;
+    const contentCount = classroom.contents?.length ?? 0;
+    const quizCount =
+        classroom.contents?.filter((content) => content.type === 'quiz')?.length ??
+        0;
+
+    const materialCount = contentCount - quizCount;
 
     const teacherInitial = classroom.teacher.name.charAt(0).toUpperCase();
 
@@ -84,8 +88,8 @@ const AdminClassroomCard = ({
                 {/* Stats Section */}
                 <div className="my-2 grid grid-cols-3 gap-2 text-center text-sm text-gray-600">
                     <div>
-                        <p className="font-bold">{contentCount}</p>
-                        <p>Contents</p>
+                        <p className="font-bold">{studentCount}</p>
+                        <p>Students</p>
                     </div>
                     <div>
                         <p className="font-bold">{quizCount}</p>

@@ -1,13 +1,14 @@
 import { formatDistanceToNow } from 'date-fns';
 
 // Import Ikon
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 // Import Komponen UI
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { TAchievement } from '@/pages/student/achievement/types';
+import { ShowStudentClassroomPageProps } from '@/pages/student/classrooms/types';
 
 // ====================================================================
 // TIPE DATA & MOCKUP
@@ -180,11 +181,11 @@ const ActivityItem = ({ activity }: { activity: TActivity }) => (
 // ====================================================================
 
 const StudentProfilePage = () => {
-    // Di aplikasi nyata, data ini akan datang dari usePage().props
+    const { classroom, student } = usePage<ShowStudentClassroomPageProps>().props;
+
     const user = mockUser;
 
     return (
-        // <Layout> // Wrapper layout Anda jika ada
         <div className="min-h-screen">
             <Head title={`${user.name}'s Profile`} />
             {/* Header Section */}
@@ -216,7 +217,10 @@ const StudentProfilePage = () => {
                     <div className="mt-8">
                         <h2 className="mb-2 text-sm font-semibold">Quick Stats</h2>
                         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                            <StatCard label="Classroom" value={'Matematika Dasar'} />
+                            <StatCard
+                                label="Classroom"
+                                value={classroom.data.fullName}
+                            />
                             <StatCard label="Completion Rate" value={'80%'} />
                             <StatCard label="Achievements" value={'1'} />
                             <StatCard
@@ -291,7 +295,6 @@ const StudentProfilePage = () => {
                 </div>
             </main>
         </div>
-        // </Layout>
     );
 };
 

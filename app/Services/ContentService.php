@@ -13,6 +13,7 @@ use App\Models\Question;
 use App\Models\Quiz;
 use App\Models\QuizSubmission;
 use App\Models\SubmissionAnswer;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -359,5 +360,29 @@ class ContentService
             'total_questions' => $totalQuestions,
             'accuracy' => $accuracy, // Akurasi bisa float (misal: 86.67)
         ];
+    }
+
+
+    public function getUpcommingContents(User $user)
+    {
+        // fungsi untuk mendapatkan konten yang belum selesai dan bertipe quiz dari semua konten yang ada di kelas yang diikuti oleh user
+        $classroomIds = $user->classrooms()->pluck('classrooms.id');
+        if ($classroomIds->isEmpty()) {
+            return collect();
+        }
+
+        return Content::whereIn('classroom_id', $classroomIds)
+            ->where('contentable_type', Quiz::class)
+            ->whereDoesntHave('quizSubmissions', function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                    ->whereNotNull('completed_at');
+            })
+            ->whereHas('classroom', function ($query) use ($user) {
+                $query->whereHas('studentUsers', function ($q) use ($user) {
+                    $q->where('users.id', $user->id);
+                });
+            })
+            ->orderBy('start_time')
+            ->get();
     }
 }

@@ -24,13 +24,6 @@ class ProcessContentCompletion implements ShouldQueue
                 $pointsToAward = 0;
                 $description = '';
 
-                Log::info('Handling content completion event', [
-                    'user_id' => $event->user->id,
-                    'content_id' => $event->content->id,
-                    'contentable_type' => $event->content->contentable_type,
-                    'event_data' => $event->data,
-                ]);
-
                 if ($event->content->contentable_type === Material::class) {
                     $pointsToAward = $event->content->points;
                     $description = 'Completed material: ' . $event->content->title;
@@ -74,12 +67,6 @@ class ProcessContentCompletion implements ShouldQueue
                                 ]
                             ]
                         );
-
-                    Log::info('Points awarded and content marked as completed', [
-                        'user_id' => $event->user->id,
-                        'content_id' => $event->content->id,
-                        'points_awarded' => $pointsToAward,
-                    ]);
                 }
             });
         } catch (\Throwable $th) {

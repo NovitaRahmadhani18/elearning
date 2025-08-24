@@ -175,7 +175,7 @@ class ContentController extends Controller
 
 
         return inertia('student/content/quiz-review', [
-            'content' => ContentResource::make($content->load('contentable')),
+            'content' => ContentResource::make($content->load(['contentable', 'classroom'])),
             'quizSubmission' => QuizSubmissionResource::make($submission->load('quiz.questions.answers', 'answers')),
         ]);
     }

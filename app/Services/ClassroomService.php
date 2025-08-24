@@ -55,6 +55,10 @@ class ClassroomService
                 })->with(['contents']);
             });
 
+        if (auth()->user()->role !== RoleEnum::STUDENT) {
+            $query->with(['students', 'category', 'status', 'contents']);
+        }
+
         $result =  DataTable::query($query)
             ->searchable(['name', 'description'])
             ->make();

@@ -28,6 +28,7 @@ const DashboardStudent = () => {
                     ?.length ?? 0,
         };
     }, [classrooms.data]);
+    console.log('counts', classrooms);
 
     return (
         <StudentLayout>

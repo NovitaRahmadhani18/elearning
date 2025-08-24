@@ -1,28 +1,39 @@
 import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
-import { BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { TClassroom } from '@/pages/admin/classroom/types';
+import { BreadcrumbItem, SharedData } from '@/types';
+import { Head, usePage } from '@inertiajs/react';
+import { useMemo } from 'react';
 import StudentProfilePage from './partials/show-student-card';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/',
-    },
-    {
-        title: 'Classrooms Management',
-        href: '/teacher/classrooms',
-    },
-    {
-        title: 'Classroom Details',
-        href: '/teacher/classrooms/show',
-    },
-    {
-        title: 'Show Student',
-        href: '/teacher/classrooms/show-student',
-    },
-];
+interface ShowStudentClassroomProps extends SharedData {
+    classroom: {
+        data: TClassroom;
+    };
+}
 
 const ShowStudentClassroom = () => {
+    const { classroom, student } = usePage<ShowStudentClassroomProps>().props;
+
+    const breadcrumbs: BreadcrumbItem[] = useMemo(
+        () => [
+            {
+                title: 'Classrooms Management',
+                href: '/teacher/classrooms',
+            },
+            {
+                title: classroom.data.fullName,
+                href: route('teacher.classrooms.show', {
+                    classroom: classroom.data.id,
+                }),
+            },
+            {
+                title: 'Show Student',
+                href: '/teacher/classrooms/show-student',
+            },
+        ],
+        [classroom],
+    );
+
     return (
         <AdminTeacherLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Classroom" />
