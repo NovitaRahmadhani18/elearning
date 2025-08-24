@@ -3,7 +3,7 @@ FROM composer:2.7 AS vendor
 WORKDIR /app
 COPY database/ database/
 COPY composer.json composer.lock ./
-RUN composer install --no-interaction --optimize-autoloader
+RUN composer install --no-interaction
 
 FROM node:20-alpine AS frontend
 
