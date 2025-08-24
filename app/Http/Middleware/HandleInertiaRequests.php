@@ -52,7 +52,8 @@ class HandleInertiaRequests extends Middleware
                     'avatar' => $request->user()->avatar ? asset($request->user()->avatar) : null,
                     'address' => $request->user()->address,
                     'gender' => $request->user()->gender,
-                    'id_number' => $request->user()->id_number
+                    'id_number' => $request->user()->id_number,
+                    'total_points' => $request->user()->total_points,
                 ] : null,
             ],
             'flash'   => [

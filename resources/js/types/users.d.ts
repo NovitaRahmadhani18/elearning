@@ -9,6 +9,7 @@ export interface TUser {
     is_active: boolean; // Optional property for active status
     role: 'admin' | 'teacher' | 'student';
     email_verified_at: string | null;
+    total_points: number;
     created_at: string;
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...

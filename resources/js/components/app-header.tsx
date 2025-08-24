@@ -16,7 +16,7 @@ import {
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Award, Bell, BookMarked, ChartArea, Home, Menu } from 'lucide-react';
+import { Award, Bell, BookMarked, ChartArea, Home, Menu, Star } from 'lucide-react';
 import AppLogoIcon from './app-logo-icon';
 import { NavUser } from './nav-user';
 
@@ -153,6 +153,12 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                             >
                                 <Bell className="!size-5 opacity-80 group-hover:opacity-100" />
                             </Button>
+                        </div>
+                        <div>
+                            <section className="flex items-center rounded-full bg-secondary px-2 py-1.5 text-xs text-white">
+                                <Star className="mr-1 inline h-4 w-4" />
+                                {page.props.auth.user.total_points} Points
+                            </section>
                         </div>
                         <NavUser />
                     </div>
