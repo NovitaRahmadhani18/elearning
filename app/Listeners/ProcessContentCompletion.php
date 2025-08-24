@@ -6,6 +6,8 @@ use App\Events\ContentCompleted;
 use App\Models\Material;
 use App\Models\Quiz;
 use App\Models\StudentPoint;
+use App\Services\AchievementService;
+use App\Services\ActivityLogService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -67,6 +69,15 @@ class ProcessContentCompletion
                                 ]
                             ]
                         );
+
+                    // --- New Logic ---
+                    // Log the activity
+                    app(ActivityLogService::class)->log($event->user, 'content.completed', $event->content, $description);
+
+                    // Process achievements if it was a quiz
+                    if ($event->content->contentable_type === Quiz::class && $event->submission) {
+                        app(AchievementService::class)->processQuizCompletion($event->user, $event->submission);
+                    }
                 }
             });
         } catch (\Throwable $th) {

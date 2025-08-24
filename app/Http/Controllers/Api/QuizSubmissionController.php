@@ -160,7 +160,7 @@ class QuizSubmissionController extends Controller
         ]);
 
         // Dispatch completion event
-        ContentCompleted::dispatch($submission->student, $quiz->content, ['score' => $score]);
+        ContentCompleted::dispatch($submission->student, $quiz->content, ['score' => $score], $submission);
 
         // Add calculated fields to the submission model for the resource
         $submission->correct_answers_count = $correctAnswers;
