@@ -5,9 +5,13 @@ import { TAchievement } from '../../types';
 
 interface AchievementCardProps {
     achievement: TAchievement;
+    showDetails?: boolean; // Optional prop to control details visibility
 }
 
-const AchievementCard = ({ achievement }: AchievementCardProps) => {
+const AchievementCard = ({
+    achievement,
+    showDetails = true,
+}: AchievementCardProps) => {
     const { name, description, image, locked, achieved_at } = achievement;
 
     return (
@@ -38,12 +42,16 @@ const AchievementCard = ({ achievement }: AchievementCardProps) => {
             <h3 className={cn('text-lg font-bold', !locked && 'text-slate-800')}>
                 {name}
             </h3>
-            <p className="text-sm">{description}</p>
+            {showDetails && (
+                <>
+                    <p className="text-sm">{description}</p>
 
-            {!locked && achieved_at && (
-                <p className="mt-2 text-xs text-green-600">
-                    Diperoleh: {format(new Date(achieved_at), 'dd MMM yyyy')}
-                </p>
+                    {!locked && achieved_at && (
+                        <p className="mt-2 text-xs text-green-600">
+                            Diperoleh: {format(new Date(achieved_at), 'dd MMM yyyy')}
+                        </p>
+                    )}
+                </>
             )}
         </div>
     );

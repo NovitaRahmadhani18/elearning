@@ -5,7 +5,7 @@ import AchievementCard from './partials/components/achievement-card';
 import { SummaryCard } from './partials/components/achievement-stat-card';
 import { TAchievement, TSummaryCardData } from './types';
 
-const mockAchievements: TAchievement[] = [
+export const mockAchievements: TAchievement[] = [
     {
         id: 1,
         name: 'Quiz Champion',

@@ -7,6 +7,8 @@ import { BookOpen, CheckCircle2 } from 'lucide-react';
 import { useMemo } from 'react';
 import AdminDashboardCard from '../admin/partials/components/admin-dashboard-card';
 import { TContentQuiz } from '../teacher/material/types';
+import { mockAchievements } from './achievement';
+import AchievementCard from './achievement/partials/components/achievement-card';
 import { TStudentClassroom } from './classrooms/types';
 import DashboardClassroomCard from './partials/components/dashboard-classroom-card';
 import UpcomingDeadlineCard from './partials/components/upcoming-deadline-card';
@@ -101,9 +103,17 @@ const DashboardStudent = () => {
                             </div>
                         </div>
 
-                        <div className="mb-6 rounded-lg bg-white p-6 shadow-sm">
+                        <div className="mb-6 space-y-4 rounded-lg bg-white p-6 shadow-sm">
                             <HeadingSmall title="Achievements Badges" />
-                            <div className="bg-red-50"></div>
+                            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2">
+                                {mockAchievements.map((achievement) => (
+                                    <AchievementCard
+                                        achievement={achievement}
+                                        key={achievement.id}
+                                        showDetails={false} // Hide details for dashboard view
+                                    />
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
