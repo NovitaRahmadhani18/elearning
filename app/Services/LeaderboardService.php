@@ -16,7 +16,7 @@ class LeaderboardService
     public function getLeaderboardForContent(Content $content): Collection
     {
         // Ambil semua siswa yang terdaftar di kelas ini
-        $studentsInClass = $content->classroom->students()->get();
+        $studentsInClass = $content->classroom->studentUsers()->get();
 
         if ($studentsInClass->isEmpty()) {
             return collect();

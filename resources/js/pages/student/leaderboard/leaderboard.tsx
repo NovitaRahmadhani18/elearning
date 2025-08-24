@@ -8,7 +8,7 @@ import { TContentLeaderboard, TLeaderboardItem } from './types'; // Pastikan pat
 // SUB-KOMPONEN
 // ====================================================================
 
-const StudentSubmissionRow = ({
+export const StudentSubmissionRow = ({
     submission,
     isCurrentUser,
     type,
@@ -137,7 +137,13 @@ const StudentSubmissionRow = ({
     );
 };
 
-const ContentProgressBlock = ({ content }: { content: TContentLeaderboard }) => {
+export const ContentProgressBlock = ({
+    content,
+    limit = 10,
+}: {
+    content: TContentLeaderboard;
+    limit?: number; // Batas jumlah item yang ditampilkan
+}) => {
     const { auth } = usePage<SharedData>().props;
     const currentUser = auth.user;
 
@@ -146,8 +152,7 @@ const ContentProgressBlock = ({ content }: { content: TContentLeaderboard }) => 
         (item) => item.user.id === currentUser.id,
     );
 
-    // potong leaderboard jika lebih dari 10 item
-    const leaderboardToShow = content.leaderboard.slice(0, 10);
+    const leaderboardToShow = content.leaderboard.slice(0, limit);
 
     return (
         <div className="mb-8 w-full overflow-hidden rounded-lg bg-white shadow-md">
@@ -196,9 +201,9 @@ const ContentProgressBlock = ({ content }: { content: TContentLeaderboard }) => 
                         type={content.type}
                     />
                 ))}
-                {content.leaderboard.length > 10 && (
+                {content.leaderboard.length > limit && (
                     <div className="mt-4 text-center text-sm text-slate-500">
-                        Showing top 10 of {content.leaderboard.length} students
+                        Showing top {limit} of {content.leaderboard.length} students
                     </div>
                 )}
             </main>
@@ -212,23 +217,28 @@ const ContentProgressBlock = ({ content }: { content: TContentLeaderboard }) => 
 
 interface StudentProgressProps {
     contentLeaderboards: TContentLeaderboard[];
+    limit?: number; // Batas jumlah item yang ditampilkan per konten
 }
 
-const StudentProgressPage = ({ contentLeaderboards }: StudentProgressProps) => {
+const StudentProgressPage = ({
+    contentLeaderboards,
+    limit = 10,
+}: StudentProgressProps) => {
     return (
         <div className="">
             {contentLeaderboards.length > 0 ? (
                 contentLeaderboards.map((content) => (
-                    <ContentProgressBlock key={content.id} content={content} />
+                    <ContentProgressBlock
+                        key={content.id}
+                        content={content}
+                        limit={limit} // Menggunakan limit jika diberikan
+                    />
                 ))
             ) : (
                 <div className="rounded-lg bg-white py-16 text-center shadow-md">
                     <h2 className="text-xl font-semibold text-slate-700">
-                        No Classrooms Joined Yet
+                        No leaderboard data available
                     </h2>
-                    <p className="mt-2 text-slate-500">
-                        Join a classroom to see your progress and leaderboard.
-                    </p>
                 </div>
             )}
         </div>

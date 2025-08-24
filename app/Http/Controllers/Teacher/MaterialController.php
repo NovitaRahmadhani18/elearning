@@ -7,16 +7,19 @@ use App\Http\Resources\ContentResource;
 use App\Models\Classroom;
 use App\Models\Content;
 use App\Services\ContentService;
+use App\Services\LeaderboardService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class MaterialController extends Controller
 {
     protected $contentService;
+    protected $leaderboardService;
 
-    public function __construct(ContentService $contentService)
+    public function __construct(ContentService $contentService, LeaderboardService $leaderboardService)
     {
         $this->contentService = $contentService;
+        $this->leaderboardService = $leaderboardService;
     }
 
     public function index()
@@ -28,8 +31,13 @@ class MaterialController extends Controller
 
     public function show(Content $content)
     {
+
+        $leaderboardContent = $this->leaderboardService->getLeaderboardForContent($content);
+        $content->load(['classroom', 'contentable']);
+        $content->leaderboard = $leaderboardContent;
+
         return inertia('teacher/material/show', [
-            'material' => ContentResource::make($content->load(['contentable', 'classroom', 'students'])),
+            'material' => ContentResource::make($content),
         ]);
     }
 

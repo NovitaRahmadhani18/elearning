@@ -1,11 +1,8 @@
 import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
-import {
-    ContentProgressBlock,
-    mockProgressData,
-} from '@/pages/student/leaderboard/leaderboard';
+import { ContentProgressBlock } from '@/pages/student/leaderboard/leaderboard';
+import { TContentLeaderboard } from '@/pages/student/leaderboard/types';
 import { BreadcrumbItem, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { TContentQuiz } from '../material/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -20,7 +17,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface QuizPageProps extends SharedData {
     quiz: {
-        data: TContentQuiz;
+        data: TContentLeaderboard;
     };
 }
 
@@ -31,7 +28,10 @@ export default function ShowQuiz() {
         <AdminTeacherLayout breadcrumbs={breadcrumbs}>
             <Head title="Detail Material" />
             <div className="">
-                <ContentProgressBlock content={mockProgressData[1]} />
+                <ContentProgressBlock
+                    content={quiz.data}
+                    limit={quiz.data.leaderboard.length}
+                />
                 {/* <StudentQuizTable /> */}
             </div>
         </AdminTeacherLayout>

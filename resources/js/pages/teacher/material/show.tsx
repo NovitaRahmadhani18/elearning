@@ -1,11 +1,8 @@
 import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
-import {
-    ContentProgressBlock,
-    mockProgressData,
-} from '@/pages/student/leaderboard/leaderboard';
+import { ContentProgressBlock } from '@/pages/student/leaderboard/leaderboard';
+import { TContentLeaderboard } from '@/pages/student/leaderboard/types';
 import { BreadcrumbItem, SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { TContentMaterial } from './types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -20,7 +17,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface MaterialProps extends SharedData {
     material: {
-        data: TContentMaterial;
+        data: TContentLeaderboard;
     };
 }
 
@@ -31,7 +28,10 @@ export default function ShowMaterial() {
         <AdminTeacherLayout breadcrumbs={breadcrumbs}>
             <Head title="Detail Material" />
             <div className="">
-                <ContentProgressBlock content={mockProgressData[0]} />
+                <ContentProgressBlock
+                    content={material.data}
+                    limit={material.data.leaderboard.length}
+                />
             </div>
         </AdminTeacherLayout>
     );
