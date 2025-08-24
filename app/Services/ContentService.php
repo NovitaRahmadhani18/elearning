@@ -373,11 +373,12 @@ class ContentService
 
         return Content::whereIn('classroom_id', $classroomIds)
             ->where('contentable_type', Quiz::class)
-            ->whereDoesntHave('quizSubmissions', function ($query) use ($user) {
-                $query->where('user_id', $user->id)
-                    ->whereNotNull('completed_at');
-            })
-            ->whereHas('classroom', function ($query) use ($user) {
+            ->when('contentable_type' == Quiz::class, function ($q) use ($user) {
+                $q->whereHas('contentable.quizSubmissions', function ($qQS) use ($user) {
+                    $qQS->where('user_id', $user->id)
+                        ->whereNotNull('completed_at');
+                });
+            })->whereHas('classroom', function ($query) use ($user) {
                 $query->whereHas('studentUsers', function ($q) use ($user) {
                     $q->where('users.id', $user->id);
                 });

@@ -7,6 +7,7 @@ use App\Models\Classroom;
 use App\Models\StudentPoint;
 use App\Models\User;
 use App\Services\ClassroomService;
+use App\Services\ContentService;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -57,6 +58,11 @@ class DashboardController extends Controller
 
     public function student()
     {
+
+        $upcomingContents = app(ContentService::class)->getUpcommingContents(auth()->user());
+
+
+
         return inertia('student/dashboard-student', [
             'classrooms' => $this->classroomService->index(),
         ]);

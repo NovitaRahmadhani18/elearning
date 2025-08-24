@@ -10,7 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class ProcessContentCompletion implements ShouldQueue
+class ProcessContentCompletion
 {
     /**
      * Handle the event.
