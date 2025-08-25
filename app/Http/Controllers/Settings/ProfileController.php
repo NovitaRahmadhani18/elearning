@@ -13,6 +13,15 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
+
+    public function show()
+    {
+        return inertia(
+            'settings/show',
+        );
+    }
+
+
     /**
      * Show the user's profile settings page.
      */

@@ -7,6 +7,7 @@ use App\Models\ActivityLog;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class StreakMasterTest extends TestCase
@@ -20,12 +21,13 @@ class StreakMasterTest extends TestCase
         $achievement = new StreakMaster();
 
         // Create 5 consecutive login activities
+        $baseDate = Carbon::parse('2025-01-05')->startOfDay(); // A fixed date
         for ($i = 0; $i < 5; $i++) {
             ActivityLog::create([
                 'user_id' => $user->id,
                 'activity_type' => 'user.login',
                 'description' => 'User logged in',
-                'created_at' => Carbon::now()->subDays($i)->startOfDay(),
+                'created_at' => $baseDate->copy()->subDays($i),
             ]);
         }
 
@@ -38,13 +40,14 @@ class StreakMasterTest extends TestCase
         $user = User::factory()->create();
         $achievement = new StreakMaster();
 
+        $baseDate = Carbon::parse('2025-01-05')->startOfDay();
         // Less than 5 days
         for ($i = 0; $i < 4; $i++) {
             ActivityLog::create([
                 'user_id' => $user->id,
                 'activity_type' => 'user.login',
                 'description' => 'User logged in',
-                'created_at' => Carbon::now()->subDays($i)->startOfDay(),
+                'created_at' => $baseDate->copy()->subDays($i),
             ]);
         }
         $this->assertFalse($achievement->check($user));
@@ -54,31 +57,31 @@ class StreakMasterTest extends TestCase
             'user_id' => $user->id,
             'activity_type' => 'user.login',
             'description' => 'User logged in',
-            'created_at' => Carbon::now()->subDays(0)->startOfDay(),
+            'created_at' => $baseDate->copy()->subDays(0),
         ]);
         ActivityLog::create([
             'user_id' => $user->id,
             'activity_type' => 'user.login',
             'description' => 'User logged in',
-            'created_at' => Carbon::now()->subDays(1)->startOfDay(),
+            'created_at' => $baseDate->copy()->subDays(1),
         ]);
         ActivityLog::create([
             'user_id' => $user->id,
             'activity_type' => 'user.login',
             'description' => 'User logged in',
-            'created_at' => Carbon::now()->subDays(2)->startOfDay(),
+            'created_at' => $baseDate->copy()->subDays(2),
         ]);
         ActivityLog::create([
             'user_id' => $user->id,
             'activity_type' => 'user.login',
             'description' => 'User logged in',
-            'created_at' => Carbon::now()->subDays(4)->startOfDay(), // Gap here
+            'created_at' => $baseDate->copy()->subDays(4), // Gap here
         ]);
         ActivityLog::create([
             'user_id' => $user->id,
             'activity_type' => 'user.login',
             'description' => 'User logged in',
-            'created_at' => Carbon::now()->subDays(5)->startOfDay(),
+            'created_at' => $baseDate->copy()->subDays(5),
         ]);
         $this->assertFalse($achievement->check($user));
     }

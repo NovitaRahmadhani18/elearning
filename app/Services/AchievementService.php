@@ -28,9 +28,15 @@ class AchievementService
      *
      * @param array<AchievementContract> $achievements
      */
-    public function __construct(array $achievements)
+    public function __construct()
     {
-        $this->achievements = $achievements;
+        $this->achievements = [
+            QuizChampion::class,
+            FastLearner::class,
+            PerfectScore::class,
+            StreakMaster::class,
+            TopRank::class,
+        ];
     }
 
     public function processQuizCompletion(User $user, QuizSubmission $submission): void
@@ -39,6 +45,8 @@ class AchievementService
 
         foreach ($this->achievements as $achievement) {
             $context = ['submission' => $submission];
+
+            $achievement = app($achievement);
 
             if ($achievement->check($user, $context)) {
                 $this->award($user, $achievement);
@@ -51,6 +59,9 @@ class AchievementService
         Log::info('Processing achievements for user activity.', ['user_id' => $user->id]);
 
         foreach ($this->achievements as $achievement) {
+
+            $achievement = app($achievement);
+
             if ($achievement->check($user)) {
                 $this->award($user, $achievement);
             }

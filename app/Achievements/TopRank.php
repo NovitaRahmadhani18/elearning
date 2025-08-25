@@ -8,9 +8,7 @@ use App\Services\LeaderboardService;
 
 class TopRank implements AchievementContract
 {
-    public function __construct(protected LeaderboardService $leaderboardService)
-    {
-    }
+    public function __construct(protected LeaderboardService $leaderboardService) {}
 
     public function slug(): string
     {
@@ -33,3 +31,4 @@ class TopRank implements AchievementContract
 
         return $topThree->contains($user->id);
     }
+}

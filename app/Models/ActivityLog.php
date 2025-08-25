@@ -15,6 +15,8 @@ class ActivityLog extends Model
         'subject_id',
         'subject_type',
         'description',
+        'created_at',
+        'updated_at',
     ];
 
     public function subject()

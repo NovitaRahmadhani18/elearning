@@ -4,6 +4,7 @@ namespace Tests\Unit\Achievements;
 
 use App\Achievements\TopRank;
 use App\Models\Content;
+use App\Models\Quiz;
 use App\Models\QuizSubmission;
 use App\Models\User;
 use App\Services\LeaderboardService;
@@ -23,9 +24,14 @@ class TopRankTest extends TestCase
         $otherUser2 = User::factory()->create();
         $otherUser3 = User::factory()->create();
 
-        $submission = QuizSubmission::factory()->create(['student_id' => $user->id]);
-        $content = Content::factory()->create(); // Create a dummy content
-        $submission->quiz->content()->associate($content)->save(); // Associate submission's quiz with content
+        $quiz = Quiz::factory()->create();
+        $content = $quiz->content()->create([
+            'classroom_id' => \App\Models\Classroom::factory()->create()->id,
+            'title' => 'Test Content',
+            'points' => 100,
+            'order' => 1,
+        ]);
+        $submission = QuizSubmission::factory()->create(['student_id' => $user->id, 'quiz_id' => $quiz->id]);
 
         // Mock LeaderboardService
         $mockLeaderboardService = $this->mock(LeaderboardService::class);
@@ -53,9 +59,14 @@ class TopRankTest extends TestCase
         $otherUser2 = User::factory()->create();
         $otherUser3 = User::factory()->create();
 
-        $submission = QuizSubmission::factory()->create(['student_id' => $user->id]);
-        $content = Content::factory()->create();
-        $submission->quiz->content()->associate($content)->save();
+        $quiz = Quiz::factory()->create();
+        $content = $quiz->content()->create([
+            'classroom_id' => \App\Models\Classroom::factory()->create()->id,
+            'title' => 'Test Content',
+            'points' => 100,
+            'order' => 1,
+        ]);
+        $submission = QuizSubmission::factory()->create(['student_id' => $user->id, 'quiz_id' => $quiz->id]);
 
         // Mock LeaderboardService
         $mockLeaderboardService = $this->mock(LeaderboardService::class);
