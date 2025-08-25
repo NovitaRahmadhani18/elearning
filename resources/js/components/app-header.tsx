@@ -16,9 +16,10 @@ import {
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Award, Bell, BookMarked, ChartArea, Home, Menu, Star } from 'lucide-react';
+import { Award, BookMarked, ChartArea, Home, Menu, Star } from 'lucide-react';
 import AppLogoIcon from './app-logo-icon';
 import { NavUser } from './nav-user';
+import NotificationPopover from './notification-popover';
 
 const mainNavItems: NavItem[] = [
     {
@@ -145,15 +146,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                     </div>
 
                     <div className="ml-auto flex items-center space-x-2">
-                        <div className="relative flex items-center space-x-1">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="group h-9 w-9 cursor-pointer"
-                            >
-                                <Bell className="!size-5 opacity-80 group-hover:opacity-100" />
-                            </Button>
-                        </div>
+                        <NotificationPopover />
                         <div>
                             <section className="flex items-center rounded-full bg-secondary px-2 py-1.5 text-xs text-white">
                                 <Star className="mr-1 inline h-4 w-4" />

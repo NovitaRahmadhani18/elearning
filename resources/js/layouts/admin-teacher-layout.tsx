@@ -1,6 +1,7 @@
 import AppLogo from '@/components/app-logo';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { NavUser } from '@/components/nav-user';
+import NotificationPopover from '@/components/notification-popover';
 import {
     Sidebar,
     SidebarContent,
@@ -70,7 +71,10 @@ const AdminTeacherLayoutHeader: React.FC<{ breadcrumbs: BreadcrumbItem[] }> = ({
                     <Breadcrumbs breadcrumbs={breadcrumbs} />
                 </div>
 
-                <NavUser />
+                <div className="flex items-center gap-4">
+                    <NotificationPopover />
+                    <NavUser />
+                </div>
             </div>
         </header>
     );
