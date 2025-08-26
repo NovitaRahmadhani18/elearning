@@ -22,6 +22,14 @@ const StudentClassroomCard: React.FC<StudentClassroomCardProps> = ({
 
     const teacherInitial = classroom.teacher.name.charAt(0).toUpperCase();
 
+    const contentCount = classroom.contents?.length || 0;
+    const quizCount =
+        classroom.contents?.filter((content) => content.type === 'quiz').length || 0;
+
+    const materialCount =
+        classroom.contents?.filter((content) => content.type === 'material')
+            .length || 0;
+
     return (
         <div
             className={cn(
@@ -47,7 +55,7 @@ const StudentClassroomCard: React.FC<StudentClassroomCardProps> = ({
                     </div>
                 )}
                 <div className="absolute top-2 right-2 rounded-full bg-black/50 px-2 py-1 text-xs font-semibold text-white">
-                    100% Complete
+                    {progress}% Complete
                 </div>
             </div>
 
@@ -103,15 +111,15 @@ const StudentClassroomCard: React.FC<StudentClassroomCardProps> = ({
                 {/* Stats Section */}
                 <div className="my-2 grid grid-cols-3 gap-2 text-center text-sm text-gray-600">
                     <div className="rounded-lg bg-primary-light/20 p-2">
-                        <p className="font-bold">{0}</p>
+                        <p className="font-bold">{contentCount}</p>
                         <p>Contents</p>
                     </div>
                     <div className="rounded-lg bg-primary-light/20 p-2">
-                        <p className="font-bold">{0}</p>
+                        <p className="font-bold">{quizCount}</p>
                         <p>Quizzes</p>
                     </div>
                     <div className="rounded-lg bg-primary-light/20 p-2">
-                        <p className="font-bold">{0}</p>
+                        <p className="font-bold">{materialCount}</p>
                         <p>Materials</p>
                     </div>
                 </div>
