@@ -30,7 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [
             'prefix' => 'teacher',
             'as' => 'teacher.',
-            'middleware' => 'role:teacher'
+            'middleware' => 'role:teacher,admin'
         ],
         function () {
             Route::resource('classrooms', \App\Http\Controllers\Teacher\ClassroomController::class);
