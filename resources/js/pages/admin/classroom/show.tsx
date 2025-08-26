@@ -2,6 +2,7 @@ import { ActionButton } from '@/components/action-button';
 import HeadingSmall from '@/components/heading-small';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
+import ClassroomContentShow from '@/pages/teacher/classroom/partials/classroom-content.show';
 import ClassroomShowStudents from '@/pages/teacher/classroom/partials/classroom-show-students';
 import { BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
@@ -52,7 +53,7 @@ const ClassroomShowPage = () => {
                             <ClassroomShowStudents />
                         </TabsContent>
                         <TabsContent value="contents">
-                            Change your password here.
+                            <ClassroomContentShow />
                         </TabsContent>
                     </Tabs>
                 </section>

@@ -8,6 +8,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ClassroomContentShow from './partials/classroom-content.show';
 import ClassroomShowStudents from './partials/classroom-show-students';
 
 const ClassroomShowPage = () => {
@@ -54,7 +55,7 @@ const ClassroomShowPage = () => {
                             <ClassroomShowStudents />
                         </TabsContent>
                         <TabsContent value="contents">
-                            Change your password here.
+                            <ClassroomContentShow />
                         </TabsContent>
                     </Tabs>
                 </section>
