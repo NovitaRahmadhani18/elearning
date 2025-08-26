@@ -1,6 +1,8 @@
 import { ActionButton } from '@/components/action-button';
 import HeadingSmall from '@/components/heading-small';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
+import ClassroomShowStudents from '@/pages/teacher/classroom/partials/classroom-show-students';
 import { BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
@@ -38,6 +40,21 @@ const ClassroomShowPage = () => {
                     <ActionButton action="create" onClick={() => setIsOpen(true)}>
                         Add Student
                     </ActionButton>
+                </section>
+
+                <section>
+                    <Tabs defaultValue="students" className="">
+                        <TabsList>
+                            <TabsTrigger value="students">Students</TabsTrigger>
+                            <TabsTrigger value="contents">Contents</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="students">
+                            <ClassroomShowStudents />
+                        </TabsContent>
+                        <TabsContent value="contents">
+                            Change your password here.
+                        </TabsContent>
+                    </Tabs>
                 </section>
             </div>
             <AdminInviteClassroomDialog

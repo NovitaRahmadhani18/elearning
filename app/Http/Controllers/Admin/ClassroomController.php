@@ -65,6 +65,12 @@ class ClassroomController extends Controller
      */
     public function show(Classroom $classroom)
     {
+        $classroom->load([
+            'students',
+            'contents',
+            'studentUsers'
+        ]);
+
         return inertia('admin/classroom/show', [
             'classroom' => ClassroomResource::make($classroom),
         ]);
