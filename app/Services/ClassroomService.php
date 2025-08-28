@@ -196,4 +196,20 @@ class ClassroomService
     {
         return $user->classrooms()->where('classroom_id', $classroom->id)->exists();
     }
+
+    public function searchStudents(Classroom $classroom, string $query)
+    {
+        $students = User::where('role', RoleEnum::STUDENT)
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                    ->orWhere('email', 'like', "%{$query}%");
+            })
+            ->whereDoesntHave('classrooms', function ($q) use ($classroom) {
+                $q->where('classroom_id', $classroom->id);
+            })
+            ->limit(10)
+            ->get();
+
+        return UserResource::collection($students);
+    }
 }

@@ -41,8 +41,6 @@ class AchievementService
 
     public function processQuizCompletion(User $user, QuizSubmission $submission): void
     {
-        Log::info('Processing achievements for quiz completion.', ['user_id' => $user->id, 'submission_id' => $submission->id]);
-
         foreach ($this->achievements as $achievement) {
             $context = ['submission' => $submission];
 
@@ -56,8 +54,6 @@ class AchievementService
 
     public function processUserActivity(User $user): void
     {
-        Log::info('Processing achievements for user activity.', ['user_id' => $user->id]);
-
         foreach ($this->achievements as $achievement) {
 
             $achievement = app($achievement);

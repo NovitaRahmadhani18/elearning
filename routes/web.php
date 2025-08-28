@@ -9,6 +9,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('home');
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
+
+    Route::middleware([
+        'role:admin,teacher'
+    ])->group(function () {
+        Route::post('classrooms/{classroom}/generate-invite-code', [\App\Http\Controllers\Teacher\ClassroomController::class, 'generateInviteCode'])
+            ->name('classrooms.generate-invite-code');
+
+        Route::post('classrooms/{classroom}/generate-code', [\App\Http\Controllers\Teacher\ClassroomController::class, 'generateCode'])
+            ->name('classrooms.generate-code');
+    });
+
     // admin
     Route::group(
         [
@@ -20,6 +31,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('dashboard', [DashboardController::class, 'admin'])->name('dashboard');
             Route::resource('users', \App\Http\Controllers\Admin\UsersController::class);
             Route::resource('classrooms', \App\Http\Controllers\Admin\ClassroomController::class);
+
+            Route::get('classrooms/{classroom}/student/{student}', [\App\Http\Controllers\Admin\ClassroomController::class, 'showStudent'])
+                ->name('classrooms.student.show');
+
 
             Route::get('monitoring', [\App\Http\Controllers\Admin\MonitoringController::class, 'index'])->name('monitoring.index');
         }
@@ -94,16 +109,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/images/upload', [\App\Http\Controllers\ImageUploadController::class, 'store'])
         ->name('images.upload');
-
-    Route::middleware([
-        'role:admin,teacher'
-    ], function () {
-        Route::post('/clasrooms/{classroom}/generate-invite-code', [\App\Http\Controllers\Teacher\ClassroomController::class, 'generateInviteCode'])
-            ->name('classrooms.generate-invite-code');
-
-        Route::post('/classrooms/{classroom}/generate-code', [\App\Http\Controllers\Teacher\ClassroomController::class, 'generateCode'])
-            ->name('classrooms.generate-code');
-    });
 });
 
 

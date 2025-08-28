@@ -8,6 +8,7 @@ export interface DebouncedSearchReturn {
 
 export interface TableToolbarProps extends DebouncedSearchReturn {
     placeholder?: string;
+    showPagination?: boolean;
     afterSearchComponent?: React.ReactNode;
 }
 

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ClassroomResource;
+use App\Http\Resources\UserResource;
 use App\Models\Classroom;
 use App\Services\ClassroomService;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ClassroomController extends Controller
 {
@@ -73,6 +75,17 @@ class ClassroomController extends Controller
 
         return inertia('admin/classroom/show', [
             'classroom' => ClassroomResource::make($classroom),
+        ]);
+    }
+
+
+    public function showStudent(Classroom $classroom, $studentId)
+    {
+        $student = $classroom->studentUsers()->where('users.id', $studentId)->firstOrFail();
+
+        return inertia('admin/classroom/show-student', [
+            'classroom' => ClassroomResource::make($classroom),
+            'student' => UserResource::make($student),
         ]);
     }
 

@@ -21,7 +21,6 @@ const AdminClassroomCard = ({
     routeName = 'admin.classrooms',
 }: AdminClassroomCardProps) => {
     const { color, Icon } = getRandomCardAppearance(classroom.id);
-    console.log(classroom);
 
     const studentCount = classroom.students?.length ?? 0;
     const contentCount = classroom.contents?.length ?? 0;
@@ -67,7 +66,7 @@ const AdminClassroomCard = ({
 
             {/* Card Content */}
             <div className="flex flex-grow flex-col p-4">
-                <h3 className="truncate text-lg font-bold">{classroom.name}</h3>
+                <h3 className="truncate text-lg font-bold">{classroom.fullName}</h3>
                 <p className="mb-3 h-10 text-sm text-gray-500">
                     {classroom.description || 'No description available.'}
                 </p>

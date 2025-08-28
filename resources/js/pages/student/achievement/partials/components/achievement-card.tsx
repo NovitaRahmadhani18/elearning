@@ -33,7 +33,7 @@ const AchievementCard = ({
                 src={image}
                 alt={name}
                 className={cn(
-                    'mb-4 h-16 w-16 transition-opacity',
+                    'mb-4 size-24 transition-opacity',
                     locked && 'opacity-10', // Faded out saat terkunci
                 )}
             />

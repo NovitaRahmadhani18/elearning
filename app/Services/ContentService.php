@@ -24,16 +24,20 @@ class ContentService
 
     public function getMaterials()
     {
-        $query =  Content::with(['contentable', 'classroom'])
-            ->when(auth()->user()->role == RoleEnum::TEACHER, function ($query) {
-                $query->whereHas('classroom', function ($q) {
-                    $q->where('teacher_id', auth()->id());
-                });
-            })
+        $query =  Content::with(['contentable', 'classroom' => function ($q) {
+            $q->withCount('students');
+        }])->when(auth()->user()->role == RoleEnum::TEACHER, function ($query) {
+            $query->whereHas('classroom', function ($q) {
+                $q->where('teacher_id', auth()->id());
+            });
+
+            $query->withCount(['students']);
+        })
             ->where('contentable_type', Material::class);
 
         $result = DataTable::query($query)
             ->searchable(['title'])
+            ->perPage(9)
             ->make();
 
         return ContentResource::collection($result);
@@ -41,16 +45,19 @@ class ContentService
 
     public function getQuizzes()
     {
-        $query = Content::with(['contentable', 'classroom'])
-            ->when(auth()->user()->role == RoleEnum::TEACHER, function ($query) {
-                $query->whereHas('classroom', function ($q) {
-                    $q->where('teacher_id', auth()->id());
-                });
-            })
+        $query = Content::with(['contentable', 'classroom' => function ($q) {
+            $q->withCount('students');
+        }])->when(auth()->user()->role == RoleEnum::TEACHER, function ($query) {
+            $query->whereHas('classroom', function ($q) {
+                $q->where('teacher_id', auth()->id());
+            });
+            $query->withCount(['students']);
+        })
             ->where('contentable_type', Quiz::class);
 
         $result = DataTable::query($query)
             ->searchable(['title'])
+            ->perPage(9)
             ->make();
 
         return ContentResource::collection($result);

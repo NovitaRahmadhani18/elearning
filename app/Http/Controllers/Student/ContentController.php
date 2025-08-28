@@ -145,6 +145,7 @@ class ContentController extends Controller
             ContentCompleted::dispatch(auth()->user(), $content, [
                 'score' => $submission->score,
                 'duration' => $submission->duration_seconds,
+                'submission' => $submission,
             ]);
         }
 

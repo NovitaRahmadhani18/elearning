@@ -22,8 +22,8 @@ class ContentFactory extends Factory
             'description' => $this->faker->paragraph(),
             'points' => $this->faker->numberBetween(10, 100),
             'order' => $this->faker->numberBetween(1, 10),
-            'contentable_id' => \App\Models\Material::factory(), // Default to Material
-            'contentable_type' => \App\Models\Material::class,
+            'contentable_id' => \App\Models\Quiz::factory(), // Default to Material
+            'contentable_type' => \App\Models\Quiz::class,
         ];
     }
 }

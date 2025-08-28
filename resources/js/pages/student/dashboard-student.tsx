@@ -7,8 +7,8 @@ import { BookOpen, CheckCircle2 } from 'lucide-react';
 import { useMemo } from 'react';
 import AdminDashboardCard from '../admin/partials/components/admin-dashboard-card';
 import { TContentQuiz } from '../teacher/material/types';
-import { mockAchievements } from './achievement';
 import AchievementCard from './achievement/partials/components/achievement-card';
+import { TAchievement } from './achievement/types';
 import { TStudentClassroom } from './classrooms/types';
 import DashboardClassroomCard from './partials/components/dashboard-classroom-card';
 import UpcomingDeadlineCard from './partials/components/upcoming-deadline-card';
@@ -17,15 +17,17 @@ interface DashboardStudentProps extends SharedData {
     classrooms: {
         data: TStudentClassroom[];
     };
+    achievements: {
+        data: TAchievement[]; // Adjust the type based on your data structure
+    };
     upcomingContents: {
         data: TContentQuiz[]; // Adjust the type based on your data structure
     };
 }
 
 const DashboardStudent = () => {
-    const { auth, classrooms, upcomingContents } =
+    const { auth, classrooms, upcomingContents, achievements } =
         usePage<DashboardStudentProps>().props;
-    console.log('DashboardStudent', upcomingContents);
 
     const counts = useMemo(() => {
         return {
@@ -36,7 +38,6 @@ const DashboardStudent = () => {
                     ?.length ?? 0,
         };
     }, [classrooms.data]);
-    console.log('counts', classrooms);
 
     return (
         <StudentLayout>
@@ -65,7 +66,7 @@ const DashboardStudent = () => {
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     {/* current courses */}
-                    <div className="mb-6 space-y-4 rounded-lg bg-white p-6 shadow-sm lg:col-span-2">
+                    <div className="mb-6 h-fit space-y-4 rounded-lg bg-white p-6 shadow-sm lg:col-span-2">
                         <HeadingSmall title="Current Courses" />
                         <section className="space-y-2">
                             {classrooms.data.length > 0 ? (
@@ -106,13 +107,19 @@ const DashboardStudent = () => {
                         <div className="mb-6 space-y-4 rounded-lg bg-white p-6 shadow-sm">
                             <HeadingSmall title="Achievements Badges" />
                             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2">
-                                {mockAchievements.map((achievement) => (
-                                    <AchievementCard
-                                        achievement={achievement}
-                                        key={achievement.id}
-                                        showDetails={false} // Hide details for dashboard view
-                                    />
-                                ))}
+                                {achievements.data.length > 0 ? (
+                                    achievements.data.map((achievement) => (
+                                        <AchievementCard
+                                            key={achievement.id}
+                                            achievement={achievement}
+                                            showDetails={false}
+                                        />
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-muted-foreground">
+                                        No achievements earned yet.
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>

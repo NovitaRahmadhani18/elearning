@@ -69,11 +69,18 @@ export const studentColumn: ColumnDef<TUser>[] = [
 ];
 
 const ActionColumn = ({ userId }: { userId: number }) => {
+    let currentRoute = route().current();
+    if (currentRoute === 'teacher.classrooms.show') {
+        currentRoute = 'teacher.classrooms.student.show';
+    } else {
+        currentRoute = 'admin.classrooms.student.show';
+    }
+
     return (
         <div className="flex items-center gap-2">
             <Button size={'sm'} variant="outline" className="text-xs" asChild>
                 <Link
-                    href={route('teacher.classrooms.student.show', {
+                    href={route(currentRoute, {
                         classroom: route().params.classroom,
                         student: userId,
                     })}

@@ -22,8 +22,14 @@ class QuizFactory extends Factory
      */
     public function definition()
     {
-        $startTime = $this->faker->dateTimeBetween('-1 month', '+1 week');
-        $endTime = Carbon::parse(clone $startTime)->addMinutes($this->faker->numberBetween(30, 120));
+
+        $startTime = Carbon::now()->subDays($this->faker->numberBetween(1, 30))->setTime(
+            $this->faker->numberBetween(8, 18),
+            $this->faker->numberBetween(0, 59),
+            0
+        );
+
+        $endTime = (clone $startTime)->addMinutes($this->faker->numberBetween(30, 120));
 
         return [
             'start_time' => $startTime,

@@ -7,6 +7,7 @@ use App\Http\Resources\ClassroomResource;
 use App\Models\Classroom;
 use App\Services\ClassroomService;
 use App\Http\Resources\ContentResource;
+use App\Http\Resources\UserResource;
 use App\Models\Material;
 use Illuminate\Http\Request;
 
@@ -77,11 +78,11 @@ class ClassroomController extends Controller
 
     public function showStudent(Classroom $classroom, $studentId)
     {
-        $student = $classroom->students()->where('student_id', $studentId)->firstOrFail();
+        $student = $classroom->studentUsers()->where('users.id', $studentId)->firstOrFail();
 
         return inertia('teacher/classroom/show-student', [
             'classroom' => ClassroomResource::make($classroom),
-            'student' => $student,
+            'student' => UserResource::make($student),
         ]);
     }
 

@@ -62,12 +62,21 @@ const RowPerPageSelect: React.FC<TableToolbarProps> = ({
     );
 };
 
-const TableToolbar: React.FC<TableToolbarProps> = (props) => {
+const TableToolbar: React.FC<TableToolbarProps> = ({
+    showPagination = true,
+    ...props
+}) => {
     return (
         <div className="flex items-center justify-between gap-2">
             <div className="flex items-center">
-                <p className="mr-2 hidden text-sm font-medium sm:block">Rows</p>
-                <RowPerPageSelect {...props} />
+                {showPagination && (
+                    <>
+                        <p className="mr-2 hidden text-sm font-medium sm:block">
+                            Rows
+                        </p>
+                        <RowPerPageSelect {...props} />
+                    </>
+                )}
             </div>
 
             <div className="flex flex-grow items-center justify-end gap-2 md:flex-grow-0">

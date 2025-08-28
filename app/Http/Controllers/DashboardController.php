@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleEnum;
+use App\Http\Resources\AchievementResource;
 use App\Http\Resources\ContentResource;
+use App\Models\Achievement;
 use App\Models\Classroom;
 use App\Models\StudentPoint;
 use App\Models\User;
 use App\Services\ClassroomService;
 use App\Services\ContentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -61,8 +64,16 @@ class DashboardController extends Controller
     {
         $upcomingContents = app(ContentService::class)->getUpcommingContents(auth()->user());
 
+        $user = Auth::user();
+
+        $achievements = Achievement::with(['users' => function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        }])->get();
+
+
         return inertia('student/dashboard-student', [
             'classrooms' => $this->classroomService->index(),
+            'achievements' => AchievementResource::collection($achievements),
             'upcomingContents' => ContentResource::collection($upcomingContents),
         ]);
     }

@@ -39,7 +39,7 @@ class AchievementResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'image' => $this->icon_path ? Storage::disk('public')->url($this->icon_path) : null,
+            'image' => $this->icon_path,
             'locked' => !$isUnlocked,
             'achieved_at' => $this->when($isUnlocked, $unlockedAt),
         ];

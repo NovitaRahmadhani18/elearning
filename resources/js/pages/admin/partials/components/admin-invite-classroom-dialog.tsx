@@ -50,7 +50,7 @@ const AdminInviteClassroomDialog: React.FC<AdminInviteClassroomDialogProps> = ({
                             <Button
                                 id="copy-secret-code"
                                 variant="outline"
-                                onClick={(e) => {
+                                onClick={() => {
                                     router.post(
                                         route(
                                             'classrooms.generate-invite-code',
@@ -99,7 +99,7 @@ const AdminInviteClassroomDialog: React.FC<AdminInviteClassroomDialogProps> = ({
                             <Button
                                 id="copy-secret-code"
                                 variant="outline"
-                                onClick={(e) => {
+                                onClick={() => {
                                     router.post(
                                         route(
                                             'classrooms.generate-code',

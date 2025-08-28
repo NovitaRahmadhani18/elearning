@@ -1,9 +1,9 @@
 import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
 import { ShowStudentClassroomPageProps } from '@/pages/student/classrooms/types';
+import StudentProfilePage from '@/pages/teacher/classroom/partials/show-student-card';
 import { BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { useMemo } from 'react';
-import StudentProfilePage from './partials/show-student-card';
 
 const ShowStudentClassroom = () => {
     const { classroom, student } = usePage<ShowStudentClassroomPageProps>().props;
@@ -11,18 +11,22 @@ const ShowStudentClassroom = () => {
     const breadcrumbs: BreadcrumbItem[] = useMemo(
         () => [
             {
+                title: 'Dashboard',
+                href: '/',
+            },
+            {
                 title: 'Classrooms Management',
-                href: '/teacher/classrooms',
+                href: '/admin/classrooms',
             },
             {
                 title: classroom.data.fullName,
-                href: route('teacher.classrooms.show', {
+                href: route('admin.classrooms.show', {
                     classroom: classroom.data.id,
                 }),
             },
             {
                 title: student.data.name,
-                href: '/teacher/classrooms/show-student',
+                href: '/admin/classrooms/show-student',
             },
         ],
         [classroom, student],

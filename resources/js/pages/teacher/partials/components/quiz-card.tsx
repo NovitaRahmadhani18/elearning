@@ -100,7 +100,9 @@ const QuizCard = ({
                 <div className="my-2 grid grid-cols-2 gap-2 text-center text-sm text-gray-600">
                     <div>
                         <p className="flex items-center justify-center gap-1 font-bold">
-                            <Users className="h-4 w-4 text-primary" />0
+                            <Users className="h-4 w-4 text-primary" />
+                            {quizContent.students_count || 0} /{' '}
+                            {quizContent.classroom.students_count || 0}
                         </p>
                         <p>Submissions</p>
                     </div>

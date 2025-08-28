@@ -62,6 +62,7 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+    total_points?: number;
     [key: string]: unknown; // This allows for additional properties...
 }
 

@@ -5,7 +5,7 @@ import { TUser } from '@/types/users';
 const UserCard: React.FC<{ user: TUser }> = ({ user }) => {
     const getInitials = useInitials();
     return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 py-2">
             <Avatar className="h-8 w-8 overflow-hidden rounded-full border border-primary">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg bg-primary-light text-primary">

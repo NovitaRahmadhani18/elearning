@@ -31,6 +31,7 @@ export interface TClassroom {
     contents?: TContent[];
     students?: TStudentClassroom[];
     studentUsers?: TUser[];
+    students_count?: number;
 }
 
 export interface ClassroomIndexPageProps extends SharedData {
@@ -57,5 +58,8 @@ export interface EditClassroomPageProps extends SharedData {
 export interface ShowClassroomPageProps extends SharedData {
     classroom: {
         data: TClassroom;
+    };
+    students?: {
+        data: TUser;
     };
 }

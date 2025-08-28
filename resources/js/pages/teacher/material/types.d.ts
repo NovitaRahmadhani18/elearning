@@ -18,6 +18,7 @@ type TContentBase = {
     classroom: TClassroom;
     created_at: string;
     updated_at: string;
+    students_count?: number;
 
     status?: 'locked' | 'unlocked' | 'completed';
 };

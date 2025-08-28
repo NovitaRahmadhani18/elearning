@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Enums\RoleEnum;
+use App\Facades\DataTable;
 use App\Services\ContentStatusService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -45,7 +46,26 @@ class ClassroomResource extends JsonResource
             'students' => $this->whenLoaded('students', function () {
                 return ClassroomStudentResource::collection($this->students);
             }),
-            'studentUsers' => $this->whenLoaded('studentUsers', function () {
+            'students_count' => $this->when(
+                isset($this->students_count),
+                $this->students_count
+            ),
+
+            'studentUsers' => $this->whenLoaded('studentUsers', function () use ($request) {
+
+                if ($request->routeIs('teacher.classrooms.show') || $request->routeIs('admin.classrooms.show')) {
+                    $result = $this->studentUsers()
+                        ->where('role', RoleEnum::STUDENT)
+                        ->when($request->has('search'), function ($query) use ($request) {
+                            $search = $request->input('search');
+                            $query->where(function ($q) use ($search) {
+                                $q->where('name', 'like', "%{$search}%")
+                                    ->orWhere('email', 'like', "%{$search}%");
+                            });
+                        });
+
+                    return UserResource::collection($result->get());
+                }
                 return UserResource::collection($this->studentUsers);
             }),
 

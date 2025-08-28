@@ -10,7 +10,6 @@ export type TAchievement = {
 };
 
 export type TSummaryCardData = {
-    id: number;
     label: string;
     value: string;
     Icon: LucideIcon;

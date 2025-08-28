@@ -28,7 +28,6 @@ class QuizController extends Controller
     {
         return inertia('teacher/quiz/index', [
             'quizzes' => $this->contentService->getQuizzes(),
-            'classrooms' => $this->contentService->getClassrooms(),
         ]);
     }
 

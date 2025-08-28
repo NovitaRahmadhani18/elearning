@@ -175,7 +175,7 @@ class DataTable
      *
      * @return $this
      */
-    public function orderBy(string $column = 'created_at', string $direction = 'asc'): self
+    public function orderBy(string $column = 'created_at', string $direction = 'desc'): self
     {
         $this->orderBy = $column;
         $this->direction = $direction;

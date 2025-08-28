@@ -3,7 +3,7 @@ import HeadingSmall from '@/components/heading-small';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
 import ClassroomContentShow from '@/pages/teacher/classroom/partials/classroom-content.show';
-import ClassroomShowStudents from '@/pages/teacher/classroom/partials/classroom-show-students';
+import StudentClassroomTable from '@/pages/teacher/classroom/partials/table/student/data-table';
 import { BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
@@ -43,14 +43,14 @@ const ClassroomShowPage = () => {
                     </ActionButton>
                 </section>
 
-                <section>
+                <section className="space-y-4">
                     <Tabs defaultValue="students" className="">
                         <TabsList>
                             <TabsTrigger value="students">Students</TabsTrigger>
                             <TabsTrigger value="contents">Contents</TabsTrigger>
                         </TabsList>
                         <TabsContent value="students">
-                            <ClassroomShowStudents />
+                            <StudentClassroomTable />
                         </TabsContent>
                         <TabsContent value="contents">
                             <ClassroomContentShow />

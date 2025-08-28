@@ -9,7 +9,7 @@ import { useMemo, useState } from 'react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ClassroomContentShow from './partials/classroom-content.show';
-import ClassroomShowStudents from './partials/classroom-show-students';
+import StudentClassroomTable from './partials/table/student/data-table';
 
 const ClassroomShowPage = () => {
     const { classroom } = usePage<ShowClassroomPageProps>().props;
@@ -52,7 +52,7 @@ const ClassroomShowPage = () => {
                             <TabsTrigger value="contents">Contents</TabsTrigger>
                         </TabsList>
                         <TabsContent value="students">
-                            <ClassroomShowStudents />
+                            <StudentClassroomTable />
                         </TabsContent>
                         <TabsContent value="contents">
                             <ClassroomContentShow />

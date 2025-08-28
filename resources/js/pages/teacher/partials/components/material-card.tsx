@@ -32,8 +32,8 @@ const MaterialCard = ({
     }
     const materialContent = content as TContentMaterial;
 
-    const completionCount = 15;
-    const totalStudents = 30;
+    const completionCount = materialContent?.students_count ?? 0;
+    const totalStudents = materialContent.classroom?.students_count ?? 0;
 
     return (
         <div

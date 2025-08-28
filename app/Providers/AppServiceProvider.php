@@ -15,12 +15,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
-        $this->app->singleton(AchievementService::class, function ($app) {
-            return new AchievementService(); // Uses default achievements
-        });
-    }
+    public function register(): void {}
 
     /**
      * Bootstrap any application services.
@@ -30,11 +25,6 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(
             ContentCompleted::class,
             ProcessContentCompletion::class
-        );
-
-        Event::listen(
-            Login::class,
-            LogSuccessfulLogin::class
         );
     }
 }

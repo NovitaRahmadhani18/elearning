@@ -71,12 +71,14 @@ class ProcessContentCompletion
                         );
 
                     // --- New Logic ---
-                    // Log the activity
-                    app(ActivityLogService::class)->log($event->user, 'content.completed', $event->content, $description);
 
-                    // Process achievements if it was a quiz
-                    if ($event->content->contentable_type === Quiz::class && $event->submission) {
-                        app(AchievementService::class)->processQuizCompletion($event->user, $event->submission);
+                    if ($event->content->contentable_type === Quiz::class && $event->data['submission']) {
+                        Log::info('Processing achievements for quiz completion', [
+                            'user_id' => $event->user->id,
+                            'quiz_id' => $event->content->contentable_id,
+                            'submission_id' => $event->data['submission']->id
+                        ]);
+                        app(AchievementService::class)->processQuizCompletion($event->user, $event->data['submission']);
                     }
                 }
             });

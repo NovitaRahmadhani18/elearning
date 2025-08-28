@@ -6,6 +6,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { TAchievement } from '@/pages/student/achievement/types';
 import { ShowStudentClassroomPageProps } from '@/pages/student/classrooms/types';
@@ -183,7 +184,9 @@ const ActivityItem = ({ activity }: { activity: TActivity }) => (
 const StudentProfilePage = () => {
     const { classroom, student } = usePage<ShowStudentClassroomPageProps>().props;
 
-    const user = mockUser;
+    const getInitial = useInitials();
+
+    const user = mockUser; // Gunakan data siswa dari props atau data mockup;
 
     return (
         <div className="min-h-screen">
@@ -195,18 +198,20 @@ const StudentProfilePage = () => {
                         <div className="flex items-center gap-4">
                             <Avatar className="h-20 w-20 border-4 border-white/50 text-3xl">
                                 <AvatarFallback className="bg-blue-400 text-white">
-                                    {user.avatar_initial}
+                                    {getInitial(student.data.name)}
                                 </AvatarFallback>
                             </Avatar>
                             <div>
-                                <h1 className="text-3xl font-bold">{user.name}</h1>
+                                <h1 className="text-3xl font-bold">
+                                    {student.data.name}
+                                </h1>
                                 <p className="">
-                                    {user.email} •{' '}
+                                    {student.data.email} •{' '}
                                     <Badge
                                         variant="secondary"
                                         className="capitalize"
                                     >
-                                        {user.role}
+                                        {student.data.role}
                                     </Badge>
                                 </p>
                             </div>
@@ -225,10 +230,9 @@ const StudentProfilePage = () => {
                             <StatCard label="Achievements" value={'1'} />
                             <StatCard
                                 label="Last Activity"
-                                value={formatDistanceToNow(
-                                    new Date(user.stats.last_activity),
-                                    { addSuffix: true },
-                                )}
+                                value={formatDistanceToNow(new Date(), {
+                                    addSuffix: true,
+                                })}
                             />
                         </div>
                     </div>

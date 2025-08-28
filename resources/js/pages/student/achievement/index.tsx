@@ -1,6 +1,9 @@
 import Heading from '@/components/heading';
 import StudentLayout from '@/layouts/student-layout';
+import { SharedData } from '@/types';
+import { usePage } from '@inertiajs/react';
 import { Star, TrendingUp, Trophy } from 'lucide-react';
+import { useMemo } from 'react';
 import AchievementCard from './partials/components/achievement-card';
 import { SummaryCard } from './partials/components/achievement-stat-card';
 import { TAchievement, TSummaryCardData } from './types';
@@ -44,19 +47,42 @@ export const mockAchievements: TAchievement[] = [
     },
 ];
 
-const summaryData: TSummaryCardData[] = [
-    { id: 1, label: 'Total Lencana', value: '1/5', Icon: Trophy, color: 'blue' },
-    { id: 2, label: 'Total Point', value: '86 Point', Icon: Star, color: 'yellow' },
-    {
-        id: 3,
-        label: 'Tingkat Penyelesaian',
-        value: '20%',
-        Icon: TrendingUp,
-        color: 'green',
-    },
-];
+interface AchievementPageProps extends SharedData {
+    achievements: {
+        data: TAchievement[];
+    };
+}
 
 const AchievementPage = () => {
+    const { achievements, auth } = usePage<AchievementPageProps>().props;
+
+    const sumaryData: TSummaryCardData[] = useMemo(
+        () => [
+            {
+                id: 1,
+                label: 'Total Lencana',
+                value: `${achievements.data.filter((a) => !a.locked).length}/${achievements.data.length}`,
+                Icon: Trophy,
+                color: 'blue',
+            },
+            {
+                id: 2,
+                label: 'Total Point',
+                value: `${auth.user?.total_points || 0} Points`,
+                Icon: Star,
+                color: 'yellow',
+            },
+            {
+                id: 3,
+                label: 'Tingkat Penyelesaian',
+                value: `${((achievements.data.filter((a) => !a.locked).length / achievements.data.length) * 100).toFixed(0)}%`,
+                Icon: TrendingUp,
+                color: 'green',
+            },
+        ],
+        [achievements, auth],
+    );
+
     return (
         <StudentLayout>
             <div className="flex flex-1 flex-col gap-4 space-y-4">
@@ -70,9 +96,9 @@ const AchievementPage = () => {
                         <div className="mx-auto max-w-7xl">
                             {/* Kartu Statistik */}
                             <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-                                {summaryData.map((card) => (
+                                {sumaryData.map((card, i) => (
                                     <SummaryCard
-                                        key={card.id}
+                                        key={`summary-card-${i}`}
                                         icon={card.Icon}
                                         label={card.label}
                                         value={card.value}
@@ -83,12 +109,18 @@ const AchievementPage = () => {
 
                             {/* Grid Lencana */}
                             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                                {mockAchievements.map((achievement) => (
-                                    <AchievementCard
-                                        key={achievement.id}
-                                        achievement={achievement}
-                                    />
-                                ))}
+                                {achievements.data.length > 0 ? (
+                                    achievements.data.map((achievement) => (
+                                        <AchievementCard
+                                            key={achievement.id}
+                                            achievement={achievement}
+                                        />
+                                    ))
+                                ) : (
+                                    <p className="text-center text-slate-500">
+                                        No achievements earned yet. Keep going!
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -16,7 +16,7 @@ export const studentTrackingTableColumns: ColumnDef<TStudentClassroom>[] = [
     {
         accessorKey: 'classroom.name',
         header: 'Classroom Name',
-        cell: ({ row }) => row.original.classroom.name,
+        cell: ({ row }) => row.original.classroom.fullName,
     },
     {
         id: 'progress',
