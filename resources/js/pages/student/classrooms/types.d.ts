@@ -25,4 +25,7 @@ interface ShowStudentClassroomPageProps extends SharedData {
     student: {
         data: TUser;
     };
+    contents: {
+        data: TContent[];
+    };
 }

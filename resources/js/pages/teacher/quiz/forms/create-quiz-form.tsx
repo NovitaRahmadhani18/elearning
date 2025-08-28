@@ -76,6 +76,9 @@ const AnswerForm = ({
                         onAnswerChange(qIndex, aIndex, 'image', file)
                     }
                 />
+                <p className="text-xs text-gray-500">
+                    Max file size: 2MB. Allowed formats: jpg, jpeg, png.
+                </p>
                 <InputError
                     message={errors[`questions.${qIndex}.answers.${aIndex}.image`]}
                 />
@@ -150,6 +153,9 @@ const QuestionForm = ({
                         onQuestionChange(qIndex, 'image', file)
                     }
                 />
+                <p className="text-xs text-gray-500">
+                    Max file size: 2MB. Allowed formats: jpg, jpeg, png.
+                </p>
                 <InputError message={errors[`questions.${qIndex}.image`]} />
             </div>
             <h3 className="text-md pt-2 font-semibold">Options</h3>
@@ -405,6 +411,12 @@ const CreateQuizForm = () => {
                                 required
                             />
                         )}
+                    </div>
+                    <div className="rounded-md border border-red-500 bg-red-100 p-2">
+                        <p className="text-xs text-red-700">
+                            Make sure the start and due times are set correctly to
+                            avoid confusion for students.
+                        </p>
                     </div>
                     <DateTimePicker24hForm
                         id="start_time"

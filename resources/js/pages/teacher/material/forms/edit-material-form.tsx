@@ -118,9 +118,18 @@ export function EditMaterialForm() {
                     {/* Tampilkan input file jika tidak ada lampiran atau jika lampiran sudah dihapus */}
                     {(!material.data.details.attachment_path ||
                         data.remove_attachment) && (
-                        <FileInput
-                            onChange={(file: File) => setData('attachment', file)}
-                        />
+                        <>
+                            <FileInput
+                                onChange={(file: File) =>
+                                    setData('attachment', file)
+                                }
+                            />
+
+                            <p className="text-xs text-gray-500">
+                                Max file size: 10MB. Allowed formats: pdf, docx,
+                                pptx, jpg, png, zip.
+                            </p>
+                        </>
                     )}
                     <InputError message={errors.attachment} />
                 </div>

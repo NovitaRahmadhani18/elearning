@@ -84,6 +84,11 @@ export function CreateMaterialForm() {
                     <FileInput
                         onChange={(file: File) => setData('attachment', file)}
                     />
+                    <p className="text-xs text-gray-500">
+                        Max file size: 10MB. Allowed formats: pdf, docx, pptx, jpg,
+                        png, zip.
+                    </p>
+
                     <InputError message={errors.attachment} />
                 </div>
 

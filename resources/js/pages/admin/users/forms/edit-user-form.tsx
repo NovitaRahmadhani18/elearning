@@ -111,18 +111,6 @@ const EditUserForm = ({ user }: { user: TUser }) => {
                     disabled={processing}
                 />
 
-                <FormField
-                    id="address"
-                    label="Address"
-                    value={data.address}
-                    onChange={(e) => setData('address', e.target.value)}
-                    required
-                    placeholder="Enter address"
-                    textarea
-                    error={errors.address}
-                    disabled={processing}
-                />
-
                 <RadioGroupInput
                     id="role"
                     label="Role"

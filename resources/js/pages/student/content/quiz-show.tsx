@@ -2,7 +2,7 @@ import StudentLayout from '@/layouts/student-layout';
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types'; // Pastikan path tipe benar
 import { Head, Link, usePage } from '@inertiajs/react';
-import { format } from 'date-fns';
+import { format, isFuture, parseISO } from 'date-fns';
 import React from 'react';
 
 // Import Ikon dari lucide-react
@@ -112,6 +112,8 @@ const QuizShowPage = () => {
     const quiz = content.data; // Untuk kemudahan membaca
     const classroom = quiz.classroom;
 
+    const isFutureQuiz = isFuture(parseISO(quiz.details.start_time));
+
     return (
         <StudentLayout>
             <Head title={`Quiz: ${quiz.title}`} />
@@ -220,12 +222,19 @@ const QuizShowPage = () => {
                             </div>
 
                             <Button
+                                disabled={isFutureQuiz}
                                 asChild
                                 size="lg"
-                                className="bg-gradient-to-r from-primary to-primary/80 transition-all duration-200 hover:scale-105 hover:shadow-md"
+                                className={cn(
+                                    isFutureQuiz && 'cursor-not-allowed opacity-50',
+                                )}
                             >
                                 <Link
-                                    href={route('student.quizzes.start', quiz.id)}
+                                    href={
+                                        isFutureQuiz
+                                            ? '#'
+                                            : route('student.quizzes.start', quiz.id)
+                                    }
                                     className="flex items-center"
                                 >
                                     <Play className="mr-2 h-5 w-5" />

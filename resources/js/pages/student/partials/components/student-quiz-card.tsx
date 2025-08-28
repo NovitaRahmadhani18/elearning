@@ -109,7 +109,9 @@ const StudentQuizCard = ({ content }: { content: TContentQuiz }) => {
                             href={
                                 isLocked
                                     ? '#'
-                                    : route('student.contents.show', content.id)
+                                    : isCompleted
+                                      ? route('student.quizzes.result', content.id)
+                                      : route('student.contents.show', content.id)
                             }
                             as="div"
                         >

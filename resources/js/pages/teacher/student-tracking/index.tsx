@@ -14,7 +14,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const StudentTrackingPage = () => {
-    const { studentClassrooms } = usePage<TStudentTrackingPageProps>().props;
+    const { studentClassrooms, averageCompletionRate } =
+        usePage<TStudentTrackingPageProps>().props;
 
     const totalStudents = studentClassrooms.data?.length ?? 0; // Get the total number of students from the props
 
@@ -31,7 +32,7 @@ const StudentTrackingPage = () => {
 
                     <AdminDashboardCard
                         title="Average Completion Rate"
-                        value="80%" // Placeholder value, replace with actual data if available
+                        value={`${averageCompletionRate.toFixed(2)}%`} // Placeholder value, replace with actual data if available
                         icon={ChartBar} // Replace with an actual icon if needed
                     />
                 </div>

@@ -11,7 +11,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::middleware([
-        'role:admin,teacher'
+        'role:admin'
     ])->group(function () {
         Route::post('classrooms/{classroom}/generate-invite-code', [\App\Http\Controllers\Teacher\ClassroomController::class, 'generateInviteCode'])
             ->name('classrooms.generate-invite-code');

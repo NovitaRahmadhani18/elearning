@@ -52,7 +52,6 @@ class UsersController extends Controller
             'email' => 'required|email|unique:users,email',
             'role' => 'required|in:admin,teacher,student', // Adjust roles as needed
             'id_number' => 'required|numeric|max:50|unique:users,id_number',
-            'address' => 'required|string|max:255',
             'gender' => 'required|in:male,female',
             'avatar' => 'nullable|image|max:2048',
             'is_active' => 'boolean',
@@ -103,7 +102,6 @@ class UsersController extends Controller
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($userId)],
                 'gender' => ['required', 'in:male,female'],
-                'address' => ['required', 'string'],
                 'role' => ['required', 'string', 'in:admin,teacher,student'],
                 'is_active' => ['required', 'boolean'],
                 // Password bersifat 'nullable', artinya tidak wajib diisi

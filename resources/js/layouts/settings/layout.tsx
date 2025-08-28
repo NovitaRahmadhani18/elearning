@@ -21,7 +21,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             </header>
 
             <div className="mx-auto w-full max-w-4xl flex-1 px-4">
-                <section className="w-full">{children}</section>
+                <section className="w-full pb-10">{children}</section>
             </div>
         </div>
     );

@@ -19,8 +19,10 @@ class ClassroomController extends Controller
 
     public function index()
     {
+        $classrooms = $this->classroomService->index();
+
         return inertia('student/classrooms/index', [
-            'classrooms' => $this->classroomService->index()
+            'classrooms' => $classrooms
         ]);
     }
 

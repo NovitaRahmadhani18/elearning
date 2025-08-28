@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { TContent } from '@/pages/teacher/material/types';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 import StudentMaterialCard from '../partials/components/student-material-card';
 import StudentQuizCard from '../partials/components/student-quiz-card';
 import { ShowStudentClassroomPageProps } from './types';
@@ -24,8 +26,11 @@ const ContentItem = ({ content }: { content: TContent }) => {
 };
 
 const ClassroomShow = () => {
-    const { classroom: classroomData, contents: contentsData } =
-        usePage<ShowStudentClassroomPageProps>().props;
+    const {
+        classroom: classroomData,
+        contents: contentsData,
+        errors,
+    } = usePage<ShowStudentClassroomPageProps>().props;
 
     const classroom = classroomData.data;
     const contents = contentsData.data;
@@ -36,6 +41,14 @@ const ClassroomShow = () => {
     ).length;
     const learningProgress =
         totalContents > 0 ? (completedContents / totalContents) * 100 : 0;
+
+    useEffect(() => {
+        if (errors && Object.keys(errors).length > 0) {
+            Object.values(errors).forEach((error) => {
+                toast.error(error as string);
+            });
+        }
+    }, [errors]);
 
     return (
         <StudentLayout>

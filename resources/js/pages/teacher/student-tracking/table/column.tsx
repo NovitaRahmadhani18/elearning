@@ -1,4 +1,5 @@
 import { Progress } from '@/components/ui/progress';
+import UserCard from '@/pages/admin/partials/components/user-card';
 import { ColumnDef } from '@tanstack/react-table';
 import { TStudentClassroom } from '../types';
 
@@ -11,7 +12,7 @@ export const studentTrackingTableColumns: ColumnDef<TStudentClassroom>[] = [
     {
         accessorKey: 'student.name',
         header: 'Student Name',
-        cell: ({ row }) => row.original.student.name,
+        cell: ({ row }) => <UserCard user={row.original.student} />,
     },
     {
         accessorKey: 'classroom.name',
@@ -23,7 +24,7 @@ export const studentTrackingTableColumns: ColumnDef<TStudentClassroom>[] = [
         header: 'Progress',
         cell: ({ row }) => {
             // randomly generate a progress percentage for demonstration
-            const progress = Math.floor(Math.random() * 101); // 0 to 100
+            const progress = row.original.progress; // Use actual progress from data
 
             return (
                 <div className="w-full">
@@ -39,7 +40,7 @@ export const studentTrackingTableColumns: ColumnDef<TStudentClassroom>[] = [
         header: 'Completion',
         cell: ({ row }) => {
             // randomly generate a completion percentage for demonstration
-            const completion = Math.floor(Math.random() * 101); // 0 to 100
+            const completion = row.original.progress; // Use actual completion from data
             return completion + '%';
         },
     },

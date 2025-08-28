@@ -16,10 +16,18 @@ class Achievement extends Model
         'description',
         'icon_path',
         'points_reward',
+        'unlocked_at',
+    ];
+
+    protected $casts = [
+        'unlocked_at' => 'datetime',
     ];
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_achievements')->withTimestamps();
+        return $this->belongsToMany(User::class, 'user_achievements')
+            ->withPivot('unlocked_at')
+            ->withTimestamps();
     }
 }
+

@@ -173,7 +173,7 @@ export const ContentProgressBlock = ({
                             {content.title}
                         </h2>
                         <p className="text-sm text-slate-500">
-                            {content.classroom.name} •{' '}
+                            {content.classroom.fullName} •{' '}
                             {content.type.charAt(0).toUpperCase() +
                                 content.type.slice(1)}{' '}
                             • {content.points} points

@@ -6,7 +6,7 @@ const StudentLayout: React.FC<PropsWithChildren> = ({ children }) => {
     return (
         <AppHeaderLayout>
             {children}
-            <Toaster position="top-right" richColors />
+            <Toaster position="top-right" richColors theme="light" />
         </AppHeaderLayout>
     );
 };

@@ -53,7 +53,6 @@ class UserService
             'email' => $data['email'],
             'role' => $data['role'],
             'id_number' => $data['id_number'],
-            'address' => $data['address'],
             'gender' => $data['gender'],
             'is_active' => $data['is_active'] ?? true,
             'password' => bcrypt($data['password']),
@@ -91,7 +90,6 @@ class UserService
                 'email' => $validatedData['email'],
                 'role' => $validatedData['role'],
                 'id_number' => $validatedData['id_number'],
-                'address' => $validatedData['address'],
             ]);
 
             $user->save();

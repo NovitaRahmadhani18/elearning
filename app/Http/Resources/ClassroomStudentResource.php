@@ -14,9 +14,11 @@ class ClassroomStudentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         return [
             'classroom' => new ClassroomResource($this->classroom),
             'student' => new UserResource($this->student),
+            'progress' => $this->progress,
         ];
     }
 }

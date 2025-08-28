@@ -18,6 +18,9 @@ class LeaderboardController extends Controller
 
         $leaderboards = $this->leaderboardService->getLeaderboardsForStudent(auth()->user());
 
+        // sort content yang paling baru dibuat
+        $leaderboards = $leaderboards->sortByDesc('created_at')->values();
+
         return inertia('student/leaderboard/index', [
             'contentLeaderboards' => ContentResource::collection($leaderboards)
         ]);

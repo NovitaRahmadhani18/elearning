@@ -16,6 +16,11 @@ class Quiz extends Model
         'duration_minutes',
     ];
 
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+    ];
+
     protected $with = [
         'questions'
     ];
@@ -30,4 +35,3 @@ class Quiz extends Model
         return $this->hasMany(Question::class);
     }
 }
-

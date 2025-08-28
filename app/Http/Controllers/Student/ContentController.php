@@ -21,29 +21,48 @@ class ContentController extends Controller
 
     public function show(Request $request, Content $content)
     {
-        Gate::authorize('view-content', $content);
+        if (Gate::denies('view-content', $content)) {
+            return to_route('student.classrooms.show', $content->classroom)
+                ->withErrors(['error' => 'Complete previous contents to access content.']);
+        }
 
         $user = $request->user();
+        $content->load('contentable');
 
         if ($content->contentable_type === Material::class) {
             // Dispatch the event to mark as complete and award points
             ContentCompleted::dispatch($user, $content);
 
             return inertia('student/content/material-show', [
-                'content' => ContentResource::make($content->load('contentable')),
+                'content' => ContentResource::make($content),
             ]);
         }
+
+
 
         // For quizzes, just show the info page.
         // The ContentCompleted event will be dispatched after a quiz is submitted.
         return inertia('student/content/quiz-show', [
-            'content' => ContentResource::make($content->load('contentable')),
+            'content' => ContentResource::make($content),
         ]);
     }
 
     public function startQuiz(Content $content)
     {
         Gate::authorize('view-content', $content);
+
+        // check apakahs start_date dari quiz sudah lewat
+        if ($content->contentable->start_time && $content->contentable->start_time->isFuture()) {
+            return to_route('student.classrooms.show', $content->classroom)
+                ->withErrors(['error' => "Quiz has not started yet."]);
+        }
+
+        // check apakah end_date dari quiz sudah lewat
+        if ($content->contentable->end_time && $content->contentable->end_time->isPast()) {
+            return to_route('student.quizzes.result', $content)
+                ->withErrors(['error' => "Quiz has ended."]);
+        }
+
 
         $submission = auth()->user()->quizSubmissions()
             ->where('quiz_id', $content->contentable->id)
@@ -120,8 +139,16 @@ class ContentController extends Controller
 
     public function resultQuiz(Content $content)
     {
+
+
         if ($content->contentable_type !== 'App\Models\Quiz') {
             return redirect()->back()->withErrors(['error' => 'This content is not a quiz.']);
+        }
+
+
+        if ($content->contentable->start_time && $content->contentable->start_time->isFuture()) {
+            return to_route('student.classrooms.show', $content->classroom)
+                ->withErrors(['error' => "Quiz has not started yet."]);
         }
 
         $submission = auth()->user()->quizSubmissions()
@@ -129,8 +156,11 @@ class ContentController extends Controller
             ->first();
 
         if (!$submission) {
-            return to_route('student.quizzes.start', $content)
-                ->withErrors(['error' => 'You have not completed this quiz yet.']);
+            $submission = QuizSubmission::create([
+                'student_id' => auth()->id(),
+                'quiz_id' => $content->contentable->id,
+                'started_at' => now(),
+            ]);
         }
 
         if (!$submission->completed_at) {

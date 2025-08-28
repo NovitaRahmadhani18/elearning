@@ -49,19 +49,29 @@ class ClassroomService
             ->when(auth()->user()->role === RoleEnum::TEACHER, function ($query) {
                 return $query->where('teacher_id', auth()->id());
             })
-            ->when(auth()->user()->role === RoleEnum::STUDENT, function ($query) {
-                return $query->whereHas('students', function ($q) {
-                    $q->where('student_id', auth()->id());
-                })->with(['contents']);
-            });
+            ->when(
+                auth()->user()->role === RoleEnum::STUDENT,
+                function ($query) {
+                    return $query->whereHas('students', function ($q) {
+                        $q->where('student_id', auth()->id());
+                    })->with(['contents']);
+                }
+            );
+
+        $result = null;
 
         if (auth()->user()->role !== RoleEnum::STUDENT) {
             $query->with(['students', 'category', 'status', 'contents']);
+            $result =  DataTable::query($query)
+                ->searchable(['name', 'description'])
+                ->make();
+        } else {
+            $result = DataTable::query($query)
+                ->searchable(['name', 'description'])
+                ->type('collection')
+                ->make();
         }
 
-        $result =  DataTable::query($query)
-            ->searchable(['name', 'description'])
-            ->make();
 
         return ClassroomResource::collection($result);
     }

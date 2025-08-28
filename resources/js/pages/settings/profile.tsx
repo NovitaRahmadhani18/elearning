@@ -12,7 +12,6 @@ import {
     CardContent,
     CardDescription,
     CardHeader,
-    CardTitle,
 } from '@/components/ui/card';
 import SettingsLayout from '@/layouts/settings/layout';
 import { SharedData } from '@/types';
@@ -41,12 +40,6 @@ const UpdateProfileInformationForm = ({
 
     return (
         <Card>
-            <CardHeader>
-                <CardTitle>Profile Information</CardTitle>
-                <CardDescription>
-                    Update your account's profile information and email address.
-                </CardDescription>
-            </CardHeader>
             <CardContent>
                 <form onSubmit={submit} className="space-y-6">
                     <div>
@@ -105,17 +98,6 @@ const UpdateProfileInformationForm = ({
                         />
                     </div>
 
-                    <FormField
-                        id="address"
-                        label="Address"
-                        value={data.address}
-                        onChange={(e) => setData('address', e.target.value)}
-                        placeholder="Enter your full address"
-                        error={errors.address}
-                        textarea
-                        rows={4}
-                    />
-
                     <div className="flex items-center gap-4">
                         <Button disabled={processing}>
                             {processing ? 'Saving...' : 'Save Changes'}
@@ -152,7 +134,6 @@ const UpdatePasswordForm = () => {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Security</CardTitle>
                 <CardDescription>
                     Update your password to keep your account secure.
                 </CardDescription>

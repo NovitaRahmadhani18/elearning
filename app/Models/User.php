@@ -98,10 +98,6 @@ class User extends Authenticatable
         return $this->belongsToMany(Achievement::class, 'user_achievements')->withTimestamps();
     }
 
-
-
-
-
     public function hasRole(RoleEnum $role): bool
     {
         return $this->role === $role;

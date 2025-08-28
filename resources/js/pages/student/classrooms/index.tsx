@@ -8,6 +8,12 @@ import { StudentClassroomPageProps } from './types';
 const ClassroomPage = () => {
     const { classrooms } = usePage<StudentClassroomPageProps>().props;
 
+    const orderedClassrooms = classrooms.data.sort((a, b) => {
+        const progressA = a.progress || 0;
+        const progressB = b.progress || 0;
+        return progressA - progressB; // Sort descending by progress
+    });
+
     return (
         <StudentLayout>
             <div className="flex flex-1 flex-col gap-4 space-y-4">
@@ -17,13 +23,13 @@ const ClassroomPage = () => {
                 />
 
                 <section>
-                    {classrooms.data.length > 0 && (
-                        <FeaturedClassroomCard classroom={classrooms.data[0]} />
+                    {orderedClassrooms.length > 0 && (
+                        <FeaturedClassroomCard classroom={orderedClassrooms[0]} />
                     )}
                 </section>
 
                 <section className="grid auto-rows-min gap-6 md:grid-cols-3">
-                    {classrooms.data.map((classroom, index) => (
+                    {orderedClassrooms.map((classroom, index) => (
                         <StudentClassroomCard
                             classroom={classroom}
                             key={index}
