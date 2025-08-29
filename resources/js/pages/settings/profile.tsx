@@ -28,7 +28,6 @@ const UpdateProfileInformationForm = ({
         avatar: null as File | null,
         id_number: user.id_number || '',
         gender: user.gender || '',
-        address: user.address || '',
     });
 
     const submit = (e: React.FormEvent) => {
@@ -47,9 +46,10 @@ const UpdateProfileInformationForm = ({
                         <div className="mt-2 flex items-center gap-4">
                             <AvatarInput
                                 id="avatar"
-                                value={data.avatar || user.avatar_url}
+                                value={data.avatar}
                                 onChange={(file) => setData('avatar', file)}
                                 size="lg"
+                                previewUrl={user.avatar}
                             />
                             <p className="text-sm text-muted-foreground">
                                 Upload a new profile picture (JPG, PNG, max 2MB)
@@ -147,7 +147,6 @@ const UpdatePasswordForm = () => {
                         value={data.current_password}
                         onChange={(e) => setData('current_password', e.target.value)}
                         error={errors.current_password}
-                        autoComplete="current-password"
                     />
                     <FormField
                         id="password"
@@ -156,7 +155,6 @@ const UpdatePasswordForm = () => {
                         value={data.password}
                         onChange={(e) => setData('password', e.target.value)}
                         error={errors.password}
-                        autoComplete="new-password"
                     />
                     <FormField
                         id="password_confirmation"
@@ -167,7 +165,6 @@ const UpdatePasswordForm = () => {
                             setData('password_confirmation', e.target.value)
                         }
                         error={errors.password_confirmation}
-                        autoComplete="new-password"
                     />
 
                     <div className="flex items-center gap-4">

@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { Camera, User2 } from 'lucide-react';
 import * as React from 'react';
@@ -15,6 +16,7 @@ interface AvatarInputProps {
     size?: 'sm' | 'md' | 'lg';
     /** Status disabled */
     disabled?: boolean;
+    previewUrl?: string;
 }
 
 // Mapping ukuran ke kelas Tailwind CSS
@@ -31,9 +33,12 @@ export function AvatarInput({
     className,
     size = 'md',
     disabled = false,
+    previewUrl: propPreviewUrl,
 }: AvatarInputProps) {
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+    const [previewUrl, setPreviewUrl] = React.useState<string | null>(
+        propPreviewUrl || null,
+    );
 
     // Efek untuk mengelola URL preview
     React.useEffect(() => {
@@ -66,27 +71,26 @@ export function AvatarInput({
 
     return (
         <div className={cn('relative inline-flex', sizeClasses[size], className)}>
-            <div
+            <Avatar
                 className={cn(
                     'group relative flex h-full w-full items-center justify-center rounded-full bg-muted',
                     'border-2 border-dashed border-gray-300',
                 )}
             >
-                {previewUrl ? (
-                    <img
-                        src={previewUrl}
-                        alt="Avatar preview"
-                        className="h-full w-full rounded-full object-cover"
-                    />
-                ) : (
+                <AvatarImage
+                    src={previewUrl || propPreviewUrl || undefined}
+                    alt="Avatar preview"
+                    className="h-full w-full rounded-full object-cover"
+                />
+                <AvatarFallback className="bg-transparent">
                     <User2
                         className={cn(
                             'h-1/2 w-1/2 text-gray-400',
                             size === 'sm' && 'h-10 w-10',
                         )}
                     />
-                )}
-            </div>
+                </AvatarFallback>
+            </Avatar>
 
             {/* Tombol Pemicu Input */}
             <button

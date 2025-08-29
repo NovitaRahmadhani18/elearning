@@ -27,6 +27,7 @@ export type TContentStudent = {
     completed_at: string | null;
     content: TContent;
     user: TUser;
+    description: string | null;
 };
 
 export interface MonitoringPageProps extends SharedData {

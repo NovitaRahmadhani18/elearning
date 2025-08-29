@@ -3,11 +3,17 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AchievementResource;
 use App\Http\Resources\ClassroomResource;
+use App\Http\Resources\ClassroomStudentResource;
 use App\Models\Classroom;
 use App\Services\ClassroomService;
 use App\Http\Resources\ContentResource;
+use App\Http\Resources\ContentStudentResourc;
 use App\Http\Resources\UserResource;
+use App\Models\Achievement;
+use App\Models\ClassroomStudent;
+use App\Models\ContentStudent;
 use App\Models\Material;
 use Illuminate\Http\Request;
 
@@ -78,11 +84,31 @@ class ClassroomController extends Controller
 
     public function showStudent(Classroom $classroom, $studentId)
     {
-        $student = $classroom->studentUsers()->where('users.id', $studentId)->firstOrFail();
+        $student = $classroom->studentUsers()
+            ->where('users.id', $studentId)->firstOrFail();
+
+        $classroomStudent = ClassroomStudent::query()
+            ->with(['classroom', 'student'])
+            ->where('classroom_id', $classroom->id)
+            ->where('student_id', $student->id)
+            ->first();
+
+        $achievements = Achievement::with(['users' => function ($query) use ($student) {
+            $query->where('user_id', $student->id);
+        }])->get();
+
+        $contentStudents = ContentStudent::whereIn('content_id', $classroom->contents->pluck('id'))
+            ->where('user_id', $student->id)
+            ->with(['content'])
+            ->orderBy('completed_at', 'desc')
+            ->get();
 
         return inertia('teacher/classroom/show-student', [
             'classroom' => ClassroomResource::make($classroom),
             'student' => UserResource::make($student),
+            'classroomStudent' => $classroomStudent ? ClassroomStudentResource::make($classroomStudent) : null,
+            'achievements' => AchievementResource::collection($achievements),
+            'contentStudents' => ContentStudentResourc::collection($contentStudents),
         ]);
     }
 

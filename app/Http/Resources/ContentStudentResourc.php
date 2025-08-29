@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,6 +15,8 @@ class ContentStudentResourc extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+
         return [
             'id' => $this->id,
             'content_id' => $this->content_id,
@@ -23,6 +26,13 @@ class ContentStudentResourc extends JsonResource
             'completed_at' => $this->completed_at,
             'content' => new ContentResource($this->whenLoaded('content')),
             'user' => new UserResource($this->whenLoaded('user')),
+            'description' => $this->when($this->content, function () {
+                if ($this->content->contentable_type === Quiz::class) {
+                    return "submitted the quiz '{$this->content->title}' and earned {$this->score} points";
+                } else {
+                    return "completed the material '{$this->content->title}' and earned {$this->score} points";
+                }
+            }, null),
 
         ];
     }

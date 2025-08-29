@@ -1,7 +1,9 @@
 import { TClassroom } from '@/pages/admin/classroom/types';
+import { TContentStudent } from '@/pages/admin/monitoring';
 import { TContent } from '@/pages/teacher/material/types';
 import { PaginatedData, SharedData } from '@/types';
 import { TUser } from '@/types/users';
+import { TAchievement } from '../achievement/types';
 
 interface TStudentClassroom extends TClassroom {
     contents?: TContent[]; // Optional property for contents
@@ -25,7 +27,13 @@ interface ShowStudentClassroomPageProps extends SharedData {
     student: {
         data: TUser;
     };
-    contents: {
-        data: TContent[];
+    classroomStudent: {
+        data: TStudentClassroom;
+    };
+    achievements: {
+        data: TAchievement[];
+    };
+    contentStudents: {
+        data: TContentStudent[];
     };
 }

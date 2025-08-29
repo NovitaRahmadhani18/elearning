@@ -60,6 +60,9 @@ export interface User {
     avatar?: string;
     role: 'admin' | 'teacher' | 'student';
     email_verified_at: string | null;
+    id_number?: string;
+    gender: string;
+
     created_at: string;
     updated_at: string;
     total_points?: number;

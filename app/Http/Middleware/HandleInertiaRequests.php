@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
 
@@ -49,11 +50,14 @@ class HandleInertiaRequests extends Middleware
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
                     'role' => $request->user()->role->value,
-                    'avatar' => $request->user()->avatar ? asset($request->user()->avatar) : null,
+                    'avatar' => $request->user()->avatar ? Storage::url($request->user()->avatar) : null,
                     'address' => $request->user()->address,
                     'gender' => $request->user()->gender,
                     'id_number' => $request->user()->id_number,
                     'total_points' => $request->user()->total_points,
+                    'created_at' => $request->user()->created_at,
+                    'updated_at' => $request->user()->updated_at,
+                    'is_active' => $request->user()->is_active,
                 ] : null,
             ],
             'flash'   => [

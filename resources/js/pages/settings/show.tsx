@@ -1,115 +1,50 @@
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useInitials } from '@/hooks/use-initials'; // Asumsi hook ini ada
+import { useInitials } from '@/hooks/use-initials';
 import SettingsLayout from '@/layouts/settings/layout';
 import { SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { format, formatDistanceToNow, subWeeks } from 'date-fns';
-import { id as indonesiaLocale } from 'date-fns/locale';
-
-// ====================================================================
-// TIPE DATA & MOCKUP
-// ====================================================================
-
-type TActivity = {
-    id: number;
-    description: string;
-    created_at: string; // ISO String
-};
-
-// Data dummy untuk melengkapi informasi profil
-const mockProfileData = {
-    stats: {
-        classrooms: 0,
-        last_login: subWeeks(new Date(), 1).toISOString(), // 1 minggu yang lalu
-        member_since: new Date('2025-08-12T09:00:00Z').toISOString(),
-        last_updated: new Date('2025-08-12T09:00:00Z').toISOString(),
-    },
-    personal_info: {
-        id_number: null,
-        gender: null,
-        address: null,
-    },
-    recent_activity: [
-        {
-            id: 1,
-            description: 'logged in',
-            created_at: subWeeks(new Date(), 1).toISOString(),
-        },
-        {
-            id: 2,
-            description: 'logged in',
-            created_at: subWeeks(new Date(), 1).toISOString(),
-        },
-        {
-            id: 3,
-            description: 'logged in',
-            created_at: subWeeks(new Date(), 1).toISOString(),
-        },
-        {
-            id: 4,
-            description: 'logged in',
-            created_at: subWeeks(new Date(), 1).toISOString(),
-        },
-        {
-            id: 5,
-            description: 'logged in',
-            created_at: subWeeks(new Date(), 1).toISOString(),
-        },
-    ],
-};
-
-// ====================================================================
-// SUB-KOMPONEN
-// ====================================================================
-
-const StatCard = ({ label, value }: { label: string; value: string | number }) => (
-    <div className="rounded-lg border bg-slate-50 p-4">
-        <p className="text-xs tracking-wider text-slate-500 uppercase">{label}</p>
-        <p className="text-lg font-bold text-slate-800">{value}</p>
-    </div>
-);
+import { format } from 'date-fns';
+import { TContentStudent } from '../admin/monitoring';
 
 const PersonalInfoItem = ({
     label,
     value,
 }: {
     label: string;
-    value: string | null;
+    value: string | number | null;
 }) => (
     <div className="flex justify-between border-b border-gray-100 py-3 text-sm">
         <p className="text-gray-500">{label}</p>
-        <p className="font-medium text-gray-800">{value || '—'}</p>
+        <p className="font-medium text-gray-800 capitalize">{value || '—'}</p>
     </div>
 );
 
-const ActivityItem = ({ activity }: { activity: TActivity }) => (
-    <div className="flex justify-between border-b border-gray-100 py-3 text-sm">
-        <p className="text-gray-800">{activity.description}</p>
-        <p className="ml-4 flex-shrink-0 text-gray-500">
-            {formatDistanceToNow(new Date(activity.created_at), {
-                addSuffix: true,
-                locale: indonesiaLocale,
-            })}
-        </p>
-    </div>
+const CardPersonalInfo = ({ title, value }: { title: string; value?: string }) => (
+    <Card className="gap-2 bg-gray-50">
+        <CardHeader>
+            <CardTitle className="text-sm font-normal">{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+            <p className="text-xl font-semibold">{value || '-'}</p>
+        </CardContent>
+    </Card>
 );
 
-// ====================================================================
-// KOMPONEN HALAMAN UTAMA
-// ====================================================================
+interface ShowProfilePageProps extends SharedData {
+    classroomsCount: number;
+    contentStudent: {
+        data: TContentStudent[];
+    };
+}
 
 const ShowProfilePage = () => {
-    const { user } = usePage<SharedData>().props.auth;
+    const { auth, contentStudent, classroomsCount } =
+        usePage<ShowProfilePageProps>().props;
+    const user = auth.user;
     const getInitials = useInitials();
-
-    // Menggabungkan data asli dengan data dummy
-    const profileData = {
-        ...user,
-        ...mockProfileData,
-    };
 
     return (
         <SettingsLayout>
@@ -119,6 +54,11 @@ const ShowProfilePage = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
                         <Avatar className="h-20 w-20 border-4 text-3xl">
+                            <AvatarImage
+                                src={user.avatar}
+                                alt={user.name}
+                                className="object-cover"
+                            />
                             <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                         </Avatar>
                         <div>
@@ -138,39 +78,19 @@ const ShowProfilePage = () => {
                         <Link href={route('profile.edit')}>Edit Profile</Link>
                     </Button>
                 </div>
-
-                {/* Quick Stats Section */}
-                <div className="">
-                    <h2 className="mb-2 text-sm font-semibold text-muted-foreground">
-                        Quick Stats
-                    </h2>
-                    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                        <StatCard
-                            label="Classrooms"
-                            value={profileData.stats.classrooms}
-                        />
-                        <StatCard
-                            label="Last Login"
-                            value={formatDistanceToNow(
-                                new Date(profileData.stats.last_login),
-                                { addSuffix: true },
-                            )}
-                        />
-                        <StatCard
-                            label="Member Since"
-                            value={format(
-                                new Date(profileData.stats.member_since),
-                                'dd MMM yyyy',
-                            )}
-                        />
-                        <StatCard
-                            label="Last Updated"
-                            value={format(
-                                new Date(profileData.stats.last_updated),
-                                'dd MMM yyyy',
-                            )}
-                        />
-                    </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <CardPersonalInfo
+                        title="Classrooms"
+                        value={classroomsCount.toString()}
+                    />
+                    <CardPersonalInfo
+                        title="Member Since"
+                        value={format(new Date(user.created_at), 'dd MMM yyyy')}
+                    />
+                    <CardPersonalInfo
+                        title="Last Update"
+                        value={format(new Date(user.updated_at), 'dd MMM yyyy')}
+                    />
                 </div>
             </div>
 
@@ -186,27 +106,23 @@ const ShowProfilePage = () => {
                             <CardContent>
                                 <PersonalInfoItem
                                     label="ID Number"
-                                    value={profileData.personal_info.id_number}
+                                    value={user.id_number || '-'}
                                 />
                                 <PersonalInfoItem
                                     label="Gender"
-                                    value={profileData.personal_info.gender}
-                                />
-                                <PersonalInfoItem
-                                    label="Address"
-                                    value={profileData.personal_info.address}
-                                />
-                                <PersonalInfoItem
-                                    label="Member Since"
-                                    value={format(
-                                        new Date(profileData.stats.member_since),
-                                        'dd MMM yyyy',
-                                    )}
+                                    value={user.gender}
                                 />
                                 <PersonalInfoItem
                                     label="Last Updated"
                                     value={format(
-                                        new Date(profileData.stats.last_updated),
+                                        new Date(user.updated_at),
+                                        'dd MMM yyyy',
+                                    )}
+                                />
+                                <PersonalInfoItem
+                                    label="Member Since"
+                                    value={format(
+                                        new Date(user.created_at),
                                         'dd MMM yyyy',
                                     )}
                                 />
@@ -221,12 +137,31 @@ const ShowProfilePage = () => {
                                 <CardTitle>Recent Activity</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                {profileData.recent_activity.map((activity) => (
-                                    <ActivityItem
-                                        key={activity.id}
-                                        activity={activity}
-                                    />
-                                ))}
+                                {contentStudent.data.length > 0 ? (
+                                    contentStudent.data.map((activity, index) => (
+                                        <div
+                                            key={index}
+                                            className="border-b border-gray-100 py-3 last:border-0"
+                                        >
+                                            <p className="text-sm text-gray-800">
+                                                {activity.description ||
+                                                    'No description'}
+                                            </p>
+                                            <p className="text-xs text-gray-500">
+                                                {format(
+                                                    new Date(
+                                                        activity.completed_at || '',
+                                                    ),
+                                                    'dd MMM yyyy HH:mm',
+                                                )}
+                                            </p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-center text-gray-500">
+                                        No recent activity.
+                                    </p>
+                                )}
                             </CardContent>
                         </Card>
                     </div>

@@ -16,6 +16,11 @@ class ContentStudent extends Model
         'completed_at',
     ];
 
+    protected $casts = [
+        'completed_at' => 'datetime',
+    ];
+
+
     public function content()
     {
         return $this->belongsTo(Content::class);

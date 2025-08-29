@@ -8,136 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
-import { TAchievement } from '@/pages/student/achievement/types';
+import { TContentStudent } from '@/pages/admin/monitoring';
 import { ShowStudentClassroomPageProps } from '@/pages/student/classrooms/types';
-
-// ====================================================================
-// TIPE DATA & MOCKUP
-// ====================================================================
-
-// --- Tipe Data Disesuaikan untuk Menambah Info Skor ---
-type TActivity = {
-    id: number;
-    description: string;
-    score_info: string; // Teks untuk menampilkan skor atau poin
-    created_at: string;
-};
-
-const mockAchievements: TAchievement[] = [
-    {
-        id: 1,
-        name: 'Quiz Champion',
-        description: 'Menyelesaikan kuis dengan nilai ≥ 85',
-        image: '/images/achievements/quiz-champion.png',
-        locked: true,
-    },
-    {
-        id: 2,
-        name: 'Fast Learner',
-        description: 'Menyelesaikan kuis dalam waktu < 10 menit',
-        image: '/images/achievements/fast-learner.png',
-        locked: false,
-        achieved_at: '2025-08-12T10:30:00.000Z',
-    },
-    {
-        id: 3,
-        name: 'Perfect Score',
-        description: 'Mendapatkan nilai sempurna (100) pada salah satu kuis',
-        image: '/images/achievements/perfect-score.png',
-        locked: true,
-    },
-    {
-        id: 4,
-        name: 'Streak Master',
-        description: 'Mengerjakan kuis 5 hari berturut-turut',
-        image: '/images/achievements/streak-master.png',
-        locked: true,
-    },
-    {
-        id: 5,
-        name: 'Top Rank',
-        description: 'Berada di peringkat 3 besar leaderboard',
-        image: '/images/achievements/top-rank.png',
-        locked: true,
-    },
-];
-
-type TUserProfile = {
-    id: number;
-    name: string;
-    email: string;
-    role: 'teacher' | 'admin' | 'student';
-    avatar_initial: string;
-    stats: {
-        courses_enrolled: number;
-        last_activity: string;
-        member_since: string;
-        achievements_unlocked: number;
-    };
-    personal_info: {
-        id_number: string | null;
-        gender: string | null;
-        address: string | null;
-    };
-    recent_activity: TActivity[];
-};
-
-// --- DATA MOCKUP DIUBAH MENJADI DATA SISWA ---
-const mockUser: TUserProfile = {
-    id: 101,
-    name: 'Budi Santoso',
-    email: 'budi.santoso@student.com',
-    role: 'student',
-    avatar_initial: 'BS',
-    stats: {
-        courses_enrolled: 3,
-        last_activity: '2025-08-23T12:05:11Z',
-        member_since: '2025-02-10T09:00:00Z',
-        achievements_unlocked: 2,
-    },
-    personal_info: {
-        id_number: '123456789',
-        gender: 'Male',
-        address: 'Jl. Merdeka No. 17, Bandung',
-    },
-    recent_activity: [
-        {
-            id: 1,
-            description: 'Quiz 1: Matematika Dasar',
-            score_info: 'Score: 80/100',
-            created_at: '2025-08-23T12:05:11Z',
-        },
-        {
-            id: 2,
-            description: 'Pengenalan Aljabar',
-            score_info: '+10 points',
-            created_at: '2025-08-22T11:00:00Z',
-        },
-        {
-            id: 3,
-            description: 'Quiz 2: Faktorisasi dan Persamaan',
-            score_info: 'Score: 95/100',
-            created_at: '2025-08-21T15:30:00Z',
-        },
-        {
-            id: 4,
-            description: 'Apa itu Aljabar?',
-            score_info: '+5 points',
-            created_at: '2025-08-21T09:15:00Z',
-        },
-        {
-            id: 5,
-            description: 'Quiz 2: Aljabar Dasar',
-            score_info: 'Score: 95/100',
-            created_at: '2025-08-20T10:00:00Z',
-        },
-    ],
-};
-// --- AKHIR PERUBAHAN DATA MOCKUP ---
-
-// ====================================================================
-// SUB-KOMPONEN
-// ====================================================================
 
 const StatCard = ({ label, value }: { label: string; value: string | number }) => (
     <div className="rounded-lg bg-white/10 p-4 backdrop-blur-sm">
@@ -146,30 +18,23 @@ const StatCard = ({ label, value }: { label: string; value: string | number }) =
     </div>
 );
 
-const PersonalInfoItem = ({
-    label,
-    value,
-}: {
-    label: string;
-    value: string | null;
-}) => (
-    <div className="flex justify-between border-b border-gray-100 py-3 text-sm">
-        <p className="text-gray-500">{label}</p>
-        <p className="font-medium text-gray-800">{value || '—'}</p>
-    </div>
-);
-
 // --- Penyesuaian Kecil untuk Menampilkan Info Skor ---
-const ActivityItem = ({ activity }: { activity: TActivity }) => (
+const ActivityItem = ({ activity }: { activity: TContentStudent }) => (
     <div className="flex items-center justify-between border-b border-gray-100 py-3 text-sm">
         <div>
-            <p className="text-gray-800">{activity.description}</p>
-            {activity.score_info && (
-                <p className="font-semibold text-primary">{activity.score_info}</p>
+            <p className="text-gray-800 capitalize">
+                {activity.content.type}: {activity.content.title}
+            </p>
+            {activity.content.type === 'quiz' ? (
+                <Badge className="mt-1">
+                    Score: {activity.score} / {activity.content.points}
+                </Badge>
+            ) : (
+                <Badge className="mt-1">Score: {activity.score ?? 'N/A'}</Badge>
             )}
         </div>
         <p className="ml-4 flex-shrink-0 text-gray-500">
-            {formatDistanceToNow(new Date(activity.created_at), {
+            {formatDistanceToNow(new Date(activity.completed_at ?? ''), {
                 addSuffix: true,
             })}
         </p>
@@ -182,15 +47,20 @@ const ActivityItem = ({ activity }: { activity: TActivity }) => (
 // ====================================================================
 
 const StudentProfilePage = () => {
-    const { classroom, student } = usePage<ShowStudentClassroomPageProps>().props;
+    const { classroom, student, classroomStudent, achievements, contentStudents } =
+        usePage<ShowStudentClassroomPageProps>().props;
 
     const getInitial = useInitials();
-
-    const user = mockUser; // Gunakan data siswa dari props atau data mockup;
+    const completedAchievements = achievements?.data.filter(
+        (achievement) => !achievement.locked,
+    ).length;
+    const lastActivity = contentStudents.data.length
+        ? new Date(contentStudents.data[0].completed_at || '')
+        : null;
 
     return (
         <div className="min-h-screen">
-            <Head title={`${user.name}'s Profile`} />
+            <Head title={`${student.data.name}'s Profile`} />
             {/* Header Section */}
             <div className="rounded bg-white bg-cover bg-center p-6 text-gray-700 shadow-lg md:p-8">
                 <div className="mx-auto max-w-7xl">
@@ -216,7 +86,6 @@ const StudentProfilePage = () => {
                                 </p>
                             </div>
                         </div>
-                        {/* Tombol Edit Profile Anda (tidak diubah) */}
                     </div>
 
                     <div className="mt-8">
@@ -226,13 +95,23 @@ const StudentProfilePage = () => {
                                 label="Classroom"
                                 value={classroom.data.fullName}
                             />
-                            <StatCard label="Completion Rate" value={'80%'} />
-                            <StatCard label="Achievements" value={'1'} />
+                            <StatCard
+                                label="Completion Rate"
+                                value={classroomStudent.data.progress + '%'}
+                            />
+                            <StatCard
+                                label="Achievements"
+                                value={completedAchievements}
+                            />
                             <StatCard
                                 label="Last Activity"
-                                value={formatDistanceToNow(new Date(), {
-                                    addSuffix: true,
-                                })}
+                                value={
+                                    lastActivity
+                                        ? formatDistanceToNow(lastActivity, {
+                                              addSuffix: true,
+                                          })
+                                        : 'No activity'
+                                }
                             />
                         </div>
                     </div>
@@ -249,7 +128,7 @@ const StudentProfilePage = () => {
                                 <CardTitle>Achievements</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                {mockAchievements.map((achievement) => (
+                                {achievements?.data?.map((achievement) => (
                                     <div
                                         key={achievement.id}
                                         className={cn(
@@ -287,12 +166,18 @@ const StudentProfilePage = () => {
                                 <CardTitle>Progress</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                {user.recent_activity.map((activity) => (
-                                    <ActivityItem
-                                        key={activity.id}
-                                        activity={activity}
-                                    />
-                                ))}
+                                {contentStudents.data.length > 0 ? (
+                                    contentStudents.data.map((activity, index) => (
+                                        <ActivityItem
+                                            key={index}
+                                            activity={activity}
+                                        />
+                                    ))
+                                ) : (
+                                    <p className="text-sm text-gray-500">
+                                        No recent activity.
+                                    </p>
+                                )}
                             </CardContent>
                         </Card>
                     </div>

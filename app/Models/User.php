@@ -15,7 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -27,13 +27,14 @@ class User extends Authenticatable
         'email',
         'role',
         'id_number',
-        'address',
         'gender',
         'avatar',
         'is_active',
         'total_points',
         'password',
     ];
+
+    protected $appends = ['avatar_url'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -58,6 +59,15 @@ class User extends Authenticatable
             'is_active' => 'boolean',
             'password' => 'hashed',
         ];
+    }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar) {
+            return asset('storage/'.$this->avatar);
+        }
+
+        return 'https://ui-avatars.com/api/?name='.urlencode($this->name);
     }
 
     public function teachedClassrooms()
@@ -104,13 +114,14 @@ class User extends Authenticatable
     }
 
     /**
-     * @param array<string> $roles
+     * @param  array<string>  $roles
      */
     public function hasAnyRole(array $roles): bool
     {
-        if (!$this->role) {
+        if (! $this->role) {
             return false;
         }
+
         return in_array($this->role->value, $roles);
     }
 
