@@ -11,6 +11,7 @@ use App\Models\StudentPoint;
 use App\Models\User;
 use App\Services\ClassroomService;
 use App\Services\ContentService;
+use App\Services\MonitoringService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,6 +45,7 @@ class DashboardController extends Controller
         $classroomCount = Classroom::count();
         $totalUserCount = User::count();
         $completionCount = StudentPoint::count();
+        $recentActivities = app(MonitoringService::class)->index();
 
         return inertia(
             'admin/dashboard-admin',
@@ -51,6 +53,7 @@ class DashboardController extends Controller
                 'classroomCount' => $classroomCount,
                 'totalUserCount' => $totalUserCount,
                 'completionCount' => $completionCount,
+                'recentActivities' => $recentActivities,
             ]
         );
     }

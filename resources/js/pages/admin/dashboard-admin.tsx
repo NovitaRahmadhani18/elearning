@@ -1,14 +1,13 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
-import { BreadcrumbItem } from '@/types';
+import { BreadcrumbItem, PaginatedData } from '@/types';
 import { Head } from '@inertiajs/react';
 import { GraduationCap, LibraryBig, Users } from 'lucide-react';
-import { useMemo } from 'react';
 import AdminDashboardCard from './partials/components/admin-dashboard-card';
-import { TActvityUser } from './types';
 
 import { intlFormatDistance } from 'date-fns';
+import { TContentStudent } from './monitoring';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,14 +20,14 @@ const DashboardAdmin = ({
     classroomCount,
     totalUserCount,
     completionCount,
+    recentActivities,
 }: {
     classroomCount: number;
     totalUserCount: number;
     completionCount: number;
+    recentActivities: PaginatedData<TContentStudent>;
 }) => {
-    const userActivities: TActvityUser[] = useMemo(() => {
-        return mockActivityLog;
-    }, []);
+    const userActivities = recentActivities.data;
 
     return (
         <AdminTeacherLayout breadcrumbs={breadcrumbs}>
@@ -81,12 +80,17 @@ const DashboardAdmin = ({
 export default DashboardAdmin;
 
 interface AdminActivityUserCardProps {
-    activity: TActvityUser;
+    activity: TContentStudent;
 }
 
 const AdminActivityUserCard: React.FC<AdminActivityUserCardProps> = ({
     activity,
 }) => {
+    const desc =
+        activity.content.type == 'quiz'
+            ? `submitted the quiz '${activity.content.title}' and earned ${activity.score} points.`
+            : `completed the material '${activity.content.title}' and earned ${activity.score} points.`;
+
     return (
         <div className="flex items-center gap-4">
             <div className="flex-shrink-0">
@@ -106,88 +110,19 @@ const AdminActivityUserCard: React.FC<AdminActivityUserCardProps> = ({
             </div>
             <div className="flex-1">
                 <p className="text-gray-900">
-                    {activity.user.name} {activity.desc}
+                    <span className="font-semibold">{activity.user.name}</span>{' '}
+                    {desc}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                    {intlFormatDistance(new Date(activity.created_at), new Date(), {
-                        style: 'long',
-                    })}
+                    {intlFormatDistance(
+                        new Date(activity.completed_at ?? ''),
+                        new Date(),
+                        {
+                            style: 'long',
+                        },
+                    )}
                 </p>
             </div>
         </div>
     );
 };
-
-// Mockup Data for the Activity Log
-export const mockActivityLog: TActvityUser[] = [
-    {
-        user: {
-            id: 2,
-            name: 'Budi Santoso',
-            email: 'budi.s@example.com',
-            avatar: 'https://i.pravatar.cc/150?u=budi',
-        },
-        desc: "submitted the quiz 'Chapter 1 Quiz: Linear Equations' and earned 40 points.",
-        created_at: '2025-08-23T12:05:11.861Z', // A few moments ago (UTC)
-    },
-    {
-        user: {
-            id: 4,
-            name: 'Dewi Lestari',
-            email: 'dewi.l@example.com',
-            avatar: null, // Example of a user without an avatar
-        },
-        desc: "completed the material 'Introduction to Basic Algebra' and earned 10 points.",
-        created_at: '2025-08-23T11:45:23.512Z',
-    },
-    {
-        user: {
-            id: 3,
-            name: 'Cici Paramida',
-            email: 'cici.p@example.com',
-            avatar: 'https://i.pravatar.cc/150?u=cici',
-        },
-        desc: "submitted the quiz 'Chapter 1 Quiz: Linear Equations' and earned 50 points.",
-        created_at: '2025-08-23T10:15:05.123Z',
-    },
-    {
-        user: {
-            id: 1,
-            name: 'Tanek',
-            email: 'tanek@example.com',
-            avatar: 'https://i.pravatar.cc/150?u=tanek',
-        },
-        desc: "completed the material 'Introduction to Spatial Geometry' and earned 15 points.",
-        created_at: '2025-08-22T14:30:18.992Z', // Yesterday
-    },
-    {
-        user: {
-            id: 5,
-            name: 'Eko Prasetyo',
-            email: 'eko.p@example.com',
-            avatar: 'https://i.pravatar.cc/150?u=eko',
-        },
-        desc: "viewed the material 'Introduction to Basic Algebra' and earned 10 points.",
-        created_at: '2025-08-22T09:00:45.332Z',
-    },
-    {
-        user: {
-            id: 2,
-            name: 'Budi Santoso',
-            email: 'budi.s@example.com',
-            avatar: 'https://i.pravatar.cc/150?u=budi',
-        },
-        desc: "completed the material 'Introduction to Basic Algebra' and earned 10 points.",
-        created_at: '2025-08-21T16:20:55.781Z', // Two days ago
-    },
-    {
-        user: {
-            id: 4,
-            name: 'Dewi Lestari',
-            email: 'dewi.l@example.com',
-            avatar: null,
-        },
-        desc: "submitted the quiz 'History of Independence Quiz' and earned 85 points.",
-        created_at: '2025-08-21T15:55:10.104Z',
-    },
-];

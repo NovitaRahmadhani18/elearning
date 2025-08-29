@@ -19,8 +19,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 const QuizPage = () => {
     const { quizzes, filters } = usePage<QuizPageProps>().props;
 
-    console.log(quizzes);
-
     const { setParams } = useDebouncedSearch(
         route(route().current() as string),
         filters,

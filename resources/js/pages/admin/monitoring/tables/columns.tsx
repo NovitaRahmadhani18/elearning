@@ -1,7 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { TActvityUser } from '../../types';
+import { TContentStudent } from '..';
 
-export const monitoringTableColumns: ColumnDef<TActvityUser>[] = [
+export const monitoringTableColumns: ColumnDef<TContentStudent>[] = [
     {
         accessorKey: '#',
         header: '#',
@@ -10,7 +10,8 @@ export const monitoringTableColumns: ColumnDef<TActvityUser>[] = [
     {
         accessorKey: 'created_at',
         header: 'Timestamp',
-        cell: ({ row }) => new Date(row.original.created_at).toLocaleString(),
+        cell: ({ row }) =>
+            new Date(row.original.completed_at ?? '').toLocaleString(),
     },
     {
         accessorKey: 'user.name',
@@ -42,7 +43,33 @@ export const monitoringTableColumns: ColumnDef<TActvityUser>[] = [
         },
     },
     {
-        accessorKey: 'desc',
+        id: 'classroom',
+        header: 'Classroom',
+        cell: ({ row }) => {
+            const classroom = row.original.content.classroom;
+            return (
+                <span className="text-sm text-gray-600">
+                    {classroom ? classroom.fullName : 'N/A'}
+                </span>
+            );
+        },
+    },
+    {
+        id: 'desc',
         header: 'Description',
+        cell: ({ row }) => {
+            const content = row.original.content;
+
+            return (
+                <div className="w-xs">
+                    <span className="text-xs text-gray-700">
+                        {content.type === 'quiz'
+                            ? 'Submitted quiz '
+                            : 'Completed material '}
+                        '{content.title}' and earned {row.original.score} points.
+                    </span>
+                </div>
+            );
+        },
     },
 ];
