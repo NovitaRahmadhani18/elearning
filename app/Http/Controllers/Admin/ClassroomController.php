@@ -6,13 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\AchievementResource;
 use App\Http\Resources\ClassroomResource;
 use App\Http\Resources\ClassroomStudentResource;
+use App\Http\Resources\ContentResource;
 use App\Http\Resources\ContentStudentResourc;
 use App\Http\Resources\UserResource;
 use App\Models\Achievement;
 use App\Models\Classroom;
 use App\Models\ClassroomStudent;
+use App\Models\Content;
 use App\Models\ContentStudent;
 use App\Services\ClassroomService;
+use App\Services\LeaderboardService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -76,6 +79,7 @@ class ClassroomController extends Controller
         $classroom->load([
             'students',
             'contents',
+            'contents.students',
             'studentUsers'
         ]);
 
@@ -112,6 +116,20 @@ class ClassroomController extends Controller
             'classroomStudent' => $classroomStudent ? ClassroomStudentResource::make($classroomStudent) : null,
             'achievements' => AchievementResource::collection($achievements),
             'contentStudents' => ContentStudentResourc::collection($contentStudents),
+        ]);
+    }
+
+    public function showContent(Classroom $classroom, Content $content)
+    {
+        $leaderboardContent = app(LeaderboardService::class)->getLeaderboardForContent($content);
+
+        $content->load(['classroom', 'contentable']);
+
+        $content->leaderboard = $leaderboardContent;
+
+        return inertia('admin/classroom/show-content', [
+            'classroom' => ClassroomResource::make($classroom),
+            'content' => ContentResource::make($content),
         ]);
     }
 

@@ -9,8 +9,11 @@ use App\Http\Resources\UserResource;
 use App\Models\Classroom;
 use App\Models\Status;
 use App\Models\User;
+use App\Notifications\Notifications\NewClassroomAssignment;
+use App\Notifications\Notifications\StudentJoinedClassroom;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -103,6 +106,8 @@ class ClassroomService
 
 
             $classroom->save();
+
+            $classroom->teacher->notify(new NewClassroomAssignment($classroom));
 
             return $classroom;
         });
@@ -198,6 +203,12 @@ class ClassroomService
     public function joinClassroom(Classroom $classroom, User $user): Classroom
     {
         $user->classrooms()->attach($classroom);
+
+        $teacher = $classroom->teacher;
+        $admins = User::where('role', 'admin')->get();
+        $recipients = $admins->push($teacher)->unique();
+
+        Notification::send($recipients, new StudentJoinedClassroom($user, $classroom));
 
         return $classroom;
     }

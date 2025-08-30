@@ -14,9 +14,11 @@ use App\Models\Quiz;
 use App\Models\QuizSubmission;
 use App\Models\SubmissionAnswer;
 use App\Models\User;
+use App\Notifications\Notifications\NewContentAvailable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 class ContentService
@@ -99,6 +101,9 @@ class ContentService
                 'points' => $data['points'],
                 'order' => $newOrder, // Gunakan order baru yang sudah dihitung
             ]);
+
+            $students = $classroom->studentUsers;
+            Notification::send($students, new NewContentAvailable($content));
 
             return $content;
         });
@@ -200,6 +205,10 @@ class ContentService
                     ]);
                 }
             }
+
+            $classroom = Classroom::find($data['classroom_id']);
+            $students = $classroom->studentUsers;
+            Notification::send($students, new NewContentAvailable($content));
 
             return $content;
         });

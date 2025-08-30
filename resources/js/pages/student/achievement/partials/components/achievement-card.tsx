@@ -13,7 +13,6 @@ const AchievementCard = ({
     showDetails = true,
 }: AchievementCardProps) => {
     const { name, description, image, locked, achieved_at } = achievement;
-    console.log('AchievementCard Rendered:', achievement);
 
     return (
         <div

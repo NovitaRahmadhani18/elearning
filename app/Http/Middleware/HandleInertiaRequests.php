@@ -78,6 +78,24 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
+            'notifications' => function () {
+                if (auth()->check()) {
+                    return auth()->user()->notifications()->take(15)->get()->map(function ($notification) {
+                        return [
+                            'id'      => $notification->id,
+                            'title'   => $notification->data['title'],
+                            'message' => $notification->data['message'],
+                            'icon'    => $notification->data['icon'],
+                            'link'    => $notification->data['link'],
+                            'type'    => $notification->data['type'],
+                            'date'    => $notification->created_at->toISOString(),
+                            'read'    => $notification->read_at !== null,
+                        ];
+                    });
+                }
+                return [];
+            },
+            'unreadNotificationsCount' => fn () => auth()->check() ? auth()->user()->unreadNotifications()->count() : 0,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

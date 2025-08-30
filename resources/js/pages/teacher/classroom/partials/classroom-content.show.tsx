@@ -1,17 +1,27 @@
 import { cn } from '@/lib/utils';
 import { ShowClassroomPageProps } from '@/pages/admin/classroom/types';
-import { usePage } from '@inertiajs/react';
-import { BookMarked, FileText, Star } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { BookMarked, FileText } from 'lucide-react';
 import { TContent } from '../../material/types';
 
-const ContentCard = ({ content }: { content: TContent }) => {
+const ContentCard = ({
+    content,
+    route: routeLink,
+}: {
+    content: TContent;
+    route: string;
+}) => {
     const { classroom } = usePage<ShowClassroomPageProps>().props;
 
     return (
-        <div
+        <Link
             className={cn(
                 'flex flex-col overflow-hidden rounded-xl bg-white shadow-lg',
             )}
+            href={route(routeLink, {
+                classroom: classroom.data.id,
+                content: content.id,
+            })}
         >
             {/* Card Header */}
             <div className="relative h-32 bg-secondary/30 text-secondary">
@@ -37,35 +47,42 @@ const ContentCard = ({ content }: { content: TContent }) => {
                 </section>
 
                 {/* Stats Section */}
-                <div className="my-2 grid grid-cols-1 gap-2 text-center text-sm text-gray-600">
-                    {/* <div> */}
-                    {/*     <p className="flex items-center justify-center gap-1 font-bold"> */}
-                    {/*         <HelpCircle className="h-4 w-4 text-primary" /> */}
-                    {/*     </p> */}
-                    {/*     <p>Completed</p> */}
-                    {/* </div> */}
-                    <div>
-                        <p className="flex items-center justify-center gap-1 font-bold">
-                            <Star className="h-4 w-4 text-primary" />
-                            {content.points || 0}
-                        </p>
-                        <p>Points</p>
-                    </div>
-                </div>
-
+                {/* <div className="my-2 grid grid-cols-2 gap-2 text-center text-sm text-gray-600"> */}
+                {/*     <div> */}
+                {/*         <p className="flex items-center justify-center gap-1 font-bold"> */}
+                {/*             <HelpCircle className="h-4 w-4 text-primary" /> */}
+                {/*         </p> */}
+                {/*         {content.students_count} */}
+                {/*         <p>Completed</p> */}
+                {/*     </div> */}
+                {/*     <div> */}
+                {/*         <p className="flex items-center justify-center gap-1 font-bold"> */}
+                {/*             <Star className="h-4 w-4 text-primary" /> */}
+                {/*             {content.points || 0} */}
+                {/*         </p> */}
+                {/*         <p>Points</p> */}
+                {/*     </div> */}
+                {/* </div> */}
+                {/**/}
                 <div className="flex-grow" />
             </div>
-        </div>
+        </Link>
     );
 };
 
 const ClassroomContentShow = () => {
-    const { classroom } = usePage<ShowClassroomPageProps>().props;
+    const { classroom, auth } = usePage<ShowClassroomPageProps>().props;
+
+    const route =
+        auth.user.role === 'teacher'
+            ? 'teacher.classrooms.content.show'
+            : 'admin.classrooms.content.show';
+
     return (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
             {classroom.data.contents && classroom.data.contents.length > 0 ? (
                 classroom.data.contents.map((content) => (
-                    <ContentCard key={content.id} content={content} />
+                    <ContentCard key={content.id} content={content} route={route} />
                 ))
             ) : (
                 <p>No contents available.</p>

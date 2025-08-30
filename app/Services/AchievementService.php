@@ -12,6 +12,7 @@ use App\Events\AchievementUnlocked;
 use App\Models\Achievement;
 use App\Models\QuizSubmission;
 use App\Models\User;
+use App\Notifications\Notifications\AchievementUnlockedNotification;
 use Illuminate\Support\Facades\Log;
 
 class AchievementService
@@ -88,5 +89,7 @@ class AchievementService
 
         // Dispatch an event
         AchievementUnlocked::dispatch($user, $achievementModel);
+
+        $user->notify(new AchievementUnlockedNotification($achievementModel));
     }
 }

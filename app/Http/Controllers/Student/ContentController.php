@@ -10,6 +10,7 @@ use App\Models\Content;
 use App\Models\Material;
 use App\Models\Quiz;
 use App\Models\QuizSubmission;
+use App\Notifications\Notifications\ContentCompletedByStudent;
 use App\Services\ContentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -32,6 +33,8 @@ class ContentController extends Controller
         if ($content->contentable_type === Material::class) {
             // Dispatch the event to mark as complete and award points
             ContentCompleted::dispatch($user, $content);
+
+            $content->classroom->teacher->notify(new ContentCompletedByStudent($user, $content));
 
             return inertia('student/content/material-show', [
                 'content' => ContentResource::make($content),
@@ -177,6 +180,8 @@ class ContentController extends Controller
                 'duration' => $submission->duration_seconds,
                 'submission' => $submission,
             ]);
+
+            $content->classroom->teacher->notify(new ContentCompletedByStudent(auth()->user(), $content));
         }
 
 

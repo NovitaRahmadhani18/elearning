@@ -2,7 +2,6 @@ import { cn } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 import { formatDistanceToNow } from 'date-fns';
 import { Award, Bell, BookOpen, Clock, Trophy, type LucideIcon } from 'lucide-react';
-import { Button } from './ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
@@ -141,7 +140,7 @@ const NotificationPopover = () => {
             <PopoverContent align="end" className="w-80 md:w-96">
                 <div className="">
                     <h3 className="text-lg font-semibold">Notifications</h3>
-                    <Separator className="my-2" />
+                    <Separator className="" />
                     {notifications.length > 0 ? (
                         <ScrollArea className="h-auto max-h-96">
                             <ul className="mt-2 space-y-1">
@@ -159,16 +158,7 @@ const NotificationPopover = () => {
                         </div>
                     )}
                 </div>
-                <Separator className="my-2" />
-                <div className="p-2">
-                    <Button
-                        variant="link"
-                        asChild
-                        className="w-full text-center text-sm"
-                    >
-                        <Link href="">View all notifications</Link>
-                    </Button>
-                </div>
+                <Separator className="" />
             </PopoverContent>
         </Popover>
     );

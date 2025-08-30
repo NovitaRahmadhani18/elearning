@@ -12,10 +12,12 @@ export const StudentSubmissionRow = ({
     submission,
     isCurrentUser,
     type,
+    fullPoints, // Tambahkan properti fullPoints jika diperlukan di masa depan
 }: {
     submission: TLeaderboardItem;
     isCurrentUser: boolean;
     type: 'material' | 'quiz';
+    fullPoints?: number;
 }) => {
     const rankStyles: Record<
         number | 'default',
@@ -124,11 +126,11 @@ export const StudentSubmissionRow = ({
                       )
                     : submission.completed_at && (
                           <>
-                              <p className="text-lg font-bold text-gray-800">
-                                  {submission.score?.toFixed(1)}%
-                              </p>
-                              <p className="text-xs text-green-600">
+                              <p className="text-lg font-bold text-green-600">
                                   +{submission.score} pts
+                              </p>
+                              <p className="text-grey-600 text-xs">
+                                  from {fullPoints} pts
                               </p>
                           </>
                       )}
@@ -199,6 +201,7 @@ export const ContentProgressBlock = ({
                         submission={submission}
                         isCurrentUser={submission.user.id === currentUser.id}
                         type={content.type}
+                        fullPoints={content.points} // Kirim fullPoints jika diperlukan di masa depan
                     />
                 ))}
                 {content.leaderboard.length > limit && (

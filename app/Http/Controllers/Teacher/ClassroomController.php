@@ -13,8 +13,10 @@ use App\Http\Resources\ContentStudentResourc;
 use App\Http\Resources\UserResource;
 use App\Models\Achievement;
 use App\Models\ClassroomStudent;
+use App\Models\Content;
 use App\Models\ContentStudent;
 use App\Models\Material;
+use App\Services\LeaderboardService;
 use Illuminate\Http\Request;
 
 class ClassroomController extends Controller
@@ -109,6 +111,21 @@ class ClassroomController extends Controller
             'classroomStudent' => $classroomStudent ? ClassroomStudentResource::make($classroomStudent) : null,
             'achievements' => AchievementResource::collection($achievements),
             'contentStudents' => ContentStudentResourc::collection($contentStudents),
+        ]);
+    }
+
+
+    public function showContent(Classroom $classroom, Content $content)
+    {
+        $leaderboardContent = app(LeaderboardService::class)->getLeaderboardForContent($content);
+
+        $content->load(['classroom', 'contentable']);
+
+        $content->leaderboard = $leaderboardContent;
+
+        return inertia('teacher/classroom/show-content', [
+            'classroom' => ClassroomResource::make($classroom),
+            'content' => ContentResource::make($content),
         ]);
     }
 

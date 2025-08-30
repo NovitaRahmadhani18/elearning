@@ -11,7 +11,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::middleware([
-        'role:admin'
+        'role:admin,teacher'
     ])->group(function () {
         Route::post('classrooms/{classroom}/generate-invite-code', [\App\Http\Controllers\Teacher\ClassroomController::class, 'generateInviteCode'])
             ->name('classrooms.generate-invite-code');
@@ -35,6 +35,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('classrooms/{classroom}/student/{student}', [\App\Http\Controllers\Admin\ClassroomController::class, 'showStudent'])
                 ->name('classrooms.student.show');
 
+            Route::get('classrooms/{classroom}/content/{content}', [\App\Http\Controllers\Admin\ClassroomController::class, 'showContent'])
+                ->name('classrooms.content.show');
+
 
             Route::get('monitoring', [\App\Http\Controllers\Admin\MonitoringController::class, 'index'])->name('monitoring.index');
         }
@@ -52,6 +55,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::get('classrooms/{classroom}/student/{student}', [\App\Http\Controllers\Teacher\ClassroomController::class, 'showStudent'])
                 ->name('classrooms.student.show');
+
+            Route::get('classrooms/{classroom}/content/{content}', [\App\Http\Controllers\Teacher\ClassroomController::class, 'showContent'])
+                ->name('classrooms.content.show');
 
 
             Route::resource('materials', \App\Http\Controllers\Teacher\MaterialController::class)->parameters(['materials' => 'content']);
