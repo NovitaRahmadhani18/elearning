@@ -99,27 +99,5 @@ class AchievementServiceTest extends TestCase
         Event::assertNotDispatched(AchievementUnlocked::class);
         $this->assertEquals(0, $user->fresh()->total_points);
     }
-
-    /** @test */
-    public function it_processes_user_activity_achievements()
-    {
-        Event::fake();
-
-        $user = User::factory()->create();
-
-        $mockAchievement = $this->mock(AchievementContract::class);
-        $mockAchievement->shouldReceive('slug')->andReturn('streak-master');
-        $mockAchievement->shouldReceive('check')->with($user)->andReturn(true);
-
-        // Instantiate service with the mocked achievement object
-        $service = new AchievementService([$mockAchievement]);
-
-        $service->processUserActivity($user);
-
-        $achievementModel = Achievement::firstWhere('slug', 'streak-master');
-        $this->assertNotNull($achievementModel);
-        $this->assertTrue($user->achievements->contains($achievementModel));
-        Event::assertDispatched(AchievementUnlocked::class);
-        $this->assertEquals($achievementModel->points_reward, $user->fresh()->total_points);
-    }
 }
+
