@@ -50,8 +50,23 @@ export interface SharedData {
     filters: FiltersQuery;
     query?: Record<string, string | number | boolean>; // Optional query parameters
     flash?: Flash; // Optional flash messages
+
+    notifications?: TNotification[]; // Optional notifications
+    unreadNotificationsCount: number;
+
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export type TNotification = {
+    id: number;
+    title: string;
+    date: string; // ISO 8601 String
+    type: string;
+    icon: string; // Icon name as a string
+    link: string;
+    message: string;
+    read: boolean;
+};
 
 export interface User {
     id: number;

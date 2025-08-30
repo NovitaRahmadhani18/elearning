@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ContentResource;
 use App\Http\Resources\LeaderboardResource;
 use App\Models\Content;
+use App\Models\Material;
 use App\Services\LeaderboardService;
 
 class LeaderboardController extends Controller
@@ -17,6 +18,11 @@ class LeaderboardController extends Controller
     {
 
         $leaderboards = $this->leaderboardService->getLeaderboardsForStudent(auth()->user());
+
+        // hapus content yang bertipe materi
+        $leaderboards = $leaderboards->filter(function ($content) {
+            return $content->contentable_type  !== Material::class;
+        });
 
         // sort content yang paling baru dibuat
         $leaderboards = $leaderboards->sortByDesc('created_at')->values();

@@ -43,7 +43,7 @@ class ContentCompletedByStudent extends Notification
             'title'   => 'Student Task Completed',
             'message' => "Student '{$this->student->name}' has completed the content '{$this->content->title}'.",
             'icon'    => 'award',
-            'link'    => route('teacher.classrooms.showStudent', [$this->content->classroom->id, $this->student->id]),
+            'link'    => route('teacher.classrooms.content.show', [$this->content->classroom->id, $this->content->id]),
             'type'    => 'content_completed',
         ];
     }

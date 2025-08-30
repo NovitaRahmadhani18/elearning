@@ -9,6 +9,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('home');
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
+    Route::get('read-notification/{id}', [\App\Http\Controllers\NotificationController::class, 'read'])
+        ->name('notifications.read');
 
     Route::middleware([
         'role:admin,teacher'
