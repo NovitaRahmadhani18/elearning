@@ -6,13 +6,13 @@ use App\Contracts\AchievementContract;
 use App\Models\User;
 use App\Services\LeaderboardService;
 
-class TopRank implements AchievementContract
+class TopRanker implements AchievementContract
 {
     public function __construct(protected LeaderboardService $leaderboardService) {}
 
     public function slug(): string
     {
-        return 'top-rank';
+        return 'top-ranker';
     }
 
     public function check(User $user, array $context = []): bool

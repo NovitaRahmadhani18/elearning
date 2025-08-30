@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
-use App\Achievements\FastLearner;
+use App\Achievements\KnowledgeExplorer;
+use App\Achievements\LegendaryLearner;
 use App\Achievements\PerfectScore;
-use App\Achievements\QuizChampion;
-use App\Achievements\StreakMaster;
-use App\Achievements\TopRank;
+use App\Achievements\PointHunter;
+use App\Achievements\QuizChallenger;
+use App\Achievements\TopRanker;
 use App\Contracts\AchievementContract;
 use App\Events\AchievementUnlocked;
 use App\Models\Achievement;
@@ -32,11 +33,12 @@ class AchievementService
     public function __construct()
     {
         $this->achievements = [
-            QuizChampion::class,
-            FastLearner::class,
+            KnowledgeExplorer::class,
+            LegendaryLearner::class,
             PerfectScore::class,
-            StreakMaster::class,
-            TopRank::class,
+            QuizChallenger::class,
+            TopRanker::class,
+            PointHunter::class,
         ];
     }
 
@@ -48,18 +50,6 @@ class AchievementService
             $achievement = app($achievement);
 
             if ($achievement->check($user, $context)) {
-                $this->award($user, $achievement);
-            }
-        }
-    }
-
-    public function processUserActivity(User $user): void
-    {
-        foreach ($this->achievements as $achievement) {
-
-            $achievement = app($achievement);
-
-            if ($achievement->check($user)) {
                 $this->award($user, $achievement);
             }
         }
@@ -91,5 +81,17 @@ class AchievementService
         AchievementUnlocked::dispatch($user, $achievementModel);
 
         $user->notify(new AchievementUnlockedNotification($achievementModel));
+    }
+
+    public function processUserActivity(User $user): void
+    {
+        foreach ($this->achievements as $achievement) {
+
+            $achievement = app($achievement);
+
+            if ($achievement->check($user)) {
+                $this->award($user, $achievement);
+            }
+        }
     }
 }

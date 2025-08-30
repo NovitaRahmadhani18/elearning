@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContentStudent extends Model
 {
+    const STATUS_COMPLETED = 'completed';
+
     protected $table = 'content_student';
 
     protected $fillable = [
