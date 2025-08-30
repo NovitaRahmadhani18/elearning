@@ -8,7 +8,7 @@ import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { type User } from '@/types';
 import { Link, router } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, User2 } from 'lucide-react';
 
 interface UserMenuContentProps {
     user: User;
@@ -39,8 +39,8 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
                         prefetch
                         onClick={cleanup}
                     >
-                        <Settings className="mr-2" />
-                        Settings
+                        <User2 className="mr-2" />
+                        Profile
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
