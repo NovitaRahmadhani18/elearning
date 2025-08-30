@@ -1,22 +1,86 @@
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { TContentQuiz } from '@/pages/teacher/material/types';
-import { BookCopy, Clock } from 'lucide-react';
+import { BookCopy, Clock, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 
 interface QuizInProgressViewProps {
     quiz: TContentQuiz;
     currentQuestionIndex: number;
     onAnswerSelect: (questionId: number, answerId: number) => void;
     formattedTime: string;
-    isSubmitting: boolean; // Tambahkan prop ini dari komponen utama
+    isSubmitting: boolean;
 }
 
-// Pindahkan map di luar komponen agar tidak dibuat ulang pada setiap render
+// BARU: Definisikan palet warna pastel kita
+const pastelThemes = [
+    {
+        bg: 'bg-sky-500',
+        border: 'border-sky-200',
+        hoverBg: 'hover:bg-sky-100',
+        hoverBorder: 'hover:border-sky-500',
+        badgeBg: 'bg-sky-100',
+        badgeText: 'text-sky-700',
+        hoverBadgeBg: 'group-hover:bg-sky-500',
+        hoverBadgeText: 'group-hover:text-white',
+        ring: 'focus:ring-sky-200',
+        textHover: 'group-hover:text-sky-900',
+    },
+    {
+        bg: 'bg-emerald-500',
+        border: 'border-emerald-200',
+        hoverBg: 'hover:bg-emerald-100',
+        hoverBorder: 'hover:border-emerald-500',
+        badgeBg: 'bg-emerald-100',
+        badgeText: 'text-emerald-700',
+        hoverBadgeBg: 'group-hover:bg-emerald-500',
+        hoverBadgeText: 'group-hover:text-white',
+        ring: 'focus:ring-emerald-200',
+        textHover: 'group-hover:text-emerald-900',
+    },
+    {
+        bg: 'bg-amber-500',
+        border: 'border-amber-200',
+        hoverBg: 'hover:bg-amber-100',
+        hoverBorder: 'hover:border-amber-500',
+        badgeBg: 'bg-amber-100',
+        badgeText: 'text-amber-700',
+        hoverBadgeBg: 'group-hover:bg-amber-500',
+        hoverBadgeText: 'group-hover:text-white',
+        ring: 'focus:ring-amber-200',
+        textHover: 'group-hover:text-amber-900',
+    },
+    {
+        bg: 'bg-rose-500',
+        border: 'border-rose-200',
+        hoverBg: 'hover:bg-rose-100',
+        hoverBorder: 'hover:border-rose-500',
+        badgeBg: 'bg-rose-100',
+        badgeText: 'text-rose-700',
+        hoverBadgeBg: 'group-hover:bg-rose-500',
+        hoverBadgeText: 'group-hover:text-white',
+        ring: 'focus:ring-rose-200',
+        textHover: 'group-hover:text-rose-900',
+    },
+    {
+        bg: 'bg-violet-500',
+        border: 'border-violet-200',
+        hoverBg: 'hover:bg-violet-100',
+        hoverBorder: 'hover:border-violet-500',
+        badgeBg: 'bg-violet-100',
+        badgeText: 'text-violet-700',
+        hoverBadgeBg: 'group-hover:bg-violet-500',
+        hoverBadgeText: 'group-hover:text-white',
+        ring: 'focus:ring-violet-200',
+        textHover: 'group-hover:text-violet-900',
+    },
+];
+
 const gridColsByAnswerCount: Record<number, string> = {
     2: 'md:grid-cols-2',
     3: 'md:grid-cols-3',
-    4: 'md:grid-cols-2', // Menghasilkan 2x2 grid yang rapi
-    5: 'md:grid-cols-3', // Menghasilkan 3 di atas, 2 di bawah
+    4: 'md:grid-cols-4',
+    5: 'md:grid-cols-5',
 };
 
 export const QuizInProgressView = ({
@@ -24,59 +88,66 @@ export const QuizInProgressView = ({
     currentQuestionIndex,
     onAnswerSelect,
     formattedTime,
-    isSubmitting, // Terima prop isSubmitting
+    isSubmitting,
 }: QuizInProgressViewProps) => {
-    // Ambil pertanyaan saat ini, pastikan tidak error jika index di luar batas
+    const [selectedAnswerId, setSelectedAnswerId] = useState<number | null>(null);
+
     const currentQuestion = quiz.details.questions[currentQuestionIndex];
     if (!currentQuestion) {
-        // Tampilkan pesan loading atau error jika pertanyaan tidak ditemukan
         return (
-            <div className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
-                Loading question...
+            <div className="flex min-h-screen items-center justify-center bg-sky-50 text-slate-800">
+                <Loader2 className="h-8 w-8 animate-spin" />
             </div>
         );
     }
 
-    // Kalkulasi progress yang lebih intuitif
     const progressPercentage =
         (currentQuestionIndex / quiz.details.questions.length) * 100;
-
-    // Logika pemilihan kelas grid yang aman dari error
     const numAnswers = currentQuestion.answers?.length || 0;
     const responsiveGridClass =
-        gridColsByAnswerCount[numAnswers] || 'md:grid-cols-2'; // Fallback aman
+        gridColsByAnswerCount[numAnswers] || 'md:grid-cols-2';
+
+    const handleSelectAndSubmit = (questionId: number, answerId: number) => {
+        if (isSubmitting) return;
+        setSelectedAnswerId(answerId);
+        onAnswerSelect(questionId, answerId);
+    };
 
     return (
-        <div className="flex min-h-screen flex-col bg-slate-900 p-4 text-white sm:p-6 lg:p-8">
+        <div className="flex min-h-screen flex-col bg-slate-50 p-4 text-slate-800 sm:p-6 lg:p-8">
             <header className="mb-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <BookCopy className="h-8 w-8 text-slate-400" />
+                <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
+                        <BookCopy className="h-6 w-6 text-slate-600" />
+                    </div>
                     <div>
-                        <h1 className="text-xl font-bold">{quiz.title}</h1>
-                        <p className="text-sm text-slate-400">
+                        <h1 className="text-xl font-bold text-slate-900">
+                            {quiz.title}
+                        </h1>
+                        <p className="text-sm text-slate-600">
                             {quiz.classroom.name}
                         </p>
                     </div>
                 </div>
-                <div className="flex items-center gap-2 rounded-lg bg-yellow-400 px-3 py-1.5 font-bold text-black">
+                <div className="flex items-center gap-2 rounded-lg bg-amber-400 px-3 py-1.5 font-bold text-amber-900 shadow-sm">
                     <Clock className="h-5 w-5" />
                     <span>{formattedTime}</span>
                 </div>
             </header>
 
             <div className="mb-8">
-                <div className="mb-1 flex justify-between text-sm text-slate-400">
+                <div className="mb-2 flex justify-between text-sm font-medium text-slate-600">
                     <span>
                         Question {currentQuestionIndex + 1} of{' '}
                         {quiz.details.questions.length}
                     </span>
-                    <span>{Math.round(progressPercentage)}% Complete</span>
+                    <span>{Math.floor(progressPercentage)}% Complete</span>
                 </div>
-                <Progress value={progressPercentage} className="h-2" />
+                <Progress value={progressPercentage} />
             </div>
 
             <main className="flex flex-grow flex-col items-center justify-center text-center">
-                <h2 className="mb-10 text-3xl font-bold">
+                <h2 className="mb-8 text-3xl font-bold text-slate-900">
                     {currentQuestion.question_text}
                 </h2>
 
@@ -84,45 +155,79 @@ export const QuizInProgressView = ({
                     <img
                         src={currentQuestion.image_path}
                         alt={`Image for question: ${currentQuestion.question_text}`}
-                        className="mb-6 max-h-64 w-full max-w-lg rounded-lg object-contain"
+                        className="mb-8 max-h-64 w-full max-w-lg rounded-xl object-contain shadow-md"
                     />
                 )}
 
                 <div
                     className={cn(
-                        'grid w-full max-w-4xl grid-cols-1 gap-4',
+                        'grid w-full grid-cols-1 gap-1',
                         responsiveGridClass,
                     )}
                 >
-                    {currentQuestion.answers.map((answer, index) => (
-                        <button
-                            key={answer.id}
-                            onClick={() =>
-                                onAnswerSelect(currentQuestion.id, answer.id)
-                            }
-                            disabled={isSubmitting} // Gunakan prop isSubmitting di sini
-                            className={cn(
-                                'flex h-full flex-col rounded-lg border-2 border-slate-700 p-4 text-left transition-colors',
-                                'hover:border-primary hover:bg-slate-800 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-slate-900 focus:outline-none',
-                                'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-slate-700 disabled:hover:bg-transparent',
-                            )}
-                        >
-                            <div className="flex items-center">
-                                <span className="mr-4 font-bold text-slate-500">
-                                    {String.fromCharCode(65 + index)}
-                                </span>
-                                <span>{answer.answer_text}</span>
-                            </div>
+                    {currentQuestion.answers.map((answer, index) => {
+                        // Pilih tema warna secara berurutan dan berulang
+                        const theme = pastelThemes[index % pastelThemes.length];
 
-                            {answer.image_path && (
-                                <img
-                                    src={answer.image_path}
-                                    alt={`Image for answer option ${index + 1}`}
-                                    className="mt-4 w-full flex-1 rounded-lg object-cover"
-                                />
-                            )}
-                        </button>
-                    ))}
+                        return (
+                            <button
+                                key={answer.id}
+                                onClick={() =>
+                                    handleSelectAndSubmit(
+                                        currentQuestion.id,
+                                        answer.id,
+                                    )
+                                }
+                                disabled={isSubmitting}
+                                className={cn(
+                                    'group flex h-full flex-col rounded-xl border-2 p-4 text-left shadow-sm transition-all duration-200',
+                                    theme.bg,
+                                    theme.border,
+                                    theme.hoverBg,
+                                    theme.hoverBorder,
+                                    theme.ring,
+                                    'focus:ring-4 focus:ring-offset-2 focus:ring-offset-slate-50 focus:outline-none',
+                                    'disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-inherit disabled:hover:bg-inherit',
+                                )}
+                            >
+                                <div className="flex items-center">
+                                    <div
+                                        className={cn(
+                                            'mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md font-bold transition-colors',
+                                            theme.badgeBg,
+                                            theme.badgeText,
+                                            theme.hoverBadgeBg,
+                                            theme.hoverBadgeText,
+                                        )}
+                                    >
+                                        {String.fromCharCode(65 + index)}
+                                    </div>
+                                    <span
+                                        className={cn(
+                                            'font-semibold text-white',
+                                            theme.textHover,
+                                        )}
+                                    >
+                                        {answer.answer_text}
+                                    </span>
+                                    {isSubmitting &&
+                                        selectedAnswerId === answer.id && (
+                                            <Loader2 className="ml-auto h-5 w-5 animate-spin text-primary" />
+                                        )}
+                                </div>
+
+                                {answer.image_path && (
+                                    <div className="h-full">
+                                        <img
+                                            src={answer.image_path}
+                                            alt={`Image for answer option ${index + 1}`}
+                                            className="mt-4 w-full flex-1 rounded-lg object-cover"
+                                        />
+                                    </div>
+                                )}
+                            </button>
+                        );
+                    })}
                 </div>
             </main>
         </div>
