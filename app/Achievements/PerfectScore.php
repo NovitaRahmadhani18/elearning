@@ -11,7 +11,7 @@ class PerfectScore implements AchievementContract
 
     public function slug(): string
     {
-        return 'top-ranker';
+        return 'perfect-score';
     }
 
     public function check(User $user, array $context = []): bool
