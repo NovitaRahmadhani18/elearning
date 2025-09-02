@@ -51,7 +51,7 @@ class UsersController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'role' => 'required|in:admin,teacher,student', // Adjust roles as needed
-            'id_number' => 'required|numeric|max:50|unique:users,id_number',
+            'id_number' => 'required|numeric|unique:users,id_number',
             'gender' => 'required|in:male,female',
             'avatar' => 'nullable|image|max:2048',
             'is_active' => 'boolean',
@@ -98,7 +98,7 @@ class UsersController extends Controller
             [
                 'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
                 // Gunakan Rule::unique untuk mengabaikan user saat ini saat pengecekan
-                'id_number' => ['required', 'numeric', 'max:255', Rule::unique('users')->ignore($userId)],
+                'id_number' => ['required', 'numeric', Rule::unique('users')->ignore($userId)],
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($userId)],
                 'gender' => ['required', 'in:male,female'],

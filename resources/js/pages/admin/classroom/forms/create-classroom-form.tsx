@@ -1,4 +1,4 @@
-import { useForm, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import React from 'react';
 import { toast } from 'sonner';
 
@@ -100,7 +100,7 @@ const CreateClassroomForm = () => {
                         disabled={processing}
                     />
                     {errors.thumbnail && (
-                        <p className="text-destructive mt-1 text-sm">
+                        <p className="mt-1 text-sm text-destructive">
                             {errors.thumbnail}
                         </p>
                     )}
@@ -108,12 +108,13 @@ const CreateClassroomForm = () => {
 
                 <div className="flex items-center justify-end gap-4 border-t pt-6">
                     <Button
-                        type="button"
+                        type="button" // Change to type="button" to prevent form submission
+                        className="mr-2 w-full sm:w-auto"
                         variant="outline"
-                        onClick={() => reset()}
                         disabled={processing}
+                        asChild
                     >
-                        Cancel
+                        <Link href={route('admin.classrooms.index')}>Cancel</Link>
                     </Button>
                     <Button type="submit" disabled={processing}>
                         {processing ? 'Publishing...' : 'Publish Classroom'}

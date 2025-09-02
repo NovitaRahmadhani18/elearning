@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import React from 'react';
 import { toast } from 'sonner';
 
@@ -168,13 +168,13 @@ const EditUserForm = ({ user }: { user: TUser }) => {
                 <div className="flex items-center justify-end pt-4">
                     {/* Tombol Cancel bisa mengarahkan kembali ke halaman index */}
                     <Button
-                        type="button"
-                        onClick={() => window.history.back()}
+                        type="button" // Change to type="button" to prevent form submission
                         className="mr-2 w-full sm:w-auto"
                         variant="outline"
                         disabled={processing}
+                        asChild
                     >
-                        Cancel
+                        <Link href={route('admin.users.index')}>Cancel</Link>
                     </Button>
                     <Button
                         type="submit"

@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import React from 'react';
 
 // Import all your reusable components
@@ -159,12 +159,12 @@ const CreateUserForm = () => {
                 <div className="flex items-center justify-end pt-4">
                     <Button
                         type="button" // Change to type="button" to prevent form submission
-                        onClick={() => reset()} // Call the reset function
                         className="mr-2 w-full sm:w-auto"
                         variant="outline"
                         disabled={processing}
+                        asChild
                     >
-                        Cancel
+                        <Link href={route('admin.users.index')}>Cancel</Link>
                     </Button>
                     <Button
                         type="submit"
