@@ -14,7 +14,7 @@ COPY --from=vendor /app/vendor /app/vendor
 RUN npm install
 RUN npm run build
 
-FROM dunglas/frankenphp:1-php8.3-alpine AS final
+FROM dunglas/frankenphp:1-php8.4-alpine AS final
 
 RUN apk add --no-cache \
     libzip-dev \
