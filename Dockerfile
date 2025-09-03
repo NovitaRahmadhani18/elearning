@@ -3,6 +3,16 @@ FROM composer:2.7 AS vendor
 WORKDIR /app
 COPY database/ database/
 COPY composer.json composer.lock ./
+
+# Install gd
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN composer install --no-interaction --optimize-autoloader --no-scripts
 
 FROM node:20-alpine AS frontend
@@ -22,7 +32,7 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     freetype-dev \
     sqlite-dev \
-    && docker-php-ext-install -j$(nproc) zip pdo_sqlite \
+    && docker-php-ext-install -j$(nproc) zip pdo_sqlite gd \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd
 
