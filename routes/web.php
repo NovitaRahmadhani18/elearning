@@ -20,6 +20,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::post('classrooms/{classroom}/generate-code', [\App\Http\Controllers\Teacher\ClassroomController::class, 'generateCode'])
             ->name('classrooms.generate-code');
+
+        Route::get('classrooms/{classroom}/export-rekap-nilai', [\App\Http\Controllers\Teacher\ClassroomController::class, 'exportRekapNilai'])
+            ->name('classrooms.export-rekap-nilai');
     });
 
     // admin

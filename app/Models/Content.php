@@ -40,4 +40,9 @@ class Content extends Model
             ->withPivot('status', 'score', 'completed_at')
             ->withTimestamps();
     }
+
+    public function contentStudents()
+    {
+        return $this->hasMany(ContentStudent::class, 'content_id');
+    }
 }

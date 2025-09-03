@@ -2,6 +2,7 @@ import { TContent } from '@/pages/teacher/material/types';
 import { TStudentClassroom } from '@/pages/teacher/student-tracking/types';
 import { SharedData } from '@/types';
 import { TUser } from '@/types/users';
+import { TClassroomRecapNilai } from './show-recap';
 
 export interface TClassroomCategory {
     id: number;
@@ -68,4 +69,5 @@ export interface ShowClassroomPageProps extends SharedData {
     students?: {
         data: TUser;
     };
+    rekapNilai: TClassroomRecapNilai[];
 }

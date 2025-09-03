@@ -95,8 +95,11 @@ class ClassroomController extends Controller
             'studentUsers'
         ]);
 
+        $rekapNilai = $this->classroomService->getRekapNilaiClassroom($classroom);
+
         return inertia('admin/classroom/show', [
             'classroom' => ClassroomResource::make($classroom),
+            'rekapNilai' => $rekapNilai,
         ]);
     }
 

@@ -8,6 +8,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ShowRekap from '@/pages/admin/classroom/show-recap';
 import ClassroomContentShow from './partials/classroom-content.show';
 import StudentClassroomTable from './partials/table/student/data-table';
 
@@ -50,12 +51,16 @@ const ClassroomShowPage = () => {
                         <TabsList>
                             <TabsTrigger value="students">Students</TabsTrigger>
                             <TabsTrigger value="contents">Contents</TabsTrigger>
+                            <TabsTrigger value="recap">Recap</TabsTrigger>
                         </TabsList>
                         <TabsContent value="students">
                             <StudentClassroomTable />
                         </TabsContent>
                         <TabsContent value="contents">
                             <ClassroomContentShow />
+                        </TabsContent>
+                        <TabsContent value="recap">
+                            <ShowRekap />
                         </TabsContent>
                     </Tabs>
                 </section>

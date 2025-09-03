@@ -8,6 +8,7 @@ import { BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminInviteClassroomDialog from '../partials/components/admin-invite-classroom-dialog';
+import ShowRekap from './show-recap';
 import { ShowClassroomPageProps } from './types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -48,12 +49,16 @@ const ClassroomShowPage = () => {
                         <TabsList>
                             <TabsTrigger value="students">Students</TabsTrigger>
                             <TabsTrigger value="contents">Contents</TabsTrigger>
+                            <TabsTrigger value="recap">Recap</TabsTrigger>
                         </TabsList>
                         <TabsContent value="students">
                             <StudentClassroomTable />
                         </TabsContent>
                         <TabsContent value="contents">
                             <ClassroomContentShow />
+                        </TabsContent>
+                        <TabsContent value="recap">
+                            <ShowRekap />
                         </TabsContent>
                     </Tabs>
                 </section>

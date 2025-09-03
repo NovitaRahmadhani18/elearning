@@ -245,4 +245,50 @@ class ClassroomService
 
         return UserResource::collection($students);
     }
+
+
+    public function getRekapNilaiClassroom(Classroom $classroom)
+    {
+        $classroom->load(['contents', 'studentUsers']);
+
+        // nama, konten 1, konten 2, total nilai, rata-rata
+        // budi, 80, 90, 170, 85
+        $rekapNilai = [];
+        foreach ($classroom->studentUsers as $student) {
+            $totalNilai = 0;
+            $jumlahKonten = 0;
+            $nilaiPerKonten = [];
+
+            foreach ($classroom->contents as $content) {
+                $contentStudent = $content->contentStudents()->where('user_id', $student->id)->first();
+                if ($contentStudent) {
+                    if ($contentStudent->score === null) {
+                        $nilai = 0;
+                    } else {
+                        $nilai = $contentStudent->score;
+                    }
+                    $totalNilai += $nilai;
+                    $jumlahKonten++;
+                } else {
+                    $nilai = 0;
+                }
+                $nilaiPerKonten[] = [
+                    'content_id' => $content->id,
+                    'content_title' => $content->title,
+                    'score' => $nilai,
+                ];
+            }
+
+            $rataRata = $jumlahKonten > 0 ? round($totalNilai / $jumlahKonten, 2) : 0;
+
+            $rekapNilai[] = [
+                'student' => UserResource::make($student),
+                'scores' => $nilaiPerKonten,
+                'total_score' => $totalNilai,
+                'average_score' => $rataRata,
+            ];
+        }
+
+        return $rekapNilai;
+    }
 }

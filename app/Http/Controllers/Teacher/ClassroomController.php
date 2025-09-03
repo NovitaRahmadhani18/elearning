@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Teacher;
 
+use App\Exports\RekapNilaiExport;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AchievementResource;
 use App\Http\Resources\ClassroomResource;
@@ -18,6 +19,7 @@ use App\Models\ContentStudent;
 use App\Models\Material;
 use App\Services\LeaderboardService;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ClassroomController extends Controller
 {
@@ -89,8 +91,12 @@ class ClassroomController extends Controller
             'studentUsers'
         ]);
 
+        $rekapNilai = $this->classroomService->getRekapNilaiClassroom($classroom);
+
+
         return inertia('teacher/classroom/show', [
             'classroom' => ClassroomResource::make($classroom),
+            'rekapNilai' => $rekapNilai,
         ]);
     }
 
@@ -212,6 +218,20 @@ class ClassroomController extends Controller
             return  back()->with('success', 'Classroom code regenerated successfully: ' . $code);
         } catch (\Throwable $th) {
             return back()->withErrors('error', 'Failed to regenerate classroom code: ' . $th->getMessage());
+        }
+    }
+
+    public function exportRekapNilai(Classroom $classroom)
+    {
+        try {
+
+            $fileName = 'rekap-nilai-' . $classroom->fullName . '.xlsx';
+            // hapus spasi pada filename dengan strip
+            $fileName = str_replace(' ', '-', $fileName);
+
+            return Excel::download(new RekapNilaiExport($classroom), $fileName);
+        } catch (\Throwable $th) {
+            return back()->withErrors('error', 'Failed to export rekap nilai: ' . $th->getMessage());
         }
     }
 }
