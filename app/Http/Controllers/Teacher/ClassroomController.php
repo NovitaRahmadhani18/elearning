@@ -27,8 +27,18 @@ class ClassroomController extends Controller
      */
     public function index()
     {
+        $categories = $this->classroomService->getClassroomCategories();
+        // set the category filter to name and value
+        $categoryFilter = $categories->map(function ($category) {
+            return [
+                'label' => $category->name,
+                'value' => $category->value,
+            ];
+        })->toArray();
+
         return inertia('teacher/classroom/index', [
             'classrooms' => $this->classroomService->index(),
+            'categories' => $categoryFilter,
         ]);
     }
 

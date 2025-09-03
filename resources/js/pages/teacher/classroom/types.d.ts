@@ -1,8 +1,9 @@
-import { TClassroom } from '@/pages/admin/classroom/types';
+import { TCategory, TClassroom } from '@/pages/admin/classroom/types';
 import { PaginatedData, SharedData } from '@/types';
 
 export interface TeacherClassroomPageProps extends SharedData {
     classrooms: PaginatedData<TClassroom>;
+    categories: TCategory[];
 }
 
 export interface TeacherCreateClassroomPageProps extends SharedData {

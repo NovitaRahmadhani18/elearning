@@ -2,6 +2,14 @@ import { ActionButton } from '@/components/action-button';
 import TablePagination from '@/components/data-table/table-pagination';
 import HeadingSmall from '@/components/heading-small';
 import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import useDebouncedSearch from '@/hooks/use-debounce-search';
 import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
 import { TClassroom } from '@/pages/admin/classroom/types';
@@ -18,9 +26,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const ClassroomIndexPage = () => {
-    const { classrooms, filters } = usePage<TeacherClassroomPageProps>().props;
+    const { classrooms, filters, categories } =
+        usePage<TeacherClassroomPageProps>().props;
 
-    const { setParams } = useDebouncedSearch(
+    const { setParams, params } = useDebouncedSearch(
         route(route().current() as string),
         filters,
         500,
@@ -41,15 +50,54 @@ const ClassroomIndexPage = () => {
                         </ActionButton>
                     </Link>
                 </section>
-                <section>
+                <section className="flex w-full justify-between">
                     <Input
                         className="max-w-md"
                         placeholder="Search classrooms..."
                         type="text"
-                        onChange={(e) => setParams({ search: e.target.value })}
+                        // @ts-expect-error value bisa string atau number
+                        value={params.search || ''}
+                        onChange={(e) => {
+                            setParams({
+                                // @ts-expect-error value bisa string atau number
+                                ...params,
+                                search: e.target.value,
+                            });
+                        }}
                         aria-label="Search classrooms"
                         autoComplete="off"
                     />
+                    <Select
+                        onValueChange={(value) => {
+                            // @ts-expect-error value bisa string atau number
+                            setParams({ ...params, category: value });
+                        }}
+                        // @ts-expect-error value bisa string atau number
+                        value={params.category || ''}
+                    >
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select filter" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="all">All</SelectItem>
+                                {categories.length > 0 ? (
+                                    categories.map((category) => (
+                                        <SelectItem
+                                            key={category.value}
+                                            value={category.value}
+                                        >
+                                            {category.label}
+                                        </SelectItem>
+                                    ))
+                                ) : (
+                                    <p className="p-2 text-sm text-gray-500">
+                                        No categories available.
+                                    </p>
+                                )}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </section>
                 <section className="grid auto-rows-min gap-6 md:grid-cols-3">
                     {classrooms.data.length > 0 ? (

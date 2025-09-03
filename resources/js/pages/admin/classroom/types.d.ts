@@ -34,8 +34,14 @@ export interface TClassroom {
     students_count?: number;
 }
 
+export type TCategory = {
+    label: string;
+    value: string;
+};
+
 export interface ClassroomIndexPageProps extends SharedData {
     classrooms: PaginatedData<TClassroom>;
+    categories: TCategory[];
 }
 
 export interface CreateClassroomPageProps extends SharedData {

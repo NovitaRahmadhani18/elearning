@@ -65,8 +65,20 @@ class ClassroomService
 
         if (auth()->user()->role !== RoleEnum::STUDENT) {
             $query->with(['students', 'category', 'status', 'contents']);
+
+            $query->when(
+                request()->has('category') && request()->query('category') !== 'all',
+                function ($query) {
+                    $query->whereHas('category', function ($q) {
+                        $q->where('value', request()->query('category'));
+                    });
+                }
+            );
+
+
             $result =  DataTable::query($query)
                 ->searchable(['name', 'description'])
+                ->perPage(request()->query('perPage', 6))
                 ->make();
         } else {
             $result = DataTable::query($query)
