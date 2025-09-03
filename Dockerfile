@@ -16,8 +16,15 @@ RUN npm run build
 
 FROM dunglas/frankenphp:1-php8.3-alpine AS final
 
-RUN apk add --no-cache sqlite-dev \
-    && docker-php-ext-install pdo_sqlite
+RUN apk add --no-cache \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    sqlite-dev \
+    && docker-php-ext-install -j$(nproc) zip pdo_sqlite \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
 WORKDIR /app
 COPY frankenphp/caddy/Caddyfile /etc/caddy/Caddyfile
