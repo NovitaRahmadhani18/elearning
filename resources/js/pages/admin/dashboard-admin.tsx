@@ -1,5 +1,3 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import AdminTeacherLayout from '@/layouts/admin-teacher-layout';
 import { BreadcrumbItem, PaginatedData } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -52,26 +50,26 @@ const DashboardAdmin = ({
                         icon={GraduationCap} // Replace with an actual icon if needed
                     />
                 </div>
-                <Card className="">
-                    <CardHeader>
-                        <h2 className="text-xl font-semibold">Recent Activities</h2>
-                    </CardHeader>
-                    <Separator />
-                    <CardContent className="space-y-4">
-                        {userActivities.length > 0 ? (
-                            userActivities.map((activity, index) => (
-                                <AdminActivityUserCard
-                                    key={index}
-                                    activity={activity}
-                                />
-                            ))
-                        ) : (
-                            <p className="text-muted-foreground">
-                                No recent activities found.
-                            </p>
-                        )}
-                    </CardContent>
-                </Card>
+                {/* <Card className=""> */}
+                {/*     <CardHeader> */}
+                {/*         <h2 className="text-xl font-semibold">Recent Activities</h2> */}
+                {/*     </CardHeader> */}
+                {/*     <Separator /> */}
+                {/*     <CardContent className="space-y-4"> */}
+                {/*         {userActivities.length > 0 ? ( */}
+                {/*             userActivities.map((activity, index) => ( */}
+                {/*                 <AdminActivityUserCard */}
+                {/*                     key={index} */}
+                {/*                     activity={activity} */}
+                {/*                 /> */}
+                {/*             )) */}
+                {/*         ) : ( */}
+                {/*             <p className="text-muted-foreground"> */}
+                {/*                 No recent activities found. */}
+                {/*             </p> */}
+                {/*         )} */}
+                {/*     </CardContent> */}
+                {/* </Card> */}
             </div>
         </AdminTeacherLayout>
     );

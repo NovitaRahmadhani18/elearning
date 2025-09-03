@@ -4,7 +4,6 @@ import { Link, usePage } from '@inertiajs/react';
 import { formatDistanceToNow } from 'date-fns';
 import { Award, Bell, BookOpen, Clock, Trophy, type LucideIcon } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
 
 const iconMap: Record<string, LucideIcon> = {
@@ -83,16 +82,14 @@ const NotificationPopover = () => {
                     <h3 className="text-lg font-semibold">Notifications</h3>
                     <Separator className="" />
                     {notifications && notifications.length > 0 ? (
-                        <ScrollArea className="h-auto max-h-96">
-                            <ul className="mt-2 space-y-1">
-                                {notifications.map((notification) => (
-                                    <NotificationItem
-                                        key={notification.id}
-                                        notification={notification}
-                                    />
-                                ))}
-                            </ul>
-                        </ScrollArea>
+                        <div className="max-h-96 overflow-auto">
+                            {notifications.map((notification) => (
+                                <NotificationItem
+                                    key={notification.id}
+                                    notification={notification}
+                                />
+                            ))}
+                        </div>
                     ) : (
                         <div className="py-8 text-center text-sm text-gray-500">
                             You have no new notifications.

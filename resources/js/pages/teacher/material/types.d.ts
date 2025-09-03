@@ -37,6 +37,8 @@ export type TContent = TContentMaterial | TContentQuiz;
 
 export interface MaterialPageProps extends SharedData {
     materials: PaginatedData<TContent>;
+    materialsCount: number;
+    studentsEngagedCount: number;
 }
 
 export interface CreateMaterialPageProps extends SharedData {

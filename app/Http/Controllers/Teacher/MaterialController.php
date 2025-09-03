@@ -24,8 +24,11 @@ class MaterialController extends Controller
 
     public function index()
     {
+
         return inertia('teacher/material/index', [
             'materials' => $this->contentService->getMaterials(),
+            'materialsCount' => $this->contentService->getMaterialCount(),
+            'studentsEngagedCount' => $this->contentService->getStudentEngagementStats(),
         ]);
     }
 

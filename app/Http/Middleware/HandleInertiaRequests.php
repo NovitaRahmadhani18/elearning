@@ -80,7 +80,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'notifications' => function () {
                 if (auth()->check()) {
-                    return auth()->user()->notifications()->take(15)->get()->map(function ($notification) {
+                    return auth()->user()->notifications()->get()->map(function ($notification) {
                         return [
                             'id'      => $notification->id,
                             'title'   => $notification->data['title'],
@@ -95,7 +95,7 @@ class HandleInertiaRequests extends Middleware
                 }
                 return [];
             },
-            'unreadNotificationsCount' => fn () => auth()->check() ? auth()->user()->unreadNotifications()->count() : 0,
+            'unreadNotificationsCount' => fn() => auth()->check() ? auth()->user()->unreadNotifications()->count() : 0,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

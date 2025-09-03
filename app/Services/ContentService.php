@@ -8,6 +8,7 @@ use App\Http\Resources\ClassroomResource;
 use App\Http\Resources\ContentResource;
 use App\Models\Classroom;
 use App\Models\Content;
+use App\Models\ContentStudent;
 use App\Models\Material;
 use App\Models\Question;
 use App\Models\Quiz;
@@ -43,6 +44,55 @@ class ContentService
             ->make();
 
         return ContentResource::collection($result);
+    }
+
+    public function getMaterialCount()
+    {
+        $query =  Content::when(auth()->user()->role == RoleEnum::TEACHER, function ($query) {
+            $query->whereHas('classroom', function ($q) {
+                $q->where('teacher_id', auth()->id());
+            });
+        })
+            ->where('contentable_type', Material::class);
+
+        return $query->count();
+    }
+
+    public function getStudentEngagementStats()
+    {
+        // ambil semua kelas yang diajar oleh guru saat ini
+        $classroomIds = Classroom::where('teacher_id', auth()->id())->pluck('id');
+        if ($classroomIds->isEmpty()) {
+            return 0;
+        }
+
+        // ambil semua konten dari kelas-kelas tersebut
+        $contentIds = Content::whereIn('classroom_id', $classroomIds)->pluck('id');
+        if ($contentIds->isEmpty()) {
+            return 0;
+        }
+
+        // hitung persentase siswa yang telah menyelesaikan setidaknya satu konten
+        $totalStudents = DB::table('classroom_students')
+            ->whereIn('classroom_id', $classroomIds)
+            ->distinct('student_id')
+            ->count('student_id');
+        if ($totalStudents === 0) {
+            return 0;
+        }
+
+        $countCompletedStudents = ContentStudent::query()
+            ->whereHas('content', function ($query) use ($classroomIds) {
+                // ambil hanya materi
+                $query->whereIn('classroom_id', $classroomIds);
+                $query->where('contentable_type', Material::class);
+            })
+            ->whereIn('content_id', $contentIds)
+            ->whereNotNull('completed_at')
+            ->distinct('user_id')
+            ->count('user_id');
+
+        return round(($countCompletedStudents / $totalStudents) * 100, 2);
     }
 
     public function getQuizzes()

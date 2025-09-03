@@ -19,7 +19,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const MaterialPage = () => {
-    const { filters, materials } = usePage<MaterialPageProps>().props;
+    const { filters, materials, materialsCount, studentsEngagedCount } =
+        usePage<MaterialPageProps>().props;
 
     const { setParams } = useDebouncedSearch(
         route(route().current() as string),
@@ -34,13 +35,13 @@ const MaterialPage = () => {
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
                     <AdminDashboardCard
                         title="Total Materials"
-                        value="3" // Placeholder value, replace with actual data if available'
+                        value={materialsCount.toString()} // Placeholder value, replace with actual data if available'
                         icon={BookOpenText} // Replace with an actual icon if needed
                     />
 
                     <AdminDashboardCard
                         title="Student engagement"
-                        value="50%" // Placeholder value, replace with actual data if available
+                        value={studentsEngagedCount.toString() + '%'} // Placeholder value, replace with actual data if available'
                         icon={ChartBar} // Replace with an actual icon if needed
                     />
                 </div>
