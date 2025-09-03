@@ -4,14 +4,13 @@ WORKDIR /app
 COPY database/ database/
 COPY composer.json composer.lock ./
 
-# Install gd
-RUN apt-get update && apt-get install -y \
+# Install dependency untuk gd di Alpine
+RUN apk add --no-cache \
     libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd \
-    && rm -rf /var/lib/apt/lists/*
+    && docker-php-ext-install gd
 
 RUN composer install --no-interaction --optimize-autoloader --no-scripts
 
