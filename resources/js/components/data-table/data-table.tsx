@@ -35,7 +35,7 @@ export function DataTable<TData, TValue>({
     });
 
     return (
-        <div className="max-w-[calc(70vw-10px)] overflow-auto">
+        <div className="overflow-auto md:max-w-[calc(80vw-10px)]">
             <div className="rounded-md border bg-white">
                 {title && (
                     <div className="flex items-center justify-between border-b p-4">
