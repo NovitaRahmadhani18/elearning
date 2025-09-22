@@ -91,6 +91,12 @@ class QuizController extends Controller
 
     public function edit(Content $content)
     {
+
+        // check apakah quiz start_time sudah lewat
+        if ($content->contentable->start_time <= now()) {
+            return redirect()->route('teacher.quizzes.index')->withErrors('Cannot edit a quiz that has already started.');
+        }
+
         return inertia('teacher/quiz/edit', [
             'quiz' => ContentResource::make($content->load('contentable')),
             'classrooms' => $this->contentService->getClassrooms(),

@@ -17,13 +17,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const QuizPage = () => {
-    const { quizzes, filters } = usePage<QuizPageProps>().props;
+    const { quizzes, filters, errors } = usePage<QuizPageProps>().props;
 
     const { setParams } = useDebouncedSearch(
         route(route().current() as string),
         filters,
         500,
     );
+    console.log({ errors });
 
     return (
         <AdminTeacherLayout breadcrumbs={breadcrumbs}>
@@ -48,6 +49,23 @@ const QuizPage = () => {
                         aria-label="Search classrooms"
                         autoComplete="off"
                     />
+                </section>
+                <section>
+                    {Object.keys(errors).length > 0 && (
+                        <div className="rounded-md bg-red-50 p-4">
+                            <div className="flex">
+                                <div className="ml-3">
+                                    <h3 className="text-sm font-medium text-red-800">
+                                        {Object.values(errors).map(
+                                            (error, index) => (
+                                                <div key={index}>{error}</div>
+                                            ),
+                                        )}
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </section>
 
                 <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
