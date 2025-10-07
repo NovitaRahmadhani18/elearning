@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateQuizRequest;
 use App\Http\Resources\ContentResource;
 use App\Models\Classroom;
 use App\Models\Content;
+use App\Models\Quiz;
 use App\Services\ContentService;
 use App\Services\LeaderboardService;
 use Illuminate\Http\Request;
@@ -67,8 +68,8 @@ class QuizController extends Controller
                 Rule::exists('classrooms', 'id')->where('teacher_id', auth()->id())
             ],
             'points' => ['required', 'integer', 'min:0'],
-            'start_time' => ['required', 'date'],
-            'end_time' => ['required', 'date', 'after_or_equal:start_time'],
+            'start_time' => ['required', 'date', 'after_or_equal:now'],
+            'end_time' => ['required', 'date', 'after_or_equal:start_time', 'after_or_equal:now'],
             'duration_minutes' => ['required', 'integer', 'min:1'],
 
             'questions' => ['required', 'array', 'min:1'],
@@ -128,5 +129,24 @@ class QuizController extends Controller
         $this->contentService->deleteContent($content);
 
         return redirect()->back()->with('success', 'Quiz deleted successfully.');
+    }
+
+
+    public function preview(Content $content)
+    {
+        // check apakah content adalah quiz
+        if ($content->contentable_type !== Quiz::class) {
+            return redirect()->back()->with('error', 'Content is not a quiz.');
+        }
+
+        // Load semua relasi yang diperlukan untuk preview
+        $content->load([
+            'contentable.questions.answers',
+            'classroom'
+        ]);
+
+        return inertia('teacher/quiz/preview', [
+            'quiz' => ContentResource::make($content),
+        ]);
     }
 }

@@ -3,6 +3,7 @@ import StudentLayout from '@/layouts/student-layout';
 import { usePage } from '@inertiajs/react';
 import FeaturedClassroomCard from '../partials/components/featured-classroom-card';
 import StudentClassroomCard from '../partials/components/student-classroom-card';
+import { JoinClassroomDialog } from '../partials/join-classroom-dialog';
 import { StudentClassroomPageProps } from './types';
 
 const ClassroomPage = () => {
@@ -21,6 +22,8 @@ const ClassroomPage = () => {
                     title="My Classrooms"
                     description="Continue your learning journey."
                 />
+
+                <JoinClassroomDialog />
 
                 <section>
                     {orderedClassrooms.length > 0 && (

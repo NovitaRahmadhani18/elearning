@@ -424,6 +424,7 @@ const CreateQuizForm = () => {
                         value={data.start_time}
                         error={errors.start_time}
                         onChange={(date) => setData('start_time', date)}
+                        minDate={new Date()}
                     />
                     <DateTimePicker24hForm
                         id="end_time"
@@ -431,6 +432,7 @@ const CreateQuizForm = () => {
                         value={data.end_time}
                         error={errors.end_time}
                         onChange={(date) => setData('end_time', date)}
+                        minDate={new Date()}
                     />
                     <FormField
                         id="points"

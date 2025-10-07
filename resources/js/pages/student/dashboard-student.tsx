@@ -12,6 +12,7 @@ import { TAchievement } from './achievement/types';
 import { TStudentClassroom } from './classrooms/types';
 import DashboardClassroomCard from './partials/components/dashboard-classroom-card';
 import UpcomingDeadlineCard from './partials/components/upcoming-deadline-card';
+import { JoinClassroomDialog } from './partials/join-classroom-dialog';
 
 interface DashboardStudentProps extends SharedData {
     classrooms: {
@@ -42,6 +43,7 @@ const DashboardStudent = () => {
     return (
         <StudentLayout>
             <Head title="Dashboard" />
+
             <div className="flex flex-1 flex-col gap-4 space-y-4">
                 <div>
                     <Heading
@@ -49,6 +51,8 @@ const DashboardStudent = () => {
                         description={`Welcome back, ${auth.user.name}!`}
                     />
                 </div>
+
+                <JoinClassroomDialog />
 
                 <div className="grid auto-rows-min gap-4 md:grid-cols-2">
                     <AdminDashboardCard

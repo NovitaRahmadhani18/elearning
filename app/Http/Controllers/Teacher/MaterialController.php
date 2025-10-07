@@ -128,4 +128,25 @@ class MaterialController extends Controller
 
         return redirect()->back()->with('success', 'Material deleted successfully.');
     }
+
+    /**
+     * Preview the material as students would see it.
+     */
+    public function preview(Content $content)
+    {
+        // Check if content is a material
+        if ($content->contentable_type !== \App\Models\Material::class) {
+            return redirect()->back()->with('error', 'Content is not a material.');
+        }
+
+        // Load necessary relationships for preview
+        $content->load([
+            'contentable',
+            'classroom'
+        ]);
+
+        return inertia('teacher/material/preview', [
+            'material' => ContentResource::make($content),
+        ]);
+    }
 }

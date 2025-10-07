@@ -67,8 +67,13 @@ const AdminClassroomCard = ({
             {/* Card Content */}
             <div className="flex flex-grow flex-col p-4">
                 <h3 className="truncate text-lg font-bold">{classroom.fullName}</h3>
-                <p className="mb-3 h-10 text-sm text-gray-500">
+                <p className="text-sm text-gray-500">
                     {classroom.description || 'No description available.'}
+                </p>
+
+                <p className="mt-1 mb-2 text-sm">
+                    <span className="font-semibold">Code:</span>{' '}
+                    <span className="text-sm text-gray-600">{classroom.code}</span>
                 </p>
 
                 <div className="mb-4 flex items-center gap-2">

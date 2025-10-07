@@ -81,4 +81,25 @@ class ClassroomController extends Controller
             'contents' => ContentResource::collection($contents),
         ]);
     }
+
+
+    public function joinDirectClassroom(Request $request)
+    {
+        $validated = $request->validate([
+            'classroom_code' => ['required', 'string', 'exists:classrooms,code'],
+        ]);
+
+        $classroom = Classroom::query()->where('code', $validated['classroom_code'])->firstOrFail();
+
+        if ($this->classroomService->isMember($classroom, auth()->user())) {
+            return back()->withErrors(['error' => 'You are already a member of this classroom.']);
+        }
+
+        try {
+            $this->classroomService->joinClassroom($classroom, auth()->user());
+            return to_route('student.classrooms.show', $classroom->id)->with('success', 'Successfully joined the classroom!');
+        } catch (\Throwable $th) {
+            return back()->withErrors(['error' => 'Failed to join classroom: ' . $th->getMessage()])->withInput();
+        }
+    }
 }

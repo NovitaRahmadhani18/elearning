@@ -68,6 +68,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::resource('materials', \App\Http\Controllers\Teacher\MaterialController::class)->parameters(['materials' => 'content']);
             Route::resource('quizzes', \App\Http\Controllers\Teacher\QuizController::class)->parameters(['quizzes' => 'content']);
 
+            Route::get('materials/{content}/preview', [\App\Http\Controllers\Teacher\MaterialController::class, 'preview'])->name('materials.preview');
+            Route::get('quizzes/{content}/preview', [\App\Http\Controllers\Teacher\QuizController::class, 'preview'])->name('quizzes.preview');
+
             Route::get('student-tracking', [\App\Http\Controllers\Teacher\StudentTrackingController::class, 'index'])->name('student-tracking.index');
         }
     );
@@ -90,6 +93,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::get('classrooms/{classroom}', [\App\Http\Controllers\Student\ClassroomController::class, 'show'])
                 ->name('classrooms.show');
+
+
+            // join classroom directly with code
+            Route::post('classrooms/direct-join', [\App\Http\Controllers\Student\ClassroomController::class, 'joinDirectClassroom'])
+                ->name('classrooms.direct-join');
 
             // content
 

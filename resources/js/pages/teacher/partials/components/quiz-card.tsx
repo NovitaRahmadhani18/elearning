@@ -119,6 +119,14 @@ const QuizCard = ({
 
                 {/* Action Buttons - Logika tetap sama */}
                 <div className="mt-4 grid grid-cols-3 gap-2 border-t pt-4">
+                    <section className="col-span-3 flex justify-center">
+                        <Button asChild className="w-full max-w-xs" size="sm">
+                            <Link href={route(routeName + '.preview', content.id)}>
+                                <PlayCircle className="h-4 w-4" />
+                                Preview Quiz
+                            </Link>
+                        </Button>
+                    </section>
                     <Link
                         href={route(routeName + '.show', content.id)}
                         className="w-full"

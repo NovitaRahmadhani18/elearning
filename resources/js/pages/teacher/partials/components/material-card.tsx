@@ -6,6 +6,7 @@ import {
     FileText,
     HelpCircle,
     Pencil,
+    PlayCircle,
     Star,
     Trash2,
 } from 'lucide-react';
@@ -90,6 +91,15 @@ const MaterialCard = ({
 
                 {/* Action Buttons */}
                 <div className="grid grid-cols-3 gap-2 pt-4">
+                    <section className="col-span-3 flex justify-center">
+                        <Button asChild className="w-full max-w-xs" size="sm">
+                            <Link href={route(routeName + '.preview', content.id)}>
+                                <PlayCircle className="h-4 w-4" />
+                                Preview Material
+                            </Link>
+                        </Button>
+                    </section>
+
                     <Link
                         href={route(routeName + '.show', content.id)}
                         className="w-full"

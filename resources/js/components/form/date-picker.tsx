@@ -20,6 +20,7 @@ interface DateTimePicker24hFormProps {
     required?: boolean;
     disabled?: boolean;
     className?: string;
+    minDate?: Date; // Tanggal minimum yang bisa dipilih
 }
 
 export function DateTimePicker24hForm({
@@ -32,6 +33,7 @@ export function DateTimePicker24hForm({
     required = false,
     disabled = false,
     className,
+    minDate,
 }: DateTimePicker24hFormProps) {
     /**
      * Menangani perubahan tanggal dari kalender.
@@ -107,6 +109,7 @@ export function DateTimePicker24hForm({
                             selected={value || undefined}
                             onSelect={handleDateSelect}
                             initialFocus
+                            disabled={minDate ? { before: minDate } : undefined}
                         />
                         <div className="flex h-[300px] border-l">
                             {/* Scroll Area untuk Jam */}

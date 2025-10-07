@@ -221,6 +221,14 @@ const EditQuizForm = () => {
 
     const quiz = quizData.data;
 
+    // Logika untuk menentukan minimal date untuk start_time
+    const originalStartTime = new Date(quiz.details.start_time);
+    const today = new Date();
+
+    // Jika start_time asli > hari ini (belum lewat), gunakan hari ini sebagai minimal
+    // Jika start_time asli <= hari ini (sudah lewat), gunakan start_time asli sebagai minimal
+    const minStartDate = originalStartTime > today ? today : originalStartTime;
+
     const { data, setData, post, processing, errors } = useForm({
         _method: 'PUT',
         title: quiz.title,
@@ -440,6 +448,7 @@ const EditQuizForm = () => {
                         value={data.start_time}
                         error={errors.start_time}
                         onChange={(date) => setData('start_time', date as Date)}
+                        minDate={minStartDate}
                     />
                     <DateTimePicker24hForm
                         id="end_time"
@@ -447,6 +456,7 @@ const EditQuizForm = () => {
                         value={data.end_time}
                         error={errors.end_time}
                         onChange={(date) => setData('end_time', date)}
+                        minDate={data.start_time}
                     />
                     <FormField
                         id="points"
